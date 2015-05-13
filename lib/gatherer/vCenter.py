@@ -65,4 +65,5 @@ class Worker:
                                          }
                         for vm in host.vm:
                             output[hname]['vms'][vm.config.name] = vm.config.uuid
+        Disconnect(si)
         return output
