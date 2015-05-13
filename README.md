@@ -1,8 +1,13 @@
+Requires:
+
+* install python-pyvmomi from devel:languages:python
+* install missing requirements: python-six and python-requests
 
 Example:
 
 Use as infile.json:
 -----------------------------------------
+```
 [
   { "name" : "Cloud vCenter",
     "type" : "vCenter",
@@ -12,10 +17,12 @@ Use as infile.json:
     "pass" : "the password"
    }
 ]
+```
 -----------------------------------------
 
 and call
 
+```
 $> scripts/gatherer --infile ./infile.json --outfile ./outfile.json
-
+```
 
