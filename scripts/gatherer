@@ -32,7 +32,7 @@
 import sys
 import argparse
 import json
-TYPES = ['vCenter']
+TYPES = ['vCenter', 'SUSECloud']
 
 sys.path.append('./lib')
 
