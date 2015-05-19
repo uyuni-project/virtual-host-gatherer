@@ -29,6 +29,7 @@ class Worker:
         self.port = node['port'] or 443
         self.user = node['user']
         self.password = node['pass']
+        self.log = logging.getLogger(__name__)
 
     def run(self):
         si = SmartConnect(host=self.host,
@@ -36,7 +37,7 @@ class Worker:
                           pwd=self.password,
                           port=int(self.port))
         if not si:
-            print("Could not connect to the specified host using specified "
+            self.log.error("Could not connect to the specified host using specified "
                 "username and password")
             return;
 

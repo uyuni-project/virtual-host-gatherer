@@ -30,61 +30,15 @@
 # ]
 
 import sys
-import argparse
-import json
-TYPES = ['vCenter', 'SUSECloud']
-
 sys.path.append('./lib')
-
-def _parseOptions():
-   """
-   Supports the command-line arguments listed below.
-   """
-   parser = argparse.ArgumentParser(
-       description='Process args for retrieving all the Virtual Machines')
-   parser.add_argument('-i', '--infile', required=True, action='store',
-                       help='json input file')
-   parser.add_argument('-o', '--outfile', required=True, action='store',
-                       help='to write the output to (json)')
-   args = parser.parse_args()
-   return args
-
-def loadPlugin(name):
-    mod = __import__('gatherer', globals(), locals(), [str(name)])
-    try:
-        submod = getattr(mod, name)
-    except AttributeError:
-        print("Type %s is not supported. "
-              "Could not import "
-              "gatherer.%s."
-              % (name, name))
-        return
-    return getattr(submod, "Worker")
-
-def main():
-    output = list()
-    options = _parseOptions()
-    with open(options.infile, 'r') as f:
-        mgmNodes = json.load(f)
-
-    for node in mgmNodes:
-        if node['type'] not in TYPES:
-            print "Unsupported type '%s'. Skipping '%s'" % (node['type'], node['name'])
-            continue
-        if not node['host']:
-            print "Invalid 'host' entry. Skipping '%s'" % (node['name'])
-            continue
-        if not node['user'] or not node['pass']:
-            print "Invalid 'user' or 'pass' entry. Skipping '%s'" % (node['name'])
-            continue
-        plugin = loadPlugin(node['type'])
-        if not plugin:
-            continue
-        worker = plugin(node)
-        output.append(worker.run())
-    with open(options.outfile, 'w') as f:
-        json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
+from gatherer.gatherer import Gatherer
 
 # Start program
 if __name__ == "__main__":
-   main()
+    try:
+        g = Gatherer().main()
+    except Exception, ex:
+        sys.stderr.write("General error: {0}\n".format(ex))
+        raise
+        sys.exit(1)
+sys.exit(0)

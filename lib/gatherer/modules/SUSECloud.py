@@ -14,6 +14,7 @@
 
 import sys
 import json
+import logging
 from novaclient.v1_1 import client
 
 class Worker:
@@ -23,6 +24,7 @@ class Worker:
         self.port = node['port'] or 5000
         self.user = node['user']
         self.password = node['pass']
+        self.log = logging.getLogger(__name__)
 
     def run(self):
         output = dict()
