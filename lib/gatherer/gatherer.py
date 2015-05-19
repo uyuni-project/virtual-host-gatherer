@@ -18,7 +18,7 @@ import argparse
 import json
 import logging
 from logging.handlers import RotatingFileHandler
-TYPES = ['vCenter', 'SUSECloud']
+TYPES = ['VMware', 'SUSECloud']
 
 class Gatherer:
     def __init__(self):
