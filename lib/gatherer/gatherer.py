@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import distutils.sysconfig
 import sys
 import os
+import glob
 import argparse
 import json
 import logging
@@ -41,20 +43,24 @@ class Gatherer:
         fh.setFormatter(formatFile)
         self.log.addHandler(fh)
 
+        self.options = None
+
     def _parseOptions(self):
         """
         Supports the command-line arguments listed below.
         """
         parser = argparse.ArgumentParser(
             description='Process args for retrieving all the Virtual Machines')
-        parser.add_argument('-i', '--infile', required=True, action='store',
+        parser.add_argument('-i', '--infile', action='store',
                             help='json input file')
-        parser.add_argument('-o', '--outfile', required=True, action='store',
+        parser.add_argument('-o', '--outfile', action='store',
                             help='to write the output to (json)')
         parser.add_argument('-v', '--verbose', action='count',
                             help='increase log output verbosity')
+        parser.add_argument('-l', '--list-modules', action='store_true',
+                            help="list modules with options")
         args = parser.parse_args()
-        return args
+        self.options = args
 
     def loadPlugin(self, name):
         mod = __import__('modules', globals(), locals(), [str(name)])
@@ -65,17 +71,60 @@ class Gatherer:
                            "Could not import gatherer.%s.", name, name)
             return
         self.log.debug("module %s loaded", name)
-        return getattr(submod, "Worker")
+        return getattr(submod, "get_worker")
+
+    def listModules(self):
+        plib = distutils.sysconfig.get_python_lib()
+        if os.path.exists('./lib/gatherer/modules/__init__.py'):
+            plib = './lib'
+        mod_path="%s/gatherer/modules" % plib
+        self.log.info("module path: %s", mod_path)
+        filenames = glob.glob("%s/*.py" % mod_path)
+        filenames = filenames + glob.glob("%s/*.pyc" % mod_path)
+        filenames = filenames + glob.glob("%s/*.pyo" % mod_path)
+        mods = {}
+        for fn in filenames:
+            basename = os.path.basename(fn)
+            if basename.startswith("__init__.py"):
+                continue
+            if basename[-3:] == ".py":
+                modname = basename[:-3]
+            elif basename[-4:] in [".pyc", ".pyo"]:
+                modname = basename[:-4]
+
+            try:
+                self.log.debug("load %s", modname)
+                mod = __import__('modules.%s' % (modname), globals(), locals(), [modname])
+                self.log.debug("DIR: %s", dir(mod))
+                if not hasattr(mod, "parameter"):
+                    self.log.error("Module %s has not a paramater function", modname)
+                    continue
+                mods[modname] = mod.parameter()
+            except ImportError, e:
+                raise
+        if self.options.outfile:
+            with open(self.options.outfile, 'w') as f:
+                json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
+        else:
+            print json.dumps(mods, sort_keys=True, indent=4, separators=(',', ': '))
+        return
 
     def main(self):
         output = list()
-        options = self._parseOptions()
-        if options.verbose == 1:
+        self._parseOptions()
+        if self.options.verbose == 1:
             self.log.setLevel(logging.INFO)
-        if options.verbose >= 2:
+        if self.options.verbose >= 2:
             self.log.setLevel(logging.DEBUG)
 
-        with open(options.infile, 'r') as f:
+        if self.options.list_modules:
+            self.listModules()
+            return
+        elif not self.options.infile:
+            self.log.error("infile parameter required")
+            return
+
+        with open(self.options.infile, 'r') as f:
             mgmNodes = json.load(f)
 
         for node in mgmNodes:
@@ -93,5 +142,8 @@ class Gatherer:
                 continue
             worker = plugin(node)
             output.append(worker.run())
-        with open(options.outfile, 'w') as f:
-            json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
+        if self.options.outfile:
+            with open(self.options.outfile, 'w') as f:
+                json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
+        else:
+            print json.dumps(output, sort_keys=True, indent=4, separators=(',', ': '))

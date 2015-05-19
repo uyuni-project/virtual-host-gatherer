@@ -22,16 +22,21 @@ from pyVmomi import vmodl
 
 import atexit
 
-class Worker:
+class VMwareWorker:
     def __init__(self, node):
-        self.name = node['name']
+        self.log = logging.getLogger(__name__)
+        for k in parameter():
+            if k not in node:
+                self.log.error("Missing parameter '%s' in infile", k)
+                raise AttributeError("Missing parameter '%s' in infile" % k)
+
         self.host = node['host']
         self.port = node['port'] or 443
         self.user = node['user']
         self.password = node['pass']
-        self.log = logging.getLogger(__name__)
 
     def run(self):
+        self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
         si = SmartConnect(host=self.host,
                           user=self.user,
                           pwd=self.password,
@@ -69,3 +74,12 @@ class Worker:
                             output[hname]['vms'][vm.config.name] = vm.config.uuid
         Disconnect(si)
         return output
+
+def get_worker(node):
+    return VMwareWorker(node)
+
+def parameter():
+    return {'host': '',
+            'port': 443,
+            'user': '',
+            'pass': ''}

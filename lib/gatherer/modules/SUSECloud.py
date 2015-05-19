@@ -17,18 +17,24 @@ import json
 import logging
 from novaclient.v1_1 import client
 
-class Worker:
+class SUSECloudWorker:
     def __init__(self, node):
-        self.tenant = node['name']
+        self.log = logging.getLogger(__name__)
+        for k in parameter():
+            if k not in node:
+                self.log.error("Missing parameter '%s' in infile", k)
+                raise AttributeError("Missing parameter '%s' in infile" % k)
+
         self.host = node['host']
         self.port = node['port'] or 5000
         self.user = node['user']
         self.password = node['pass']
-        self.log = logging.getLogger(__name__)
+        self.tenant = node['tenant']
 
     def run(self):
         output = dict()
         url = "http://%s:%s/v2.0/" % (self.host, self.port)
+        self.log.info("Connect to %s for tenant %s as user %s", url, self.tenant, self.user)
         nt = client.Client(self.user, self.password, self.tenant, url, service_type="compute")
         hypervisors = nt.hypervisors.list()
         for hyp in hypervisors:
@@ -50,3 +56,13 @@ class Worker:
 
         return output
 
+def parameter():
+    return {'host': '',
+            'port': 5000,
+            'user': '',
+            'pass': '',
+            'proto': 'https',
+            'tenant': 'openstack'}
+
+def get_worker(node):
+    return SUSECloudWorker(node)
