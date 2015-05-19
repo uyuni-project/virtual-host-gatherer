@@ -20,7 +20,6 @@ import argparse
 import json
 import logging
 from logging.handlers import RotatingFileHandler
-TYPES = ['VMware', 'SUSECloud']
 
 class Gatherer:
     def __init__(self):
@@ -100,14 +99,10 @@ class Gatherer:
                     self.log.error("Module %s has not a paramater function", modname)
                     continue
                 mods[modname] = mod.parameter()
+                mods[modname]['module'] = modname
             except ImportError, e:
                 raise
-        if self.options.outfile:
-            with open(self.options.outfile, 'w') as f:
-                json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
-        else:
-            print json.dumps(mods, sort_keys=True, indent=4, separators=(',', ': '))
-        return
+        return mods
 
     def main(self):
         output = list()
@@ -117,19 +112,28 @@ class Gatherer:
         if self.options.verbose >= 2:
             self.log.setLevel(logging.DEBUG)
 
-        if self.options.list_modules:
-            self.listModules()
-            return
-        elif not self.options.infile:
+        if not self.options.list_modules and not self.options.infile:
             self.log.error("infile parameter required")
+            return
+
+        installed_modules = self.listModules()
+        if self.options.list_modules:
+            if self.options.outfile:
+                with open(self.options.outfile, 'w') as f:
+                    json.dump(installed_modules, f, sort_keys=True, indent=4, separators=(',', ': '))
+            else:
+                print json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': '))
             return
 
         with open(self.options.infile, 'r') as f:
             mgmNodes = json.load(f)
 
         for node in mgmNodes:
-            if node['type'] not in TYPES:
-                self.log.error("Unsupported type '%s'. Skipping '%s'", node['type'], node['name'])
+            if not 'module' in node:
+                self.log.error("Missing module definition in infile. Skipping")
+                continue
+            if node['module'] not in installed_modules:
+                self.log.error("Unsupported module '%s'. Skipping", node['module'])
                 continue
             if not node['host']:
                 self.log.error("Invalid 'host' entry. Skipping '%s'", node['name'])
@@ -137,7 +141,7 @@ class Gatherer:
             if not node['user'] or not node['pass']:
                 self.log.error("Invalid 'user' or 'pass' entry. Skipping '%s'", node['name'])
                 continue
-            plugin = self.loadPlugin(node['type'])
+            plugin = self.loadPlugin(node['module'])
             if not plugin:
                 continue
             worker = plugin(node)
