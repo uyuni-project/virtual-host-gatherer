@@ -39,6 +39,5 @@ if __name__ == "__main__":
         g = Gatherer().main()
     except Exception, ex:
         sys.stderr.write("General error: {0}\n".format(ex))
-        raise
         sys.exit(1)
 sys.exit(0)
