@@ -20,25 +20,59 @@ Source0:        gatherer-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
 %{py_requires}
+BuildArch:      noarch
 
 %description
 This package contains a script to gather information about virtual system
 running on different kind of hypervisors.
 
+%package VMware
+Summary:        VMware connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+Requires:       python-pyvmomi
+
+%description VMware
+VMware connection module for gatherer
+
+%package SUSECloud
+Summary:        SUSE Cloud connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+Requires:       python-novaclient
+
+%description SUSECloud
+SUSE Cloud connection module for gatherer
+
+
 %prep
-%setup -q -n gatherer-%{version}
+%setup -q
 
 %build
 python setup.py build
 
 %install
-python setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT --record-rpm=INSTALLED_FILES
+python setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT
 
 %clean
 rm -rf %{buildroot}
 
-%files -f INSTALLED_FILES
+%files
 %defattr(-,root,root,-)
 %doc LICENSE README.md
+%dir %{python_sitelib}/gatherer
+%dir %{python_sitelib}/gatherer/modules
+%{python_sitelib}/gatherer/*.py*
+%{python_sitelib}/gatherer/modules/__init__.py*
+%{_bindir}/gatherer
+%{python_sitelib}/gatherer-*.egg-info
+
+%files VMware
+%defattr(-,root,root,-)
+%{python_sitelib}/gatherer/modules/VMware.py*
+
+%files SUSECloud
+%defattr(-,root,root,-)
+%{python_sitelib}/gatherer/modules/SUSECloud.py*
 
 %changelog
