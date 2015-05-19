@@ -14,7 +14,7 @@ Gather host and VM data from different kind of hypervisors
       author_email = 'mc@suse.com',
       url = 'http://www.suse.com',
       package_dir = {'': 'lib'},
-      packages = ['gatherer'],
+      packages = ['gatherer', 'gatherer/modules'],
       scripts = ['scripts/gatherer'],
       license = "Apache-2.0",
       )
