@@ -1,21 +1,55 @@
 Requires:
 
-* install python-pyvmomi from devel:languages:python
-* install missing requirements: python-six and python-requests
+* For VMware: install python-pyvmomi from devel:languages:python
+* For SUSECloud: install python-novaclient
 
 Example:
 
-Use as infile.json:
+List all installed modules with the required paramater:
+```
+$> scripts/gatherer --list-modules
+{
+    "SUSECloud": {
+        "host": "",
+        "module": "SUSECloud",
+        "pass": "",
+        "port": 5000,
+        "proto": "https",
+        "tenant": "openstack",
+        "user": ""
+    },
+    "VMware": {
+        "host": "",
+        "module": "VMware",
+        "pass": "",
+        "port": 443,
+        "user": ""
+    }
+}
+
+```
+
 -----------------------------------------
+
+Example input file (infile.json):
 ```
 [
-  { "name" : "Cloud vCenter",
-    "type" : "vCenter",
-    "host" : "10.162.186.115",
-    "port" : 443,
-    "user" : "root",
-    "pass" : "the password"
-   }
+    {
+        "module": "VMware",
+        "host": "vCenter.domain.top",
+        "user": "admin"
+        "pass": "secret",
+        "port": 443,
+    },
+    {
+        "module" : "SUSECloud",
+        "proto" : "http",
+        "host" : "susecloud.domain.top",
+        "port" : 5000,
+        "user" : "admin",
+        "pass" : "secret",
+        "tenant" : "openstack"
+  }
 ]
 ```
 -----------------------------------------
