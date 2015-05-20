@@ -121,7 +121,9 @@ class Gatherer:
             self.log.error("infile parameter required")
             return
 
+        self.log.warning("Start scanning ...")
         self.run()
+        self.log.warning("Scanning finished ...")
 
     def _loadModules(self):
         plib = distutils.sysconfig.get_python_lib()
