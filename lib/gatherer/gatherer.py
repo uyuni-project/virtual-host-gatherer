@@ -43,6 +43,7 @@ class Gatherer:
         self.log.addHandler(fh)
 
         self.options = None
+        self.modules = {}
 
     def _parseOptions(self):
         """
@@ -61,18 +62,68 @@ class Gatherer:
         args = parser.parse_args()
         self.options = args
 
-    def loadPlugin(self, name):
-        mod = __import__('modules', globals(), locals(), [str(name)])
-        try:
-            submod = getattr(mod, name)
-        except AttributeError:
-            self.log.error("Type %s is not supported. "
-                           "Could not import gatherer.%s.", name, name)
-            return
-        self.log.debug("module %s loaded", name)
-        return getattr(submod, "get_worker")
-
     def listModules(self):
+        params = {}
+        if len(self.modules) == 0:
+            self._loadModules()
+        for (modname, mod) in self.modules.items():
+            params[modname] = mod.parameter()
+            params[modname]['module'] = modname
+        return params
+
+    def run(self):
+        if len(self.modules) == 0:
+            self._loadModules()
+
+        with open(self.options.infile, 'r') as f:
+            mgmNodes = json.load(f)
+
+        output = list()
+        for node in mgmNodes:
+            if not 'module' in node:
+                self.log.error("Missing module definition in infile. Skipping")
+                continue
+            modname = node['module']
+            if modname not in self.modules:
+                self.log.error("Unsupported module '%s'. Skipping", modname)
+                continue
+            if not node['host']:
+                self.log.error("Invalid 'host' entry. Skipping '%s'", node['name'])
+                continue
+            if not node['user'] or not node['pass']:
+                self.log.error("Invalid 'user' or 'pass' entry. Skipping '%s'", node['name'])
+                continue
+            worker = self.modules[modname].worker(node)
+            output.append(worker.run())
+        if self.options.outfile:
+            with open(self.options.outfile, 'w') as f:
+                json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
+        else:
+            print json.dumps(output, sort_keys=True, indent=4, separators=(',', ': '))
+
+    def main(self):
+        self._parseOptions()
+        if self.options.verbose == 1:
+            self.log.setLevel(logging.INFO)
+        if self.options.verbose >= 2:
+            self.log.setLevel(logging.DEBUG)
+
+        if self.options.list_modules:
+            installed_modules = self.listModules()
+            if self.options.outfile:
+                with open(self.options.outfile, 'w') as f:
+                    json.dump(installed_modules, f, sort_keys=True, indent=4, separators=(',', ': '))
+            else:
+                print json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': '))
+            return
+
+        if not self.options.infile:
+            self.log.error("infile parameter required")
+            return
+
+        self.run()
+
+    def _loadModules(self):
         plib = distutils.sysconfig.get_python_lib()
         if os.path.exists('./lib/gatherer/modules/__init__.py'):
             plib = './lib'
@@ -81,7 +132,6 @@ class Gatherer:
         filenames = glob.glob("%s/*.py" % mod_path)
         filenames = filenames + glob.glob("%s/*.pyc" % mod_path)
         filenames = filenames + glob.glob("%s/*.pyo" % mod_path)
-        mods = {}
         for fn in filenames:
             basename = os.path.basename(fn)
             if basename.startswith("__init__.py"):
@@ -98,56 +148,9 @@ class Gatherer:
                 if not hasattr(mod, "parameter"):
                     self.log.error("Module %s has not a paramater function", modname)
                     continue
-                mods[modname] = mod.parameter()
-                mods[modname]['module'] = modname
+                if not hasattr(mod, "worker"):
+                    self.log.error("Module %s has not a worker function", modname)
+                    continue
+                self.modules[modname] = mod
             except ImportError, e:
                 raise
-        return mods
-
-    def main(self):
-        output = list()
-        self._parseOptions()
-        if self.options.verbose == 1:
-            self.log.setLevel(logging.INFO)
-        if self.options.verbose >= 2:
-            self.log.setLevel(logging.DEBUG)
-
-        if not self.options.list_modules and not self.options.infile:
-            self.log.error("infile parameter required")
-            return
-
-        installed_modules = self.listModules()
-        if self.options.list_modules:
-            if self.options.outfile:
-                with open(self.options.outfile, 'w') as f:
-                    json.dump(installed_modules, f, sort_keys=True, indent=4, separators=(',', ': '))
-            else:
-                print json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': '))
-            return
-
-        with open(self.options.infile, 'r') as f:
-            mgmNodes = json.load(f)
-
-        for node in mgmNodes:
-            if not 'module' in node:
-                self.log.error("Missing module definition in infile. Skipping")
-                continue
-            if node['module'] not in installed_modules:
-                self.log.error("Unsupported module '%s'. Skipping", node['module'])
-                continue
-            if not node['host']:
-                self.log.error("Invalid 'host' entry. Skipping '%s'", node['name'])
-                continue
-            if not node['user'] or not node['pass']:
-                self.log.error("Invalid 'user' or 'pass' entry. Skipping '%s'", node['name'])
-                continue
-            plugin = self.loadPlugin(node['module'])
-            if not plugin:
-                continue
-            worker = plugin(node)
-            output.append(worker.run())
-        if self.options.outfile:
-            with open(self.options.outfile, 'w') as f:
-                json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
-        else:
-            print json.dumps(output, sort_keys=True, indent=4, separators=(',', ': '))

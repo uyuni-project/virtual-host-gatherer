@@ -75,7 +75,7 @@ class VMwareWorker:
         Disconnect(si)
         return output
 
-def get_worker(node):
+def worker(node):
     return VMwareWorker(node)
 
 def parameter():

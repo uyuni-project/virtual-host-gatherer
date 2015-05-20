@@ -64,5 +64,5 @@ def parameter():
             'proto': 'https',
             'tenant': 'openstack'}
 
-def get_worker(node):
+def worker(node):
     return SUSECloudWorker(node)
