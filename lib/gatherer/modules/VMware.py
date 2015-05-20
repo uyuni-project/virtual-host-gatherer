@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import pyVmomi
+import logging
 
 from pyVmomi import vim
 from pyVmomi import vmodl
