@@ -40,10 +40,15 @@ class SUSECloudWorker:
         for hyp in hypervisors:
             cpu_info = json.loads(hyp.cpu_info)
             output[hyp.hypervisor_hostname] = {'name': hyp.hypervisor_hostname,
+                                               'os': hyp.hypervisor_type,
+                                               'osVersion': hyp.hypervisor_version,
                                                'sockets': cpu_info['topology']['sockets'],
                                                'cores': cpu_info['topology']['cores'],
                                                'threads': cpu_info['topology']['threads'],
                                                'ghz': 0,
+                                               'cpuVendor': cpu_info['vendor'],
+                                               'cpuDescription': cpu_info['model'],
+                                               'cpuArch': cpu_info['arch'],
                                                'ram': hyp.memory_mb,
                                                'vms': {}
                                                }

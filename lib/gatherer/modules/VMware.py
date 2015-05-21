@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# http://pubs.vmware.com/vsphere-55/topic/com.vmware.wssdk.apiref.doc/right-pane.html
 
 import pyVmomi
 import logging
@@ -57,21 +59,32 @@ class VMwareWorker:
                 clusterList = child.hostFolder.childEntity
                 for cluster in clusterList:
                     for host in cluster.host:
-                        hname = host.summary.config.name
+                        hname = host.summary.config.name.split()[0]
                         sockets = host.hardware.cpuInfo.numCpuPackages
                         cores = (host.hardware.cpuInfo.numCpuCores / sockets)
                         threads = (host.hardware.cpuInfo.numCpuThreads / cores / sockets)
                         ghz = (float(host.hardware.cpuInfo.hz) / float(1000*1000*1000))
                         ram = (int(host.hardware.memorySize/(1024*1024)))
                         output[hname] = {'name': hname,
+                                         'os': host.summary.config.product.name,
+                                         'osVersion': host.summary.config.product.version,
                                          'sockets': sockets,
                                          'cores': cores,
                                          'threads': threads,
                                          'ghz': ghz,
+                                         'cpuVendor': host.hardware.cpuPkg[0].vendor,
+                                         'cpuDescription': host.hardware.cpuPkg[0].description,
+                                         'cpuArch': 'x86_64',
                                          'ram': ram,
                                          'vms': {}
                                          }
+                        # If additional Hardeware info is wanted:
+                        # print "pciDevice: %s" % host.hardware.pciDevice
                         for vm in host.vm:
+                            #print "Guest: %s" % vm.config.name
+                            #print "Guest State: %s" % vm.runtime.powerState
+                            #print "Guest CPUs: %s" % vm.summary.config.numCpu
+                            #print "Guest RAM: %s" % vm.summary.config.memorySizeMB
                             output[hname]['vms'][vm.config.name] = vm.config.uuid
         Disconnect(si)
         return output
