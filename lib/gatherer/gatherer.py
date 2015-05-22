@@ -19,6 +19,7 @@ import glob
 import argparse
 import json
 import logging
+import uuid
 from logging.handlers import RotatingFileHandler
 
 class Gatherer:
@@ -78,7 +79,7 @@ class Gatherer:
         with open(self.options.infile, 'r') as f:
             mgmNodes = json.load(f)
 
-        output = list()
+        output = dict()
         for node in mgmNodes:
             if not 'module' in node:
                 self.log.error("Missing module definition in infile. Skipping")
@@ -93,8 +94,12 @@ class Gatherer:
             if not node['user'] or not node['pass']:
                 self.log.error("Invalid 'user' or 'pass' entry. Skipping '%s'", node['name'])
                 continue
+            if 'id' not in node:
+                ident = str(uuid.uuid4())
+            else:
+                ident = node['id']
             worker = self.modules[modname].worker(node)
-            output.append(worker.run())
+            output[ident] = worker.run()
         if self.options.outfile:
             with open(self.options.outfile, 'w') as f:
                 json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
