@@ -73,7 +73,7 @@ class VMwareWorker:
                                          'threads': threads,
                                          'ghz': ghz,
                                          'cpuVendor': host.hardware.cpuPkg[0].vendor,
-                                         'cpuDescription': host.hardware.cpuPkg[0].description,
+                                         'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
                                          'cpuArch': 'x86_64',
                                          'ram': ram,
                                          'vms': {}
