@@ -56,7 +56,7 @@ class Gatherer:
         formatFile = logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s")
         formatStream = logging.Formatter("%(levelname)s: %(message)s")
 
-        ch = logging.StreamHandler(sys.stdout)
+        ch = logging.StreamHandler(sys.stderr)
         ch.setFormatter(formatStream)
         self.log.addHandler(ch)
 
