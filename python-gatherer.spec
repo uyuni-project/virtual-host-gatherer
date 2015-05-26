@@ -20,7 +20,11 @@ Source0:        gatherer-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
 %{py_requires}
+%if 0%{?suse_version} && 0%{?suse_version} <= 1110
+%{!?python_sitelib: %global python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%else
 BuildArch:      noarch
+%endif
 
 %description
 This package contains a script to gather information about virtual system
