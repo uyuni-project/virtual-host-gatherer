@@ -21,10 +21,36 @@ import json
 import logging
 import uuid
 from logging.handlers import RotatingFileHandler
+from os.path import expanduser
+
+def parseOptions():
+    """
+    Supports the command-line arguments listed below.
+    """
+    home = expanduser("~")
+    if home == '/root':
+        home = '/var/log'
+    logdest = "%s/gatherer.log" % home
+    parser = argparse.ArgumentParser(
+        description='Process args for retrieving all the Virtual Machines')
+    parser.add_argument('-i', '--infile', action='store',
+                        help='json input file')
+    parser.add_argument('-o', '--outfile', action='store',
+                        help='to write the output (json) file instead of stdout')
+    parser.add_argument('-v', '--verbose', action='count', default=0,
+                        help='increase log output verbosity')
+    parser.add_argument('-l', '--list-modules', action='store_true',
+                        help="list modules with options")
+    parser.add_argument('-L', '--logfile', action='store',
+                        default=logdest,
+                        help="path to logfile. Default: %s" % logdest)
+    return parser.parse_args()
+
 
 class Gatherer:
-    def __init__(self):
-        logfile = '/var/log/gatherer.log'
+    def __init__(self, opts):
+        self.options = opts
+        logfile = self.options.logfile
         self.log = logging.getLogger('')
         self.log.setLevel(logging.WARNING)
         formatFile = logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s")
@@ -34,34 +60,14 @@ class Gatherer:
         ch.setFormatter(formatStream)
         self.log.addHandler(ch)
 
-        if not os.access(logfile, os.W_OK):
-            logfile = '/tmp/gatherer.log'
-
         fh = RotatingFileHandler(logfile,
                                  maxBytes=(1048576*5),
                                  backupCount=5)
         fh.setFormatter(formatFile)
         self.log.addHandler(fh)
 
-        self.options = None
         self.modules = {}
 
-    def _parseOptions(self):
-        """
-        Supports the command-line arguments listed below.
-        """
-        parser = argparse.ArgumentParser(
-            description='Process args for retrieving all the Virtual Machines')
-        parser.add_argument('-i', '--infile', action='store',
-                            help='json input file')
-        parser.add_argument('-o', '--outfile', action='store',
-                            help='to write the output to (json)')
-        parser.add_argument('-v', '--verbose', action='count',
-                            help='increase log output verbosity')
-        parser.add_argument('-l', '--list-modules', action='store_true',
-                            help="list modules with options")
-        args = parser.parse_args()
-        self.options = args
 
     def listModules(self):
         params = {}
@@ -107,7 +113,6 @@ class Gatherer:
             print json.dumps(output, sort_keys=True, indent=4, separators=(',', ': '))
 
     def main(self):
-        self._parseOptions()
         if self.options.verbose == 1:
             self.log.setLevel(logging.INFO)
         if self.options.verbose >= 2:

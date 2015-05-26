@@ -31,12 +31,13 @@
 
 import sys
 sys.path.append('./lib')
-from gatherer.gatherer import Gatherer
+from gatherer.gatherer import Gatherer, parseOptions
 
 # Start program
 if __name__ == "__main__":
     try:
-        g = Gatherer().main()
+        opts = parseOptions()
+        g = Gatherer(opts).main()
     except Exception, ex:
         sys.stderr.write("General error: {0}\n".format(ex))
         sys.exit(1)
