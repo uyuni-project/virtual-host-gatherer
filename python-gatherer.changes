@@ -1,4 +1,18 @@
 -------------------------------------------------------------------
+Tue May 26 11:55:04 CEST 2015 - mc@suse.de
+
+- version 1.0.2-1
+- raise if verbose is set
+- console logging to stderr
+- return a dict with an id as key to be able to identify
+  which result belongs to which node
+- strip trailing spaces from cpuDescription
+- add some more info to the output hash
+- add logging around the scanning to get start and end time in the logs
+- improve dynamic loading and add option to list expected parameters
+- add subpackages for modules
+
+-------------------------------------------------------------------
 Tue May 19 12:22:41 CEST 2015 - mc@suse.de
 
 - version 1.0.1-1

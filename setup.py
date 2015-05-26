@@ -5,7 +5,7 @@
 from distutils.core import setup
 
 setup(name = "gatherer",
-      version = "1.0.1",
+      version = "1.0.2",
       description = "gather host and VM data",
       long_description = """\
 Gather host and VM data from different kind of hypervisors
