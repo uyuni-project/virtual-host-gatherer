@@ -25,6 +25,7 @@ from pyVmomi import vmodl
 
 import atexit
 
+
 class VMwareWorker:
     def __init__(self, node):
         self.log = logging.getLogger(__name__)
@@ -45,9 +46,11 @@ class VMwareWorker:
                           pwd=self.password,
                           port=int(self.port))
         if not si:
-            self.log.error("Could not connect to the specified host using specified "
-                "username and password")
-            return;
+            self.log.error(
+                "Could not connect to the specified host using specified "
+                "username and password"
+            )
+            return
 
         atexit.register(Disconnect, si)
 
@@ -63,8 +66,8 @@ class VMwareWorker:
                         sockets = host.hardware.cpuInfo.numCpuPackages
                         cores = (host.hardware.cpuInfo.numCpuCores / sockets)
                         threads = (host.hardware.cpuInfo.numCpuThreads / cores / sockets)
-                        ghz = (float(host.hardware.cpuInfo.hz) / float(1000*1000*1000))
-                        ram = (int(host.hardware.memorySize/(1024*1024)))
+                        ghz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000 * 1000))
+                        ram = (int(host.hardware.memorySize / (1024 * 1024)))
                         output[hname] = {'name': hname,
                                          'os': host.summary.config.product.name,
                                          'osVersion': host.summary.config.product.version,
@@ -81,16 +84,18 @@ class VMwareWorker:
                         # If additional Hardeware info is wanted:
                         # print "pciDevice: %s" % host.hardware.pciDevice
                         for vm in host.vm:
-                            #print "Guest: %s" % vm.config.name
-                            #print "Guest State: %s" % vm.runtime.powerState
-                            #print "Guest CPUs: %s" % vm.summary.config.numCpu
-                            #print "Guest RAM: %s" % vm.summary.config.memorySizeMB
+                            # print "Guest: %s" % vm.config.name
+                            # print "Guest State: %s" % vm.runtime.powerState
+                            # print "Guest CPUs: %s" % vm.summary.config.numCpu
+                            # print "Guest RAM: %s" % vm.summary.config.memorySizeMB
                             output[hname]['vms'][vm.config.name] = vm.config.uuid
         Disconnect(si)
         return output
 
+
 def worker(node):
     return VMwareWorker(node)
+
 
 def parameter():
     return {'host': '',

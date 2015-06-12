@@ -23,6 +23,7 @@ import uuid
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
 
+
 def parseOptions():
     """
     Supports the command-line arguments listed below.
@@ -33,17 +34,27 @@ def parseOptions():
     logdest = "%s/gatherer.log" % home
     parser = argparse.ArgumentParser(
         description='Process args for retrieving all the Virtual Machines')
-    parser.add_argument('-i', '--infile', action='store',
-                        help='json input file')
-    parser.add_argument('-o', '--outfile', action='store',
-                        help='to write the output (json) file instead of stdout')
-    parser.add_argument('-v', '--verbose', action='count', default=0,
-                        help='increase log output verbosity')
-    parser.add_argument('-l', '--list-modules', action='store_true',
-                        help="list modules with options")
-    parser.add_argument('-L', '--logfile', action='store',
-                        default=logdest,
-                        help="path to logfile. Default: %s" % logdest)
+    parser.add_argument(
+        '-i', '--infile', action='store',
+        help='json input file'
+    )
+    parser.add_argument(
+        '-o', '--outfile', action='store',
+        help='to write the output (json) file instead of stdout'
+    )
+    parser.add_argument(
+        '-v', '--verbose', action='count', default=0,
+        help='increase log output verbosity'
+    )
+    parser.add_argument(
+        '-l', '--list-modules', action='store_true',
+        help="list modules with options"
+    )
+    parser.add_argument(
+        '-L', '--logfile', action='store',
+        default=logdest,
+        help="path to logfile. Default: %s" % logdest
+    )
     return parser.parse_args()
 
 
@@ -61,13 +72,12 @@ class Gatherer:
         self.log.addHandler(ch)
 
         fh = RotatingFileHandler(logfile,
-                                 maxBytes=(1048576*5),
+                                 maxBytes=(1048576 * 5),
                                  backupCount=5)
         fh.setFormatter(formatFile)
         self.log.addHandler(fh)
 
         self.modules = {}
-
 
     def listModules(self):
         params = {}
@@ -87,7 +97,7 @@ class Gatherer:
 
         output = dict()
         for node in mgmNodes:
-            if not 'module' in node:
+            if 'module' not in node:
                 self.log.error("Missing module definition in infile. Skipping")
                 continue
             modname = node['module']
@@ -139,7 +149,7 @@ class Gatherer:
         plib = distutils.sysconfig.get_python_lib()
         if os.path.exists('./lib/gatherer/modules/__init__.py'):
             plib = './lib'
-        mod_path="%s/gatherer/modules" % plib
+        mod_path = "%s/gatherer/modules" % plib
         self.log.info("module path: %s", mod_path)
         filenames = glob.glob("%s/*.py" % mod_path)
         filenames = filenames + glob.glob("%s/*.pyc" % mod_path)

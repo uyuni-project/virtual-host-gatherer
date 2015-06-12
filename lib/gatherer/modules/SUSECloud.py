@@ -17,6 +17,7 @@ import json
 import logging
 from novaclient.v1_1 import client
 
+
 class SUSECloudWorker:
     def __init__(self, node):
         self.log = logging.getLogger(__name__)
@@ -61,6 +62,7 @@ class SUSECloudWorker:
 
         return output
 
+
 def parameter():
     return {'host': '',
             'port': 5000,
@@ -68,6 +70,7 @@ def parameter():
             'pass': '',
             'proto': 'https',
             'tenant': 'openstack'}
+
 
 def worker(node):
     return SUSECloudWorker(node)
