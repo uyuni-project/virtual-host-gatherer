@@ -14,19 +14,13 @@
 #
 # http://pubs.vmware.com/vsphere-55/topic/com.vmware.wssdk.apiref.doc/right-pane.html
 
-import pyVmomi
 import logging
-
-from pyVmomi import vim
-from pyVmomi import vmodl
-
-from pyVim.connect import SmartConnect, Disconnect
-from pyVmomi import vmodl
-
 import atexit
 
+from pyVim.connect import SmartConnect, Disconnect
 
-class VMwareWorker:
+
+class VMwareWorker(object):
     def __init__(self, node):
         self.log = logging.getLogger(__name__)
         for k in parameter():
@@ -79,8 +73,7 @@ class VMwareWorker:
                                          'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
                                          'cpuArch': 'x86_64',
                                          'ram': ram,
-                                         'vms': {}
-                                         }
+                                         'vms': {}}
                         # If additional Hardeware info is wanted:
                         # print "pciDevice: %s" % host.hardware.pciDevice
                         for vm in host.vm:

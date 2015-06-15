@@ -58,7 +58,7 @@ def parseOptions():
     return parser.parse_args()
 
 
-class Gatherer:
+class Gatherer(object):
     def __init__(self, opts):
         self.options = opts
         logfile = self.options.logfile
@@ -174,5 +174,5 @@ class Gatherer:
                     self.log.error("Module %s has not a worker function", modname)
                     continue
                 self.modules[modname] = mod
-            except ImportError, e:
+            except ImportError:
                 raise

@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 import json
 import logging
 from novaclient.v1_1 import client
 
 
-class SUSECloudWorker:
+class SUSECloudWorker(object):
     def __init__(self, node):
         self.log = logging.getLogger(__name__)
         for k in parameter():
@@ -51,8 +50,7 @@ class SUSECloudWorker:
                                                'cpuDescription': cpu_info['model'],
                                                'cpuArch': cpu_info['arch'],
                                                'ram': hyp.memory_mb,
-                                               'vms': {}
-                                               }
+                                               'vms': {}}
             reslist = nt.hypervisors.search(hyp.hypervisor_hostname, True)
             for result in reslist:
                 if not hasattr(result, 'servers'):
