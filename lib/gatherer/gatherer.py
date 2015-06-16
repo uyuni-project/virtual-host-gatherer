@@ -20,6 +20,7 @@ import argparse
 import json
 import logging
 import uuid
+import importlib
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
 
@@ -120,7 +121,7 @@ class Gatherer(object):
             with open(self.options.outfile, 'w') as f:
                 json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
         else:
-            print json.dumps(output, sort_keys=True, indent=4, separators=(',', ': '))
+            print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 
     def main(self):
         if self.options.verbose == 1:
@@ -134,7 +135,7 @@ class Gatherer(object):
                 with open(self.options.outfile, 'w') as f:
                     json.dump(installed_modules, f, sort_keys=True, indent=4, separators=(',', ': '))
             else:
-                print json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': '))
+                print(json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': ')))
             return
 
         if not self.options.infile:
@@ -165,7 +166,7 @@ class Gatherer(object):
 
             try:
                 self.log.debug("load %s", modname)
-                mod = __import__('modules.%s' % (modname), globals(), locals(), [modname])
+                mod = importlib.import_module('gatherer.modules.%s' % (modname))
                 self.log.debug("DIR: %s", dir(mod))
                 if not hasattr(mod, "parameter"):
                     self.log.error("Module %s has not a paramater function", modname)

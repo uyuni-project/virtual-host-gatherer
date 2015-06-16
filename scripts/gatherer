@@ -38,7 +38,7 @@ if __name__ == "__main__":
     try:
         opts = parseOptions()
         g = Gatherer(opts).main()
-    except Exception, ex:
+    except Exception as ex:
         sys.stderr.write("General error: {0}\n".format(ex))
         if opts.verbose > 0:
             raise
