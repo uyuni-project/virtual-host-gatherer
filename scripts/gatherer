@@ -29,6 +29,7 @@
 #  { ... }
 # ]
 
+from __future__ import print_function, absolute_import
 import sys
 sys.path.append('./lib')
 from gatherer.gatherer import Gatherer, parseOptions

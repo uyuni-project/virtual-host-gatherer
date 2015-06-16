@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function, absolute_import
 import distutils.sysconfig
 import sys
 import os
@@ -23,7 +24,6 @@ import uuid
 import importlib
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
-
 
 def parseOptions():
     """

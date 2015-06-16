@@ -14,6 +14,7 @@
 #
 # http://pubs.vmware.com/vsphere-55/topic/com.vmware.wssdk.apiref.doc/right-pane.html
 
+from __future__ import print_function, absolute_import, division
 import logging
 import atexit
 
@@ -59,7 +60,7 @@ class VMwareWorker(object):
                         hname = host.summary.config.name.split()[0]
                         sockets = host.hardware.cpuInfo.numCpuPackages
                         cores = (host.hardware.cpuInfo.numCpuCores / sockets)
-                        threads = (host.hardware.cpuInfo.numCpuThreads / cores / sockets)
+                        threads = (int(host.hardware.cpuInfo.numCpuThreads / cores / sockets))
                         ghz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000 * 1000))
                         ram = (int(host.hardware.memorySize / (1024 * 1024)))
                         output[hname] = {'name': hname,
