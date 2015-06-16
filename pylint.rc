@@ -12,11 +12,12 @@ persistent=no
 [MESSAGES CONTROL]
 
 # Disable the message(s) with the given id(s).
-disable=C0111,duplicate-code
+disable=C0111,duplicate-code,locally-disabled
 
 # list of disabled messages:
 #C0111:  1: Missing docstring
 #duplicate-code: Similar lines in 2 files
+#locally-disabled: info message
 
 [REPORTS]
 
