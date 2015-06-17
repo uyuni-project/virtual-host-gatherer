@@ -179,7 +179,7 @@ class Gatherer(object):
         """
         mod_path = os.path.dirname(__import__('gatherer.modules', globals(), locals(), ['gatherer'], 0).__file__)
         self.log.info("module path: %s", mod_path)
-        for module_name in [item for item in os.listdir(mod_path)
+        for module_name in [item.split(".")[0] for item in os.listdir(mod_path)
                             if item.endswith(".py") and not item.startswith("__init__")]:
             try:
                 self.log.debug('Loading module "%s"', module_name)
