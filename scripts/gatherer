@@ -20,12 +20,13 @@ Gatherer application
 The input file has the following format of the array of management node definitions:
 
 [
- { 'name': 'vCenter.domain.top',
-   'type': 'vCenter',
-   'host': 'vCenter.domain.top',
-   'port': 443,
-   'user': 'admin',
-   'pass': 'password'
+ {
+  "id": "myvcenter",
+  "module": "VMware",
+  "host": "vCenter.domain.top",
+  "user": "admin"
+  "pass": "secret",
+  "port": 443
  },
  { ... }
 ]
