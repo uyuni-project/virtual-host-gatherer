@@ -103,7 +103,7 @@ class SUSECloudWorker(WorkerInterface):
         return IS_VALID
 
 
-parameters = SUSECloudWorker.DEFAULT_PARAMETERS
+PARAMETERS = SUSECloudWorker.DEFAULT_PARAMETERS
 
 
 def worker(node):

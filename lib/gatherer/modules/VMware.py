@@ -125,7 +125,7 @@ class VMwareWorker(WorkerInterface):
         return IS_VALID
 
 
-parameters = VMwareWorker.DEFAULT_PARAMETERS
+PARAMETERS = VMwareWorker.DEFAULT_PARAMETERS
 
 
 def worker(node):
