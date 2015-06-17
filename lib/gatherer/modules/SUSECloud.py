@@ -28,6 +28,15 @@ class SUSECloudWorker(object):
     Worker class for the SUSE Cloud.
     """
 
+    DEFAULT_PARAMETERS = {
+        'host': '',
+        'port': 5000,
+        'user': '',
+        'pass': '',
+        'proto': 'https',
+        'tenant': 'openstack'
+    }
+
     def __init__(self, node):
         """
         Constructor.
@@ -37,7 +46,7 @@ class SUSECloudWorker(object):
         """
 
         self.log = logging.getLogger(__name__)
-        for k in parameter():
+        for k in self.DEFAULT_PARAMETERS:
             if k not in node:
                 self.log.error("Missing parameter '%s' in infile", k)
                 raise AttributeError("Missing parameter '%s' in infile" % k)
@@ -80,17 +89,6 @@ class SUSECloudWorker(object):
                         output[hyp.hypervisor_hostname]['vms'][vm['name']] = vm['uuid']
 
         return output
-
-
-def parameter():
-    return {
-        'host': '',
-        'port': 5000,
-        'user': '',
-        'pass': '',
-        'proto': 'https',
-        'tenant': 'openstack'
-    }
 
 
 def worker(node):
