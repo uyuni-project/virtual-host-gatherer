@@ -141,10 +141,10 @@ class Gatherer(object):
         self.log.warning("Scanning finished")
 
     def _load_modules(self):
-        plib = distutils.sysconfig.get_python_lib()
+        py_lib = distutils.sysconfig.get_python_lib()
         if os.path.exists('./lib/gatherer/modules/__init__.py'):
-            plib = './lib'
-        mod_path = "%s/gatherer/modules" % plib
+            py_lib = './lib'
+        mod_path = "%s/gatherer/modules" % py_lib
         self.log.info("module path: %s", mod_path)
         filenames = glob.glob("%s/*.py" % mod_path)
         filenames += glob.glob("%s/*.pyc" % mod_path)
