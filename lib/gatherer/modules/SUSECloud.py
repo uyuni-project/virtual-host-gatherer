@@ -43,13 +43,7 @@ class SUSECloudWorker(object):
             output[hyp.hypervisor_hostname] = {'name': hyp.hypervisor_hostname,
                                                'os': hyp.hypervisor_type,
                                                'osVersion': hyp.hypervisor_version,
-                                               'sockets': cpu_info['topology']['sockets'],
-                                               'cores': cpu_info['topology']['cores'],
-                                               'threads': cpu_info['topology']['threads'],
                                                'ghz': 0,
-                                               'cpuVendor': cpu_info['vendor'],
-                                               'cpuDescription': cpu_info['model'],
-                                               'cpuArch': cpu_info['arch'],
                                                'ram': hyp.memory_mb,
                                                'vms': {}}
             reslist = nt.hypervisors.search(hyp.hypervisor_hostname, True)
@@ -58,6 +52,12 @@ class SUSECloudWorker(object):
                     continue
                 for vm in result.servers:
                     output[hyp.hypervisor_hostname]['vms'][vm['name']] = vm['uuid']
+                'sockets': cpu_info.get('topology', {}).get('sockets'),
+                'cores': cpu_info.get('topology', {}).get('cores'),
+                'threads': cpu_info.get('topology', {}).get('threads'),
+                'cpuVendor': cpu_info.get('vendor'),
+                'cpuDescription': cpu_info.get('model'),
+                'cpuArch': cpu_info.get('arch'),
 
         return output
 
