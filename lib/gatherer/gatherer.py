@@ -63,21 +63,16 @@ def parse_options():
 class Gatherer(object):
     def __init__(self, opts):
         self.options = opts
-        logfile = self.options.logfile
         self.log = logging.getLogger('')
         self.log.setLevel(logging.WARNING)
-        formatFile = logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s")
-        formatStream = logging.Formatter("%(levelname)s: %(message)s")
 
-        ch = logging.StreamHandler(sys.stderr)
-        ch.setFormatter(formatStream)
-        self.log.addHandler(ch)
+        stream_handler = logging.StreamHandler(sys.stderr)
+        stream_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+        self.log.addHandler(stream_handler)
 
-        fh = RotatingFileHandler(logfile,
-                                 maxBytes=(1048576 * 5),
-                                 backupCount=5)
-        fh.setFormatter(formatFile)
-        self.log.addHandler(fh)
+        file_handler = RotatingFileHandler(self.options.logfile, maxBytes=(0x100000 * 5), backupCount=5)
+        file_handler.setFormatter(logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s"))
+        self.log.addHandler(file_handler)
 
         self.modules = dict()
 
