@@ -180,33 +180,18 @@ class Gatherer(object):
 
         :return: void
         """
-
-        py_lib = distutils.sysconfig.get_python_lib()
-        if os.path.exists('./lib/gatherer/modules/__init__.py'):
-            py_lib = './lib'
-        mod_path = "%s/gatherer/modules" % py_lib
+        mod_path = os.path.dirname(__import__('gatherer.modules', globals(), locals(), ['gatherer'], 0).__file__)
         self.log.info("module path: %s", mod_path)
-        filenames = glob.glob("%s/*.py" % mod_path)
-        filenames += glob.glob("%s/*.pyc" % mod_path)
-        filenames += glob.glob("%s/*.pyo" % mod_path)
-        for file_name in filenames:
-            basename = os.path.basename(file_name)
-            if basename.startswith("__init__.py"):
-                continue
-            if basename.endswith(".py"):
-                module_name = basename[:-3]
-            elif basename[-4:] in [".pyc", ".pyo"]:
-                module_name = basename[:-4]
-            else:
-                continue
-
+        for module_name in [item for item in os.listdir(mod_path)
+                            if item.endswith(".py") and not item.startswith("__init__")]:
             try:
-                self.log.debug("load %s", module_name)
-                mod = importlib.import_module('gatherer.modules.{0}'.format(module_name))
-                self.log.debug("DIR: %s", dir(mod))
+                self.log.debug('Loading module "%s"', module_name)
+                mod = __import__('gatherer.modules.{0}'.format(module_name), globals(), locals(), ['gatherer', 'modules'], 0)
+                self.log.debug("Introspection: %s", dir(mod))
                 if not hasattr(mod, "worker"):
-                    self.log.error("Module %s has not a worker function", module_name)
+                    self.log.error('Missing function "worker" in the module "%s"!', module_name)
                     continue
                 self.modules[module_name] = mod
             except ImportError:
+                self.log.debug('Module "%s" was not loaded.', module_name)
                 raise
