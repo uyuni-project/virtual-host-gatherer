@@ -33,13 +33,13 @@ from __future__ import print_function, absolute_import
 import sys
 sys.path.append('./lib')
 # pylint: disable=no-name-in-module
-from gatherer.gatherer import Gatherer, parseOptions
+from gatherer.gatherer import Gatherer, parse_options
 
 # Start program
 if __name__ == "__main__":
     # pylint: disable=broad-except
     try:
-        opts = parseOptions()
+        opts = parse_options()
         g = Gatherer(opts).main()
     except Exception as ex:
         sys.stderr.write("General error: {0}\n".format(ex))

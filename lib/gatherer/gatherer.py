@@ -25,7 +25,8 @@ import importlib
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
 
-def parseOptions():
+
+def parse_options():
     """
     Supports the command-line arguments listed below.
     """
@@ -91,13 +92,13 @@ class Gatherer(object):
 
     def run(self):
         if len(self.modules) == 0:
-            self._loadModules()
+            self._load_modules()
 
         with open(self.options.infile, 'r') as f:
-            mgmNodes = json.load(f)
+            mgm_nodes = json.load(input_file)
 
         output = dict()
-        for node in mgmNodes:
+        for node in mgm_nodes:
             if 'module' not in node:
                 self.log.error("Missing module definition in infile. Skipping")
                 continue
@@ -130,7 +131,7 @@ class Gatherer(object):
             self.log.setLevel(logging.DEBUG)
 
         if self.options.list_modules:
-            installed_modules = self.listModules()
+            installed_modules = self.list_modules()
             if self.options.outfile:
                 with open(self.options.outfile, 'w') as f:
                     json.dump(installed_modules, f, sort_keys=True, indent=4, separators=(',', ': '))
@@ -146,7 +147,7 @@ class Gatherer(object):
         self.run()
         self.log.warning("Scanning finished ...")
 
-    def _loadModules(self):
+    def _load_modules(self):
         plib = distutils.sysconfig.get_python_lib()
         if os.path.exists('./lib/gatherer/modules/__init__.py'):
             plib = './lib'
