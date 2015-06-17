@@ -63,12 +63,14 @@ class SUSECloudWorker(object):
 
 
 def parameter():
-    return {'host': '',
-            'port': 5000,
-            'user': '',
-            'pass': '',
-            'proto': 'https',
-            'tenant': 'openstack'}
+    return {
+        'host': '',
+        'port': 5000,
+        'user': '',
+        'pass': '',
+        'proto': 'https',
+        'tenant': 'openstack'
+    }
 
 
 def worker(node):
