@@ -189,8 +189,8 @@ class Gatherer(object):
         filenames = glob.glob("%s/*.py" % mod_path)
         filenames += glob.glob("%s/*.pyc" % mod_path)
         filenames += glob.glob("%s/*.pyo" % mod_path)
-        for fn in filenames:
-            basename = os.path.basename(fn)
+        for file_name in filenames:
+            basename = os.path.basename(file_name)
             if basename.startswith("__init__.py"):
                 continue
             if basename.endswith(".py"):
