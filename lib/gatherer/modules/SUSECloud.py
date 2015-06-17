@@ -91,6 +91,8 @@ class SUSECloudWorker(object):
         return output
 
 
+parameters = SUSECloudWorker.DEFAULT_PARAMETERS
+
 def worker(node):
     """
     Create new worker.

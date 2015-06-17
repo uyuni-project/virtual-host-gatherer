@@ -113,6 +113,7 @@ class VMwareWorker(object):
         Disconnect(connection)
         return output
 
+parameters = VMwareWorker.DEFAULT_PARAMETERS
 
 def worker(node):
     """
