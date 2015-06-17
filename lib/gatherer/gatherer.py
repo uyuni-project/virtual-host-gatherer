@@ -107,12 +107,10 @@ class Gatherer(object):
             if not node['user'] or not node['pass']:
                 self.log.error("The 'user' or 'pass' entry is missing. Skipping '%s'", node['name'])
                 continue
-            if 'id' not in node:
-                ident = str(uuid.uuid4())
-            else:
-                ident = node['id']
+
             worker = self.modules[modname].worker(node)
-            output[ident] = worker.run()
+            output[node.get("id", str(uuid.uuid4()))] = worker.run()
+
         if self.options.outfile:
             with open(self.options.outfile, 'w') as f:
                 json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
