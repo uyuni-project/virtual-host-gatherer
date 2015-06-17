@@ -147,8 +147,8 @@ class Gatherer(object):
         mod_path = "%s/gatherer/modules" % plib
         self.log.info("module path: %s", mod_path)
         filenames = glob.glob("%s/*.py" % mod_path)
-        filenames = filenames + glob.glob("%s/*.pyc" % mod_path)
-        filenames = filenames + glob.glob("%s/*.pyo" % mod_path)
+        filenames += glob.glob("%s/*.pyc" % mod_path)
+        filenames += glob.glob("%s/*.pyo" % mod_path)
         for fn in filenames:
             basename = os.path.basename(fn)
             if basename.startswith("__init__.py"):
