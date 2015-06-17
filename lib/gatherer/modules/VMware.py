@@ -14,6 +14,10 @@
 #
 # http://pubs.vmware.com/vsphere-55/topic/com.vmware.wssdk.apiref.doc/right-pane.html
 
+"""
+VMWare Worker module implementation.
+"""
+
 from __future__ import print_function, absolute_import, division
 import logging
 import atexit
