@@ -185,6 +185,9 @@ class Gatherer(object):
                 self.log.debug('Loading module "%s"', module_name)
                 mod = __import__('gatherer.modules.{0}'.format(module_name), globals(), locals(), ['gatherer', 'modules'], 0)
                 self.log.debug("Introspection: %s", dir(mod))
+                if not mod.IS_VALID:
+                    self.log.error('Module "%s" is broken, import aborted.', module_name)
+                    continue
                 if not hasattr(mod, "worker"):
                     self.log.error('Missing function "worker" in the module "%s"!', module_name)
                     continue
