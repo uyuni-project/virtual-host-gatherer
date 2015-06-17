@@ -112,8 +112,8 @@ class Gatherer(object):
             output[node.get("id", str(uuid.uuid4()))] = worker.run()
 
         if self.options.outfile:
-            with open(self.options.outfile, 'w') as f:
-                json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
+            with open(self.options.outfile, 'w') as input_file:
+                json.dump(output, input_file, sort_keys=True, indent=4, separators=(',', ': '))
         else:
             print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 
