@@ -22,8 +22,17 @@ from pyVim.connect import SmartConnect, Disconnect
 
 
 class VMwareWorker(object):
+    """
+    Worker class for the VMWare.
+    """
 
     def __init__(self, node):
+        """
+        Constructor.
+
+        :param node: Dictionary of the node description.
+        :return:
+        """
 
         self.log = logging.getLogger(__name__)
         for k in parameter():
@@ -37,6 +46,10 @@ class VMwareWorker(object):
         self.password = node['pass']
 
     def run(self):
+        """
+        Start worker.
+        :return: Dictionary of the hosts in the worker scope.
+        """
 
         self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
         connection = SmartConnect(host=self.host, user=self.user, pwd=self.password, port=int(self.port))
@@ -90,6 +103,12 @@ class VMwareWorker(object):
 
 
 def worker(node):
+    """
+    Create new worker.
+
+    :param node: Node description
+    :return: VMWareWorker object
+    """
 
     return VMwareWorker(node)
 
