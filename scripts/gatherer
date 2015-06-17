@@ -58,4 +58,6 @@ def main():
 
 # Start program
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        sys.argv.append("-h")  # Display "help" by default.
     main()
