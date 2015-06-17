@@ -85,8 +85,8 @@ class SUSECloudWorker(object):
             }
             for result in cloud_client.hypervisors.search(hyp.hypervisor_hostname, True):
                 if hasattr(result, 'servers'):
-                    for vm in result.servers:
-                        output[hyp.hypervisor_hostname]['vms'][vm['name']] = vm['uuid']
+                    for virtual_machine in result.servers:
+                        output[hyp.hypervisor_hostname]['vms'][virtual_machine['name']] = virtual_machine['uuid']
 
         return output
 
