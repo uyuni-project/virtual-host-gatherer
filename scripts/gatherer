@@ -38,8 +38,12 @@ sys.path.append('./lib')
 # pylint: disable=no-name-in-module
 from gatherer.gatherer import Gatherer, parse_options
 
-# Start program
-if __name__ == "__main__":
+
+def main():
+    """
+    Run Gatherer application
+    :return:
+    """
     # pylint: disable=broad-except
     try:
         options = parse_options()
@@ -50,3 +54,7 @@ if __name__ == "__main__":
             raise
         sys.exit(1)
 
+
+# Start program
+if __name__ == "__main__":
+    main()
