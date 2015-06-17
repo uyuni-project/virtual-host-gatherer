@@ -19,8 +19,17 @@ from novaclient.v1_1 import client
 
 
 class SUSECloudWorker(object):
+    """
+    Worker class for the SUSE Cloud.
+    """
 
     def __init__(self, node):
+        """
+        Constructor.
+
+        :param node: Dictionary of the node description.
+        :return:
+        """
 
         self.log = logging.getLogger(__name__)
         for k in parameter():
@@ -35,6 +44,10 @@ class SUSECloudWorker(object):
         self.tenant = node['tenant']
 
     def run(self):
+        """
+        Start worker.
+        :return: Dictionary of the hosts in the worker scope.
+        """
 
         output = dict()
         url = "http://%s:%s/v2.0/" % (self.host, self.port)
@@ -76,5 +89,11 @@ def parameter():
 
 
 def worker(node):
+    """
+    Create new worker.
+
+    :param node: Node description
+    :return: SUSECloudWorker object
+    """
 
     return SUSECloudWorker(node)
