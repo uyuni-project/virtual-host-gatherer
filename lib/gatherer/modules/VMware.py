@@ -54,25 +54,27 @@ class VMwareWorker(object):
                 cluster_list = child.hostFolder.childEntity
                 for cluster in cluster_list:
                     for host in cluster.host:
-                        hname = host.summary.config.name.split()[0]
+                        host_name = host.summary.config.name.split()[0]
                         sockets = host.hardware.cpuInfo.numCpuPackages
                         cores = (host.hardware.cpuInfo.numCpuCores / sockets)
                         threads = (int(host.hardware.cpuInfo.numCpuThreads / cores / sockets))
                         ghz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000 * 1000))
                         ram = (int(host.hardware.memorySize / (1024 * 1024)))
-                        output[hname] = {'name': hname,
-                                         'os': host.summary.config.product.name,
-                                         'osVersion': host.summary.config.product.version,
-                                         'sockets': sockets,
-                                         'cores': cores,
-                                         'threads': threads,
-                                         'ghz': ghz,
-                                         'cpuVendor': host.hardware.cpuPkg[0].vendor,
-                                         'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
-                                         'cpuArch': 'x86_64',
-                                         'ram': ram,
-                                         'vms': {}}
                         # If additional Hardeware info is wanted:
+                        output[host_name] = {
+                            'name': host_name,
+                            'os': host.summary.config.product.name,
+                            'osVersion': host.summary.config.product.version,
+                            'sockets': sockets,
+                            'cores': cores,
+                            'threads': threads,
+                            'ghz': ghz,
+                            'cpuVendor': host.hardware.cpuPkg[0].vendor,
+                            'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
+                            'cpuArch': 'x86_64',
+                            'ram': ram,
+                            'vms': {}
+                        }
                         # print "pciDevice: %s" % host.hardware.pciDevice
                         for vm in host.vm:
                             # print "Guest: %s" % vm.config.name
