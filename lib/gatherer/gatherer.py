@@ -79,12 +79,12 @@ class Gatherer(object):
         fh.setFormatter(formatFile)
         self.log.addHandler(fh)
 
-        self.modules = {}
+        self.modules = dict()
 
     def listModules(self):
-        params = {}
             self._loadModules()
         for (modname, mod) in self.modules.items():
+        params = dict()
         if not self.modules:
             params[modname] = mod.parameter()
             params[modname]['module'] = modname
