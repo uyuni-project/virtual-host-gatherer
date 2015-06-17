@@ -52,10 +52,11 @@ class VMwareWorker(WorkerInterface):
         """
 
         self.log = logging.getLogger(__name__)
-        for k in self.DEFAULT_PARAMETERS:
-            if k not in node:
-                self.log.error("Missing parameter '%s' in infile", k)
-                raise AttributeError("Missing parameter '%s' in infile" % k)
+
+        miss = [ p for p in self.DEFAULT_PARAMETERS if p not in node ]
+        if miss:
+            self.log.error("Missing parameters '%s' in infile", miss)
+            raise AttributeError("Missing parameters '%s' in infile" % miss)
 
         self.host = node['host']
         self.port = node['port'] or 443
