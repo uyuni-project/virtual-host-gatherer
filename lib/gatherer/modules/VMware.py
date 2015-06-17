@@ -36,20 +36,17 @@ class VMwareWorker(object):
 
     def run(self):
         self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
-        si = SmartConnect(host=self.host,
-                          user=self.user,
-                          pwd=self.password,
-                          port=int(self.port))
-        if not si:
+        connection = SmartConnect(host=self.host, user=self.user, pwd=self.password, port=int(self.port))
+        if not connection:
             self.log.error(
                 "Could not connect to the specified host using specified "
                 "username and password"
             )
             return
 
-        atexit.register(Disconnect, si)
+        atexit.register(Disconnect, connection)
 
-        content = si.RetrieveContent()
+        content = connection.RetrieveContent()
         output = dict()
         for child in content.rootFolder.childEntity:
             if hasattr(child, 'hostFolder'):
@@ -82,8 +79,8 @@ class VMwareWorker(object):
                             # print "Guest State: %s" % vm.runtime.powerState
                             # print "Guest CPUs: %s" % vm.summary.config.numCpu
                             # print "Guest RAM: %s" % vm.summary.config.memorySizeMB
-                            output[hname]['vms'][vm.config.name] = vm.config.uuid
-        Disconnect(si)
+                            output[host_name]['vms'][vm.config.name] = vm.config.uuid
+        Disconnect(connection)
         return output
 
 
