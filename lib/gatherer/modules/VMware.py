@@ -60,7 +60,6 @@ class VMwareWorker(object):
                         threads = (int(host.hardware.cpuInfo.numCpuThreads / cores / sockets))
                         ghz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000 * 1000))
                         ram = (int(host.hardware.memorySize / (1024 * 1024)))
-                        # If additional Hardeware info is wanted:
                         output[host_name] = {
                             'name': host_name,
                             'os': host.summary.config.product.name,
@@ -75,6 +74,7 @@ class VMwareWorker(object):
                             'ram': ram,
                             'vms': {}
                         }
+                        # If an additional hardware info is wanted:
                         # print "pciDevice: %s" % host.hardware.pciDevice
                         for vm in host.vm:
                             # print "Guest: %s" % vm.config.name
