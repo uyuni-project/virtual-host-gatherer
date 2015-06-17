@@ -19,7 +19,12 @@ SUSE Cloud Worker module implementation.
 from __future__ import print_function, absolute_import
 import json
 import logging
-from novaclient.v1_1 import client
+
+try:
+    from novaclient.v1_1 import client
+    _IS_VALID = True
+except Exception as ex:
+    _IS_VALID = False
 
 
 #pylint: disable=too-few-public-methods
@@ -89,6 +94,13 @@ class SUSECloudWorker(object):
                         output[hyp.hypervisor_hostname]['vms'][virtual_machine['name']] = virtual_machine['uuid']
 
         return output
+
+    def valid(self):
+        """
+        :return: True, if the current module has novaclient installed.
+        """
+        return _IS_VALID
+
 
 
 parameters = SUSECloudWorker.DEFAULT_PARAMETERS
