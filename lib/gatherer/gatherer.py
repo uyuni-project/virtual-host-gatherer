@@ -77,10 +77,10 @@ class Gatherer(object):
         self.modules = dict()
 
     def list_modules(self):
-        for (modname, mod) in self.modules.items():
         params = dict()
         if not self.modules:
             self._load_modules()
+        for modname, mod in self.modules.items():
             params[modname] = mod.parameter()
             params[modname]['module'] = modname
         return params
