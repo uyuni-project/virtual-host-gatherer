@@ -51,8 +51,8 @@ class VMwareWorker(object):
         for child in content.rootFolder.childEntity:
             if hasattr(child, 'hostFolder'):
                 # child is now a "datacenter"
-                clusterList = child.hostFolder.childEntity
-                for cluster in clusterList:
+                cluster_list = child.hostFolder.childEntity
+                for cluster in cluster_list:
                     for host in cluster.host:
                         hname = host.summary.config.name.split()[0]
                         sockets = host.hardware.cpuInfo.numCpuPackages
