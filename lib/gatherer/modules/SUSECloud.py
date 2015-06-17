@@ -40,12 +40,10 @@ class SUSECloudWorker(object):
         hypervisors = nt.hypervisors.list()
         for hyp in hypervisors:
             cpu_info = json.loads(hyp.cpu_info)
-            output[hyp.hypervisor_hostname] = {'name': hyp.hypervisor_hostname,
-                                               'os': hyp.hypervisor_type,
-                                               'osVersion': hyp.hypervisor_version,
-                                               'ghz': 0,
-                                               'ram': hyp.memory_mb,
-                                               'vms': {}}
+            output[hyp.hypervisor_hostname] = {
+                'name': hyp.hypervisor_hostname,
+                'os': hyp.hypervisor_type,
+                'osVersion': hyp.hypervisor_version,
             reslist = nt.hypervisors.search(hyp.hypervisor_hostname, True)
             for result in reslist:
                 if not hasattr(result, 'servers'):
@@ -55,9 +53,13 @@ class SUSECloudWorker(object):
                 'sockets': cpu_info.get('topology', {}).get('sockets'),
                 'cores': cpu_info.get('topology', {}).get('cores'),
                 'threads': cpu_info.get('topology', {}).get('threads'),
+                'ghz': 0,
                 'cpuVendor': cpu_info.get('vendor'),
                 'cpuDescription': cpu_info.get('model'),
                 'cpuArch': cpu_info.get('arch'),
+                'ram': hyp.memory_mb,
+                'vms': {}
+            }
 
         return output
 
