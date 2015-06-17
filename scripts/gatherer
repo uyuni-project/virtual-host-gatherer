@@ -14,20 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#
-# infile format:
-# array of management node definitions
-#
-# [
-#  { 'name': 'vCenter.domain.top',
-#    'type': 'vCenter',
-#    'host': 'vCenter.domain.top',
-#    'port': 443,
-#    'user': 'admin',
-#    'pass': 'password'
-#  },
-#  { ... }
-# ]
+"""
+Gatherer application
+
+The input file has the following format of the array of management node definitions:
+
+[
+ { 'name': 'vCenter.domain.top',
+   'type': 'vCenter',
+   'host': 'vCenter.domain.top',
+   'port': 443,
+   'user': 'admin',
+   'pass': 'password'
+ },
+ { ... }
+]
+"""
 
 from __future__ import print_function, absolute_import
 import sys
