@@ -85,7 +85,7 @@ class Gatherer(object):
             params[modname]['module'] = modname
         return params
 
-    def run(self):
+    def _run(self):
         if not self.modules:
             self._load_modules()
 
@@ -137,7 +137,7 @@ class Gatherer(object):
             return
 
         self.log.warning("Scanning began")
-        self.run()
+        self._run()
         self.log.warning("Scanning finished")
 
     def _load_modules(self):
