@@ -183,7 +183,8 @@ class Gatherer(object):
                             if item.endswith(".py") and not item.startswith("__init__")]:
             try:
                 self.log.debug('Loading module "%s"', module_name)
-                mod = __import__('gatherer.modules.{0}'.format(module_name), globals(), locals(), ['gatherer', 'modules'], 0)
+                mod = __import__('gatherer.modules.{0}'.format(module_name), globals(),
+                                 locals(), ['gatherer', 'modules'], 0)
                 self.log.debug("Introspection: %s", dir(mod))
                 if not mod.IS_VALID:
                     self.log.error('Module "%s" is broken, import aborted.', module_name)
