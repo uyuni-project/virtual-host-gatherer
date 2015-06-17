@@ -41,7 +41,7 @@ Example input file (infile.json):
         "id": "myvcenter",
         "module": "VMware",
         "host": "vCenter.domain.top",
-        "user": "admin"
+        "user": "admin",
         "pass": "secret",
         "port": 443
     },
