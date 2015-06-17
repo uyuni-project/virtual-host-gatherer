@@ -204,9 +204,6 @@ class Gatherer(object):
                 self.log.debug("load %s", module_name)
                 mod = importlib.import_module('gatherer.modules.{0}'.format(module_name))
                 self.log.debug("DIR: %s", dir(mod))
-                if not hasattr(mod, "parameter"):
-                    self.log.error("Module %s has not a parameter function", module_name)
-                    continue
                 if not hasattr(mod, "worker"):
                     self.log.error("Module %s has not a worker function", module_name)
                     continue
