@@ -26,7 +26,7 @@ from gatherer.modules import WorkerInterface
 try:
     from pyVim.connect import SmartConnect, Disconnect
     IS_VALID = True
-except Exception as ex:
+except ImportError as ex:
     IS_VALID = False
 
 
