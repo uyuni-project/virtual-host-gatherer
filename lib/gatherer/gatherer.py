@@ -126,8 +126,8 @@ class Gatherer(object):
         if self.options.list_modules:
             installed_modules = self.list_modules()
             if self.options.outfile:
-                with open(self.options.outfile, 'w') as f:
-                    json.dump(installed_modules, f, sort_keys=True, indent=4, separators=(',', ': '))
+                with open(self.options.outfile, 'w') as output_file:
+                    json.dump(installed_modules, output_file, sort_keys=True, indent=4, separators=(',', ': '))
             else:
                 print(json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': ')))
             return
