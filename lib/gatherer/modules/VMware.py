@@ -25,9 +25,9 @@ from gatherer.modules import WorkerInterface
 
 try:
     from pyVim.connect import SmartConnect, Disconnect
-    _IS_VALID = True
+    IS_VALID = True
 except Exception as ex:
-    _IS_VALID = False
+    IS_VALID = False
 
 
 #pylint: disable=too-few-public-methods
@@ -122,7 +122,7 @@ class VMwareWorker(WorkerInterface):
         """
         Return True if pyVim module is installed.
         """
-        return _IS_VALID
+        return IS_VALID
 
 
 parameters = VMwareWorker.DEFAULT_PARAMETERS

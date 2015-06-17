@@ -23,9 +23,9 @@ from gatherer.modules import WorkerInterface
 
 try:
     from novaclient.v1_1 import client
-    _IS_VALID = True
+    IS_VALID = True
 except Exception as ex:
-    _IS_VALID = False
+    IS_VALID = False
 
 
 #pylint: disable=too-few-public-methods
@@ -100,7 +100,7 @@ class SUSECloudWorker(WorkerInterface):
         """
         :return: True, if the current module has novaclient installed.
         """
-        return _IS_VALID
+        return IS_VALID
 
 
 parameters = SUSECloudWorker.DEFAULT_PARAMETERS
