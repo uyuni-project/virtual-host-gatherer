@@ -95,17 +95,17 @@ class Gatherer(object):
         output = dict()
         for node in mgm_nodes:
             if 'module' not in node:
-                self.log.error("Missing module definition in infile. Skipping")
+                self.log.error("Skipping undefined module in the input file.")
                 continue
             modname = node['module']
             if modname not in self.modules:
-                self.log.error("Unsupported module '%s'. Skipping", modname)
+                self.log.error("Skipping unsupported module '%s'.", modname)
                 continue
             if not node['host']:
                 self.log.error("Invalid 'host' entry. Skipping '%s'", node['name'])
                 continue
             if not node['user'] or not node['pass']:
-                self.log.error("Invalid 'user' or 'pass' entry. Skipping '%s'", node['name'])
+                self.log.error("The 'user' or 'pass' entry is missing. Skipping '%s'", node['name'])
                 continue
             if 'id' not in node:
                 ident = str(uuid.uuid4())
@@ -135,12 +135,12 @@ class Gatherer(object):
             return
 
         if not self.options.infile:
-            self.log.error("infile parameter required")
+            self.log.error("Input file was not specified")
             return
 
-        self.log.warning("Start scanning ...")
+        self.log.warning("Scanning began")
         self.run()
-        self.log.warning("Scanning finished ...")
+        self.log.warning("Scanning finished")
 
     def _load_modules(self):
         plib = distutils.sysconfig.get_python_lib()
