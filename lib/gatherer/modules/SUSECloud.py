@@ -19,7 +19,9 @@ from novaclient.v1_1 import client
 
 
 class SUSECloudWorker(object):
+
     def __init__(self, node):
+
         self.log = logging.getLogger(__name__)
         for k in parameter():
             if k not in node:
@@ -33,6 +35,7 @@ class SUSECloudWorker(object):
         self.tenant = node['tenant']
 
     def run(self):
+
         output = dict()
         url = "http://%s:%s/v2.0/" % (self.host, self.port)
         self.log.info("Connect to %s for tenant %s as user %s", url, self.tenant, self.user)
@@ -73,4 +76,5 @@ def parameter():
 
 
 def worker(node):
+
     return SUSECloudWorker(node)

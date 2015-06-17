@@ -30,6 +30,7 @@ def parse_options():
     """
     Supports the command-line arguments listed below.
     """
+
     home = expanduser("~")
     if home == '/root':
         home = '/var/log'
@@ -57,11 +58,14 @@ def parse_options():
         default=log_destination,
         help="path to logfile. Default: %s" % log_destination
     )
+
     return parser.parse_args()
 
 
 class Gatherer(object):
+
     def __init__(self, opts):
+
         self.options = opts
         self.log = logging.getLogger('')
         self.log.setLevel(logging.WARNING)
@@ -77,6 +81,7 @@ class Gatherer(object):
         self.modules = dict()
 
     def list_modules(self):
+
         params = dict()
         if not self.modules:
             self._load_modules()
@@ -86,6 +91,7 @@ class Gatherer(object):
         return params
 
     def _run(self):
+
         if not self.modules:
             self._load_modules()
 
@@ -141,6 +147,7 @@ class Gatherer(object):
         self.log.warning("Scanning finished")
 
     def _load_modules(self):
+
         py_lib = distutils.sysconfig.get_python_lib()
         if os.path.exists('./lib/gatherer/modules/__init__.py'):
             py_lib = './lib'

@@ -22,7 +22,9 @@ from pyVim.connect import SmartConnect, Disconnect
 
 
 class VMwareWorker(object):
+
     def __init__(self, node):
+
         self.log = logging.getLogger(__name__)
         for k in parameter():
             if k not in node:
@@ -35,6 +37,7 @@ class VMwareWorker(object):
         self.password = node['pass']
 
     def run(self):
+
         self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
         connection = SmartConnect(host=self.host, user=self.user, pwd=self.password, port=int(self.port))
         if not connection:
@@ -87,6 +90,7 @@ class VMwareWorker(object):
 
 
 def worker(node):
+
     return VMwareWorker(node)
 
 
