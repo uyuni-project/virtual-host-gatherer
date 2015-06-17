@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Main Gatherer application implementation.
+"""
+
 from __future__ import print_function, absolute_import
 import distutils.sysconfig
 import sys
