@@ -36,20 +36,13 @@ class SUSECloudWorker(object):
         output = dict()
         url = "http://%s:%s/v2.0/" % (self.host, self.port)
         self.log.info("Connect to %s for tenant %s as user %s", url, self.tenant, self.user)
-        nt = client.Client(self.user, self.password, self.tenant, url, service_type="compute")
-        hypervisors = nt.hypervisors.list()
-        for hyp in hypervisors:
+        cloud_client = client.Client(self.user, self.password, self.tenant, url, service_type="compute")
+        for hyp in cloud_client.hypervisors.list():
             cpu_info = json.loads(hyp.cpu_info)
             output[hyp.hypervisor_hostname] = {
                 'name': hyp.hypervisor_hostname,
                 'os': hyp.hypervisor_type,
                 'osVersion': hyp.hypervisor_version,
-            reslist = nt.hypervisors.search(hyp.hypervisor_hostname, True)
-            for result in reslist:
-                if not hasattr(result, 'servers'):
-                    continue
-                for vm in result.servers:
-                    output[hyp.hypervisor_hostname]['vms'][vm['name']] = vm['uuid']
                 'sockets': cpu_info.get('topology', {}).get('sockets'),
                 'cores': cpu_info.get('topology', {}).get('cores'),
                 'threads': cpu_info.get('topology', {}).get('threads'),
@@ -60,6 +53,10 @@ class SUSECloudWorker(object):
                 'ram': hyp.memory_mb,
                 'vms': {}
             }
+            for result in cloud_client.hypervisors.search(hyp.hypervisor_hostname, True):
+                if hasattr(result, 'servers'):
+                    for vm in result.servers:
+                        output[hyp.hypervisor_hostname]['vms'][vm['name']] = vm['uuid']
 
         return output
 
