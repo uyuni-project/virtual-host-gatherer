@@ -28,7 +28,7 @@ except Exception as ex:
     IS_VALID = False
 
 
-#pylint: disable=too-few-public-methods
+#pylint: disable=too-few-public-methods, interface-not-implemented
 class SUSECloudWorker(WorkerInterface):
     """
     Worker class for the SUSE Cloud.

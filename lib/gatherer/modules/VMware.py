@@ -30,7 +30,7 @@ except Exception as ex:
     IS_VALID = False
 
 
-#pylint: disable=too-few-public-methods
+#pylint: disable=too-few-public-methods, interface-not-implemented
 class VMwareWorker(WorkerInterface):
     """
     Worker class for the VMWare.
