@@ -83,15 +83,15 @@ class Gatherer(object):
 
     def listModules(self):
         params = {}
-        if len(self.modules) == 0:
             self._loadModules()
         for (modname, mod) in self.modules.items():
+        if not self.modules:
             params[modname] = mod.parameter()
             params[modname]['module'] = modname
         return params
 
     def run(self):
-        if len(self.modules) == 0:
+        if not self.modules:
             self._load_modules()
 
         with open(self.options.infile, 'r') as f:
