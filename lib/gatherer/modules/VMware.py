@@ -21,6 +21,7 @@ VMWare Worker module implementation.
 from __future__ import print_function, absolute_import, division
 import logging
 import atexit
+from gatherer.modules import WorkerInterface
 
 try:
     from pyVim.connect import SmartConnect, Disconnect
@@ -30,7 +31,7 @@ except Exception as ex:
 
 
 #pylint: disable=too-few-public-methods
-class VMwareWorker(object):
+class VMwareWorker(WorkerInterface):
     """
     Worker class for the VMWare.
     """
@@ -125,6 +126,7 @@ class VMwareWorker(object):
 
 
 parameters = VMwareWorker.DEFAULT_PARAMETERS
+
 
 def worker(node):
     """
