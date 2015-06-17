@@ -17,15 +17,12 @@ Main Gatherer application implementation.
 """
 
 from __future__ import print_function, absolute_import
-import distutils.sysconfig
 import sys
 import os
-import glob
 import argparse
 import json
 import logging
 import uuid
-import importlib
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
 
