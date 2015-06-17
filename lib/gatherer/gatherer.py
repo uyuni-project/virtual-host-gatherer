@@ -89,7 +89,7 @@ class Gatherer(object):
         if not self.modules:
             self._load_modules()
 
-        with open(self.options.infile, 'r') as f:
+        with open(self.options.infile) as input_file:
             mgm_nodes = json.load(input_file)
 
         output = dict()
