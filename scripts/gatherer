@@ -46,4 +46,3 @@ if __name__ == "__main__":
         if opts.verbose > 0:
             raise
         sys.exit(1)
-sys.exit(0)
