@@ -22,7 +22,11 @@ from __future__ import print_function, absolute_import, division
 import logging
 import atexit
 
-from pyVim.connect import SmartConnect, Disconnect
+try:
+    from pyVim.connect import SmartConnect, Disconnect
+    _IS_VALID = True
+except Exception as ex:
+    _IS_VALID = False
 
 
 #pylint: disable=too-few-public-methods
@@ -112,6 +116,13 @@ class VMwareWorker(object):
                             output[host_name]['vms'][virtual_machine.config.name] = virtual_machine.config.uuid
         Disconnect(connection)
         return output
+
+    def valid(self):
+        """
+        Return True if pyVim module is installed.
+        """
+        return _IS_VALID
+
 
 parameters = VMwareWorker.DEFAULT_PARAMETERS
 
