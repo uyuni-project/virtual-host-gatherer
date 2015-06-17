@@ -33,7 +33,7 @@ def parse_options():
     home = expanduser("~")
     if home == '/root':
         home = '/var/log'
-    logdest = "%s/gatherer.log" % home
+    log_destination = "%s/gatherer.log" % home
     parser = argparse.ArgumentParser(
         description='Process args for retrieving all the Virtual Machines')
     parser.add_argument(
@@ -54,8 +54,8 @@ def parse_options():
     )
     parser.add_argument(
         '-L', '--logfile', action='store',
-        default=logdest,
-        help="path to logfile. Default: %s" % logdest
+        default=log_destination,
+        help="path to logfile. Default: %s" % log_destination
     )
     return parser.parse_args()
 
