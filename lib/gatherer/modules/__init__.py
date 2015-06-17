@@ -11,3 +11,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import abc
+
+
+class WorkerInterface(object):
+    """
+    Worker definition interface.
+    """
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def run(self):
+        """
+        Run the worker.
+
+        :return: Dictionary of the worker result.
+        """
+
+    @abc.abstractmethod
+    def valid(self):
+        """
+        Return worker status, if the worker can function.
+
+        :return: True, if module is operable.
+        """
