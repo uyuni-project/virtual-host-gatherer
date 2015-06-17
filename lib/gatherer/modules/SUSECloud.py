@@ -27,7 +27,7 @@ class SUSECloudWorker(object):
                 raise AttributeError("Missing parameter '%s' in infile" % k)
 
         self.host = node['host']
-        self.port = node['port'] or 5000
+        self.port = node.get('port', 5000)
         self.user = node['user']
         self.password = node['pass']
         self.tenant = node['tenant']
