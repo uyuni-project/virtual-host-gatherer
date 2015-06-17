@@ -31,6 +31,13 @@ class VMwareWorker(object):
     Worker class for the VMWare.
     """
 
+    DEFAULT_PARAMETERS = {
+        'host': '',
+        'port': 443,
+        'user': '',
+        'pass': ''
+    }
+
     def __init__(self, node):
         """
         Constructor.
@@ -40,7 +47,7 @@ class VMwareWorker(object):
         """
 
         self.log = logging.getLogger(__name__)
-        for k in parameter():
+        for k in self.DEFAULT_PARAMETERS:
             if k not in node:
                 self.log.error("Missing parameter '%s' in infile", k)
                 raise AttributeError("Missing parameter '%s' in infile" % k)
@@ -117,9 +124,3 @@ def worker(node):
 
     return VMwareWorker(node)
 
-
-def parameter():
-    return {'host': '',
-            'port': 443,
-            'user': '',
-            'pass': ''}
