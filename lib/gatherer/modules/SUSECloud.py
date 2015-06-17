@@ -12,64 +12,93 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+SUSE Cloud Worker module implementation.
+"""
+
 from __future__ import print_function, absolute_import
 import json
 import logging
 from novaclient.v1_1 import client
 
 
+#pylint: disable=too-few-public-methods
 class SUSECloudWorker(object):
+    """
+    Worker class for the SUSE Cloud.
+    """
+
+    DEFAULT_PARAMETERS = {
+        'host': '',
+        'port': 5000,
+        'user': '',
+        'pass': '',
+        'proto': 'https',
+        'tenant': 'openstack'
+    }
+
     def __init__(self, node):
+        """
+        Constructor.
+
+        :param node: Dictionary of the node description.
+        :return:
+        """
+
         self.log = logging.getLogger(__name__)
-        for k in parameter():
+        for k in self.DEFAULT_PARAMETERS:
             if k not in node:
                 self.log.error("Missing parameter '%s' in infile", k)
                 raise AttributeError("Missing parameter '%s' in infile" % k)
 
         self.host = node['host']
-        self.port = node['port'] or 5000
+        self.port = node.get('port', 5000)
         self.user = node['user']
         self.password = node['pass']
         self.tenant = node['tenant']
 
     def run(self):
+        """
+        Start worker.
+        :return: Dictionary of the hosts in the worker scope.
+        """
+
         output = dict()
         url = "http://%s:%s/v2.0/" % (self.host, self.port)
         self.log.info("Connect to %s for tenant %s as user %s", url, self.tenant, self.user)
-        nt = client.Client(self.user, self.password, self.tenant, url, service_type="compute")
-        hypervisors = nt.hypervisors.list()
-        for hyp in hypervisors:
+        cloud_client = client.Client(self.user, self.password, self.tenant, url, service_type="compute")
+        for hyp in cloud_client.hypervisors.list():
             cpu_info = json.loads(hyp.cpu_info)
-            output[hyp.hypervisor_hostname] = {'name': hyp.hypervisor_hostname,
-                                               'os': hyp.hypervisor_type,
-                                               'osVersion': hyp.hypervisor_version,
-                                               'sockets': cpu_info['topology']['sockets'],
-                                               'cores': cpu_info['topology']['cores'],
-                                               'threads': cpu_info['topology']['threads'],
-                                               'ghz': 0,
-                                               'cpuVendor': cpu_info['vendor'],
-                                               'cpuDescription': cpu_info['model'],
-                                               'cpuArch': cpu_info['arch'],
-                                               'ram': hyp.memory_mb,
-                                               'vms': {}}
-            reslist = nt.hypervisors.search(hyp.hypervisor_hostname, True)
-            for result in reslist:
-                if not hasattr(result, 'servers'):
-                    continue
-                for vm in result.servers:
-                    output[hyp.hypervisor_hostname]['vms'][vm['name']] = vm['uuid']
+            output[hyp.hypervisor_hostname] = {
+                'name': hyp.hypervisor_hostname,
+                'os': hyp.hypervisor_type,
+                'osVersion': hyp.hypervisor_version,
+                'sockets': cpu_info.get('topology', {}).get('sockets'),
+                'cores': cpu_info.get('topology', {}).get('cores'),
+                'threads': cpu_info.get('topology', {}).get('threads'),
+                'ghz': 0,
+                'cpuVendor': cpu_info.get('vendor'),
+                'cpuDescription': cpu_info.get('model'),
+                'cpuArch': cpu_info.get('arch'),
+                'ram': hyp.memory_mb,
+                'vms': {}
+            }
+            for result in cloud_client.hypervisors.search(hyp.hypervisor_hostname, True):
+                if hasattr(result, 'servers'):
+                    for virtual_machine in result.servers:
+                        output[hyp.hypervisor_hostname]['vms'][virtual_machine['name']] = virtual_machine['uuid']
 
         return output
 
 
-def parameter():
-    return {'host': '',
-            'port': 5000,
-            'user': '',
-            'pass': '',
-            'proto': 'https',
-            'tenant': 'openstack'}
-
+parameters = SUSECloudWorker.DEFAULT_PARAMETERS
 
 def worker(node):
+    """
+    Create new worker.
+
+    :param node: Node description
+    :return: SUSECloudWorker object
+    """
+
     return SUSECloudWorker(node)

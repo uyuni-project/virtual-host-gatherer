@@ -14,36 +14,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#
-# infile format:
-# array of management node definitions
-#
-# [
-#  { 'name': 'vCenter.domain.top',
-#    'type': 'vCenter',
-#    'host': 'vCenter.domain.top',
-#    'port': 443,
-#    'user': 'admin',
-#    'pass': 'password'
-#  },
-#  { ... }
-# ]
+"""
+Gatherer application
+
+The input file has the following format of the array of management node definitions:
+
+[
+ {
+  "id": "myvcenter",
+  "module": "VMware",
+  "host": "vCenter.domain.top",
+  "user": "admin"
+  "pass": "secret",
+  "port": 443
+ },
+ { ... }
+]
+"""
 
 from __future__ import print_function, absolute_import
 import sys
+
 sys.path.append('./lib')
 # pylint: disable=no-name-in-module
-from gatherer.gatherer import Gatherer, parseOptions
+from gatherer.gatherer import Gatherer, parse_options
+
+
+def main():
+    """
+    Run Gatherer application
+    :return:
+    """
+    # pylint: disable=broad-except
+    try:
+        options = parse_options()
+        Gatherer(options).main()
+    except Exception as ex:
+        sys.stderr.write("General error: {0}\n".format(ex))
+        if options.verbose > 0:
+            raise
+        sys.exit(1)
+
 
 # Start program
 if __name__ == "__main__":
-    # pylint: disable=broad-except
-    try:
-        opts = parseOptions()
-        g = Gatherer(opts).main()
-    except Exception as ex:
-        sys.stderr.write("General error: {0}\n".format(ex))
-        if opts.verbose > 0:
-            raise
-        sys.exit(1)
-sys.exit(0)
+    main()

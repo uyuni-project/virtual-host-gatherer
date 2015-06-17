@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Main Gatherer application implementation.
+"""
+
 from __future__ import print_function, absolute_import
 import distutils.sysconfig
 import sys
@@ -25,14 +29,16 @@ import importlib
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
 
-def parseOptions():
+
+def parse_options():
     """
-    Supports the command-line arguments listed below.
+    Parse command line options.
     """
+
     home = expanduser("~")
     if home == '/root':
         home = '/var/log'
-    logdest = "%s/gatherer.log" % home
+    log_destination = "%s/gatherer.log" % home
     parser = argparse.ArgumentParser(
         description='Process args for retrieving all the Virtual Machines')
     parser.add_argument(
@@ -53,127 +59,154 @@ def parseOptions():
     )
     parser.add_argument(
         '-L', '--logfile', action='store',
-        default=logdest,
-        help="path to logfile. Default: %s" % logdest
+        default=log_destination,
+        help="path to logfile. Default: %s" % log_destination
     )
+
     return parser.parse_args()
 
 
 class Gatherer(object):
+    """
+    Gatherer class.
+    """
+
     def __init__(self, opts):
+        """
+        Constructor.
+        :param opts: Command line options.
+        :return:
+        """
+
         self.options = opts
-        logfile = self.options.logfile
         self.log = logging.getLogger('')
         self.log.setLevel(logging.WARNING)
-        formatFile = logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s")
-        formatStream = logging.Formatter("%(levelname)s: %(message)s")
 
-        ch = logging.StreamHandler(sys.stderr)
-        ch.setFormatter(formatStream)
-        self.log.addHandler(ch)
+        stream_handler = logging.StreamHandler(sys.stderr)
+        stream_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+        self.log.addHandler(stream_handler)
 
-        fh = RotatingFileHandler(logfile,
-                                 maxBytes=(1048576 * 5),
-                                 backupCount=5)
-        fh.setFormatter(formatFile)
-        self.log.addHandler(fh)
+        file_handler = RotatingFileHandler(self.options.logfile, maxBytes=(0x100000 * 5), backupCount=5)
+        file_handler.setFormatter(logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s"))
+        self.log.addHandler(file_handler)
 
-        self.modules = {}
+        self.modules = dict()
 
-    def listModules(self):
-        params = {}
-        if len(self.modules) == 0:
-            self._loadModules()
-        for (modname, mod) in self.modules.items():
-            params[modname] = mod.parameter()
+    def list_modules(self):
+        """
+        List available modules.
+
+        :return: Dictionary of available modules.
+        """
+
+        params = dict()
+        if not self.modules:
+            self._load_modules()
+        for modname, mod in self.modules.items():
+            params[modname] = mod.parameters
             params[modname]['module'] = modname
         return params
 
-    def run(self):
-        if len(self.modules) == 0:
-            self._loadModules()
+    def _run(self):
+        """
+        Run gatherer application.
 
-        with open(self.options.infile, 'r') as f:
-            mgmNodes = json.load(f)
+        :return: void.
+        """
+
+        if not self.modules:
+            self._load_modules()
+
+        with open(self.options.infile) as input_file:
+            mgm_nodes = json.load(input_file)
 
         output = dict()
-        for node in mgmNodes:
+        for node in mgm_nodes:
             if 'module' not in node:
-                self.log.error("Missing module definition in infile. Skipping")
+                self.log.error("Skipping undefined module in the input file.")
                 continue
             modname = node['module']
             if modname not in self.modules:
-                self.log.error("Unsupported module '%s'. Skipping", modname)
+                self.log.error("Skipping unsupported module '%s'.", modname)
                 continue
             if not node['host']:
                 self.log.error("Invalid 'host' entry. Skipping '%s'", node['name'])
                 continue
             if not node['user'] or not node['pass']:
-                self.log.error("Invalid 'user' or 'pass' entry. Skipping '%s'", node['name'])
+                self.log.error("The 'user' or 'pass' entry is missing. Skipping '%s'", node['name'])
                 continue
-            if 'id' not in node:
-                ident = str(uuid.uuid4())
-            else:
-                ident = node['id']
+
             worker = self.modules[modname].worker(node)
-            output[ident] = worker.run()
+            output[node.get("id", str(uuid.uuid4()))] = worker.run()
+
         if self.options.outfile:
-            with open(self.options.outfile, 'w') as f:
-                json.dump(output, f, sort_keys=True, indent=4, separators=(',', ': '))
+            with open(self.options.outfile, 'w') as input_file:
+                json.dump(output, input_file, sort_keys=True, indent=4, separators=(',', ': '))
         else:
             print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 
     def main(self):
+        """
+        Application start.
+        :return:
+        """
+
         if self.options.verbose == 1:
             self.log.setLevel(logging.INFO)
         if self.options.verbose >= 2:
             self.log.setLevel(logging.DEBUG)
 
         if self.options.list_modules:
-            installed_modules = self.listModules()
+            installed_modules = self.list_modules()
             if self.options.outfile:
-                with open(self.options.outfile, 'w') as f:
-                    json.dump(installed_modules, f, sort_keys=True, indent=4, separators=(',', ': '))
+                with open(self.options.outfile, 'w') as output_file:
+                    json.dump(installed_modules, output_file, sort_keys=True, indent=4, separators=(',', ': '))
             else:
                 print(json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': ')))
             return
 
         if not self.options.infile:
-            self.log.error("infile parameter required")
+            self.log.error("Input file was not specified")
             return
 
-        self.log.warning("Start scanning ...")
-        self.run()
-        self.log.warning("Scanning finished ...")
+        self.log.warning("Scanning began")
+        self._run()
+        self.log.warning("Scanning finished")
 
-    def _loadModules(self):
-        plib = distutils.sysconfig.get_python_lib()
+    def _load_modules(self):
+        """
+        Load available modules for the gatherer.
+        If module meets the description, but cannot be imported, the ImportError exception is raised.
+
+        :return: void
+        """
+
+        py_lib = distutils.sysconfig.get_python_lib()
         if os.path.exists('./lib/gatherer/modules/__init__.py'):
-            plib = './lib'
-        mod_path = "%s/gatherer/modules" % plib
+            py_lib = './lib'
+        mod_path = "%s/gatherer/modules" % py_lib
         self.log.info("module path: %s", mod_path)
         filenames = glob.glob("%s/*.py" % mod_path)
-        filenames = filenames + glob.glob("%s/*.pyc" % mod_path)
-        filenames = filenames + glob.glob("%s/*.pyo" % mod_path)
-        for fn in filenames:
-            basename = os.path.basename(fn)
+        filenames += glob.glob("%s/*.pyc" % mod_path)
+        filenames += glob.glob("%s/*.pyo" % mod_path)
+        for file_name in filenames:
+            basename = os.path.basename(file_name)
             if basename.startswith("__init__.py"):
                 continue
-            if basename[-3:] == ".py":
-                modname = basename[:-3]
+            if basename.endswith(".py"):
+                module_name = basename[:-3]
             elif basename[-4:] in [".pyc", ".pyo"]:
-                modname = basename[:-4]
+                module_name = basename[:-4]
+            else:
+                continue
 
             try:
-                self.log.debug("load %s", modname)
-                mod = importlib.import_module('gatherer.modules.%s' % (modname))
+                self.log.debug("load %s", module_name)
+                mod = importlib.import_module('gatherer.modules.{0}'.format(module_name))
                 self.log.debug("DIR: %s", dir(mod))
-                if not hasattr(mod, "parameter"):
-                    self.log.error("Module %s has not a paramater function", modname)
-                    continue
                 if not hasattr(mod, "worker"):
-                    self.log.error("Module %s has not a worker function", modname)
+                    self.log.error("Module %s has not a worker function", module_name)
                     continue
-                self.modules[modname] = mod
+                self.modules[module_name] = mod
             except ImportError:
                 raise
