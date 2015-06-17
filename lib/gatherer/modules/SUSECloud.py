@@ -22,6 +22,7 @@ import logging
 from novaclient.v1_1 import client
 
 
+#pylint: disable=too-few-public-methods
 class SUSECloudWorker(object):
     """
     Worker class for the SUSE Cloud.

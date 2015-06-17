@@ -25,6 +25,7 @@ import atexit
 from pyVim.connect import SmartConnect, Disconnect
 
 
+#pylint: disable=too-few-public-methods
 class VMwareWorker(object):
     """
     Worker class for the VMWare.
