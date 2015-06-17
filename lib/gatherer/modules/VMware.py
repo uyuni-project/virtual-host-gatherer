@@ -104,12 +104,12 @@ class VMwareWorker(object):
                         }
                         # If an additional hardware info is wanted:
                         # print "pciDevice: %s" % host.hardware.pciDevice
-                        for vm in host.vm:
+                        for virtual_machine in host.vm:
                             # print "Guest: %s" % vm.config.name
                             # print "Guest State: %s" % vm.runtime.powerState
                             # print "Guest CPUs: %s" % vm.summary.config.numCpu
                             # print "Guest RAM: %s" % vm.summary.config.memorySizeMB
-                            output[host_name]['vms'][vm.config.name] = vm.config.uuid
+                            output[host_name]['vms'][virtual_machine.config.name] = virtual_machine.config.uuid
         Disconnect(connection)
         return output
 
