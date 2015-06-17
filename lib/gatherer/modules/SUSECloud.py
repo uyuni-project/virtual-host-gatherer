@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+SUSE Cloud Worker module implementation.
+"""
+
 from __future__ import print_function, absolute_import
 import json
 import logging
