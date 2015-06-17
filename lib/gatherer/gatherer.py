@@ -28,7 +28,7 @@ from os.path import expanduser
 
 def parse_options():
     """
-    Supports the command-line arguments listed below.
+    Parse command line options.
     """
 
     home = expanduser("~")
@@ -63,8 +63,16 @@ def parse_options():
 
 
 class Gatherer(object):
+    """
+    Gatherer class.
+    """
 
     def __init__(self, opts):
+        """
+        Constructor.
+        :param opts: Command line options.
+        :return:
+        """
 
         self.options = opts
         self.log = logging.getLogger('')
@@ -81,6 +89,11 @@ class Gatherer(object):
         self.modules = dict()
 
     def list_modules(self):
+        """
+        List available modules.
+
+        :return: Dictionary of available modules.
+        """
 
         params = dict()
         if not self.modules:
@@ -91,6 +104,11 @@ class Gatherer(object):
         return params
 
     def _run(self):
+        """
+        Run gatherer application.
+
+        :return: void.
+        """
 
         if not self.modules:
             self._load_modules()
@@ -124,6 +142,11 @@ class Gatherer(object):
             print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 
     def main(self):
+        """
+        Application start.
+        :return:
+        """
+
         if self.options.verbose == 1:
             self.log.setLevel(logging.INFO)
         if self.options.verbose >= 2:
@@ -147,6 +170,12 @@ class Gatherer(object):
         self.log.warning("Scanning finished")
 
     def _load_modules(self):
+        """
+        Load available modules for the gatherer.
+        If module meets the description, but cannot be imported, the ImportError exception is raised.
+
+        :return: void
+        """
 
         py_lib = distutils.sysconfig.get_python_lib()
         if os.path.exists('./lib/gatherer/modules/__init__.py'):
