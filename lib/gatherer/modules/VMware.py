@@ -74,7 +74,7 @@ class VMwareWorker(WorkerInterface):
         if not connection:
             self.log.error(
                 "Could not connect to the specified host using specified "
-                "username and password"
+                "username and password."
             )
             return
 
