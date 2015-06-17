@@ -19,6 +19,7 @@ SUSE Cloud Worker module implementation.
 from __future__ import print_function, absolute_import
 import json
 import logging
+from gatherer.modules import WorkerInterface
 
 try:
     from novaclient.v1_1 import client
@@ -28,7 +29,7 @@ except Exception as ex:
 
 
 #pylint: disable=too-few-public-methods
-class SUSECloudWorker(object):
+class SUSECloudWorker(WorkerInterface):
     """
     Worker class for the SUSE Cloud.
     """
@@ -102,8 +103,8 @@ class SUSECloudWorker(object):
         return _IS_VALID
 
 
-
 parameters = SUSECloudWorker.DEFAULT_PARAMETERS
+
 
 def worker(node):
     """
