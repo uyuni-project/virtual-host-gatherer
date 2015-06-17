@@ -40,7 +40,7 @@ if __name__ == "__main__":
     # pylint: disable=broad-except
     try:
         opts = parse_options()
-        g = Gatherer(opts).main()
+        Gatherer(options).main()
     except Exception as ex:
         sys.stderr.write("General error: {0}\n".format(ex))
         if opts.verbose > 0:
