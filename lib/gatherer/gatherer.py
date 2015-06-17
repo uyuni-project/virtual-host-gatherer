@@ -153,21 +153,23 @@ class Gatherer(object):
             basename = os.path.basename(fn)
             if basename.startswith("__init__.py"):
                 continue
-            if basename[-3:] == ".py":
-                modname = basename[:-3]
+            if basename.endswith(".py"):
+                module_name = basename[:-3]
             elif basename[-4:] in [".pyc", ".pyo"]:
-                modname = basename[:-4]
+                module_name = basename[:-4]
+            else:
+                continue
 
             try:
-                self.log.debug("load %s", modname)
-                mod = importlib.import_module('gatherer.modules.%s' % (modname))
+                self.log.debug("load %s", module_name)
+                mod = importlib.import_module('gatherer.modules.{0}'.format(module_name))
                 self.log.debug("DIR: %s", dir(mod))
                 if not hasattr(mod, "parameter"):
-                    self.log.error("Module %s has not a paramater function", modname)
+                    self.log.error("Module %s has not a parameter function", module_name)
                     continue
                 if not hasattr(mod, "worker"):
-                    self.log.error("Module %s has not a worker function", modname)
+                    self.log.error("Module %s has not a worker function", module_name)
                     continue
-                self.modules[modname] = mod
+                self.modules[module_name] = mod
             except ImportError:
                 raise
