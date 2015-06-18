@@ -119,6 +119,9 @@ class Gatherer(object):
 
         output = dict()
         for node in mgm_nodes:
+            if 'id' not in node:
+                self.log.error("Skipping module with no 'id'.")
+                continue
             if 'module' not in node:
                 self.log.error("Skipping undefined module in the input file.")
                 continue
@@ -126,11 +129,11 @@ class Gatherer(object):
             if modname not in self.modules:
                 self.log.error("Skipping unsupported module '%s'.", modname)
                 continue
-            if not node['host']:
-                self.log.error("Invalid 'host' entry. Skipping '%s'", node['name'])
+            if not 'host' in node:
+                self.log.error("Invalid 'host' entry. Skipping '%s'.", node['id'])
                 continue
-            if not node['user'] or not node['pass']:
-                self.log.error("The 'user' or 'pass' entry is missing. Skipping '%s'", node['name'])
+            if not 'user' in node or not 'pass' in node:
+                self.log.error("The 'user' or 'pass' entry is missing. Skipping '%s'.", node['id'])
                 continue
 
             worker = self.modules[modname].worker(node)
