@@ -202,7 +202,6 @@ class Gatherer(object):
             except (TypeError, AttributeError, NotImplementedError) as ex:
                 self.log.error('Module "%s" is broken, skipping.', module_name)
                 self.log.debug("Exception: %s", ex)
-                pass
             except ImportError:
                 self.log.debug('Module "%s" was not loaded.', module_name)
                 raise
