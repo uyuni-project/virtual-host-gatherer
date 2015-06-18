@@ -41,6 +41,7 @@ class WorkerInterface(object):
 
         :return: Dictionary with parameters and default values
         """
+        return dict()
 
     @abc.abstractmethod
     def run(self):
@@ -49,6 +50,7 @@ class WorkerInterface(object):
 
         :return: Dictionary of the worker result.
         """
+        return dict()
 
     @abc.abstractmethod
     def valid(self):
@@ -57,3 +59,4 @@ class WorkerInterface(object):
 
         :return: True, if module is operable.
         """
+        return False
