@@ -16,7 +16,7 @@ Summary:        gather virtualization information
 Group:          Development/Languages
 License:        Apache-2.0
 Url:            http://www.suse.com
-Source0:        gatherer-%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
 %{py_requires}
