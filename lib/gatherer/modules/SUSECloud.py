@@ -28,7 +28,7 @@ except ImportError as ex:
     IS_VALID = False
 
 
-#pylint: disable=too-few-public-methods, interface-not-implemented
+# pylint: disable=too-few-public-methods, interface-not-implemented
 class SUSECloud(WorkerInterface):
     """
     Worker class for the SUSE Cloud.
