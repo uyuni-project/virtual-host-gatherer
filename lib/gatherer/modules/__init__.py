@@ -60,3 +60,14 @@ class WorkerInterface(object):
         :return: True, if module is operable.
         """
         return False
+
+    def _validate_parameters(self, node):
+        """
+        Validate parameters.
+
+        :param node: Dictionary with the node description.
+        :return:
+        """
+        for param in self.parameters():
+            if not node.get(param):
+                raise AttributeError("Missing parameter or value '{0}' in infile".format(param))
