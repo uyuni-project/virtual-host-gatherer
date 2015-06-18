@@ -47,16 +47,17 @@ class SUSECloud(WorkerInterface):
         """
         Constructor.
 
-        :param node: Dictionary of the node description.
         :return:
         """
 
         self.log = logging.getLogger(__name__)
+        self.host = self.port = self.user = self.password = self.tenant = None
 
     def set_node(self, node):
         """
         Set node information
 
+        :param node: Dictionary of the node description.
         :return: void
         """
 
@@ -114,6 +115,8 @@ class SUSECloud(WorkerInterface):
 
     def valid(self):
         """
+        Check plugin class validity.
+
         :return: True, if the current module has novaclient installed.
         """
         return IS_VALID

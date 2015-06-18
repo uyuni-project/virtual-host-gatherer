@@ -47,7 +47,6 @@ class VMware(WorkerInterface):
         """
         Constructor.
 
-        :param node: Dictionary of the node description.
         :return:
         """
 
@@ -58,6 +57,7 @@ class VMware(WorkerInterface):
         """
         Set node information
 
+        :param node: Dictionary of the node description.
         :return: void
         """
 
@@ -139,7 +139,9 @@ class VMware(WorkerInterface):
 
     def valid(self):
         """
-        Return True if pyVim module is installed.
+        Check plugin class validity.
+
+        :return: True if pyVim module is installed.
         """
 
         return IS_VALID

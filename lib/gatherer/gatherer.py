@@ -110,7 +110,7 @@ class Gatherer(object):
         """
         Run gatherer application.
 
-        :return: void.
+        :return: void
         """
 
         if not self.modules:
