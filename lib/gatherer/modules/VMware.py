@@ -31,7 +31,7 @@ except ImportError as ex:
 
 
 #pylint: disable=too-few-public-methods, interface-not-implemented
-class VMwareWorker(WorkerInterface):
+class VMware(WorkerInterface):
     """
     Worker class for the VMWare.
     """
@@ -43,7 +43,7 @@ class VMwareWorker(WorkerInterface):
         'pass': ''
     }
 
-    def __init__(self, node):
+    def __init__(self):
         """
         Constructor.
 
@@ -52,13 +52,16 @@ class VMwareWorker(WorkerInterface):
         """
 
         self.log = logging.getLogger(__name__)
+        self.host = self.port = self.user = self.password = None
+
+    def set_node(self, node):
         for k in self.DEFAULT_PARAMETERS:
-            if k not in node:
-                self.log.error("Missing parameter '%s' in infile", k)
-                raise AttributeError("Missing parameter '%s' in infile" % k)
+            if not node.get(k):
+                self.log.error("Missing parameter or value '%s' in infile", k)
+                raise AttributeError("Missing parameter or value '{0}' in infile".format(k))
 
         self.host = node['host']
-        self.port = node['port'] or 443
+        self.port = node.get('port', 443)
         self.user = node['user']
         self.password = node['pass']
 
@@ -123,18 +126,3 @@ class VMwareWorker(WorkerInterface):
         Return True if pyVim module is installed.
         """
         return IS_VALID
-
-
-PARAMETERS = VMwareWorker.DEFAULT_PARAMETERS
-
-
-def worker(node):
-    """
-    Create new worker.
-
-    :param node: Node description
-    :return: VMWareWorker object
-    """
-
-    return VMwareWorker(node)
-

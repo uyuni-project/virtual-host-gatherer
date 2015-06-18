@@ -26,6 +26,14 @@ class WorkerInterface(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
+    def set_node(self, node):
+        """
+        Set node values
+
+        :return: void
+        """
+
+    @abc.abstractmethod
     def run(self):
         """
         Run the worker.

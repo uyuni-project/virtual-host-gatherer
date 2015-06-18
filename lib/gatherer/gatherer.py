@@ -99,8 +99,8 @@ class Gatherer(object):
         params = dict()
         if not self.modules:
             self._load_modules()
-        for modname, mod in self.modules.items():
-            params[modname] = mod.PARAMETERS
+        for modname, inst in self.modules.items():
+            params[modname] = inst.DEFAULT_PARAMETERS
             params[modname]['module'] = modname
         return params
 
@@ -133,7 +133,8 @@ class Gatherer(object):
                 self.log.error("The 'user' or 'pass' entry is missing. Skipping '%s'", node['name'])
                 continue
 
-            worker = self.modules[modname].worker(node)
+            worker = self.modules[modname]
+            worker.set_node(node)
             output[node.get("id", str(uuid.uuid4()))] = worker.run()
 
         if self.options.outfile:
@@ -177,22 +178,28 @@ class Gatherer(object):
 
         :return: void
         """
-        mod_path = os.path.dirname(__import__('gatherer.modules', globals(), locals(), ['gatherer'], 0).__file__)
+        mod_path = os.path.dirname(__import__('gatherer.modules', globals(), locals(), ['WorkerInterface'], 0).__file__)
         self.log.info("module path: %s", mod_path)
         for module_name in [item.split(".")[0] for item in os.listdir(mod_path)
                             if item.endswith(".py") and not item.startswith("__init__")]:
             try:
                 self.log.debug('Loading module "%s"', module_name)
                 mod = __import__('gatherer.modules.{0}'.format(module_name), globals(),
-                                 locals(), ['gatherer', 'modules'], 0)
+                                 locals(), ['WorkerInterface'], 0)
                 self.log.debug("Introspection: %s", dir(mod))
-                if not mod.IS_VALID:
+                class_ = getattr(mod, module_name)
+                if not issubclass(class_, WorkerInterface):
+                    self.log.error('Module "%s" is not a gatherer module, skipping.', module_name)
+                    continue
+                instance = class_()
+                if not instance.valid():
                     self.log.error('Module "%s" is broken, import aborted.', module_name)
                     continue
-                if not hasattr(mod, "worker"):
-                    self.log.error('Missing function "worker" in the module "%s"!', module_name)
-                    continue
-                self.modules[module_name] = mod
+                self.modules[module_name] = instance
+            except (TypeError, AttributeError, NotImplementedError) as ex:
+                self.log.error('Module "%s" is broken, skipping.', module_name)
+                self.log.debug("Exception: %s", ex)
+                pass
             except ImportError:
                 self.log.debug('Module "%s" was not loaded.', module_name)
                 raise

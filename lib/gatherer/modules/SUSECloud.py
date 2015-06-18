@@ -29,7 +29,7 @@ except ImportError as ex:
 
 
 #pylint: disable=too-few-public-methods, interface-not-implemented
-class SUSECloudWorker(WorkerInterface):
+class SUSECloud(WorkerInterface):
     """
     Worker class for the SUSE Cloud.
     """
@@ -43,7 +43,7 @@ class SUSECloudWorker(WorkerInterface):
         'tenant': 'openstack'
     }
 
-    def __init__(self, node):
+    def __init__(self):
         """
         Constructor.
 
@@ -52,10 +52,12 @@ class SUSECloudWorker(WorkerInterface):
         """
 
         self.log = logging.getLogger(__name__)
+
+    def set_node(self, node):
         for k in self.DEFAULT_PARAMETERS:
-            if k not in node:
-                self.log.error("Missing parameter '%s' in infile", k)
-                raise AttributeError("Missing parameter '%s' in infile" % k)
+            if not node.get(k):
+                self.log.error("Missing parameter or value '%s' in infile", k)
+                raise AttributeError("Missing parameter or value '{0}' in infile".format(k))
 
         self.host = node['host']
         self.port = node.get('port', 5000)
@@ -101,17 +103,3 @@ class SUSECloudWorker(WorkerInterface):
         :return: True, if the current module has novaclient installed.
         """
         return IS_VALID
-
-
-PARAMETERS = SUSECloudWorker.DEFAULT_PARAMETERS
-
-
-def worker(node):
-    """
-    Create new worker.
-
-    :param node: Node description
-    :return: SUSECloudWorker object
-    """
-
-    return SUSECloudWorker(node)
