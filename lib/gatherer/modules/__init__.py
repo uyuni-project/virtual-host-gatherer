@@ -34,6 +34,14 @@ class WorkerInterface(object):
         """
 
     @abc.abstractmethod
+    def parameters(self):
+        """
+        Return required parameters with default values
+
+        :return: Dictionary with paramters and default values
+        """
+
+    @abc.abstractmethod
     def run(self):
         """
         Run the worker.

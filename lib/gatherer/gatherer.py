@@ -101,7 +101,7 @@ class Gatherer(object):
         if not self.modules:
             self._load_modules()
         for modname, inst in self.modules.items():
-            params[modname] = inst.DEFAULT_PARAMETERS
+            params[modname] = inst.parameters()
             params[modname]['module'] = modname
         return params
 

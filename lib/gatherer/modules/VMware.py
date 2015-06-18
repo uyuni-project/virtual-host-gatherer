@@ -55,6 +55,11 @@ class VMware(WorkerInterface):
         self.host = self.port = self.user = self.password = None
 
     def set_node(self, node):
+        """
+        Set node information
+
+        :return: void
+        """
         for k in self.DEFAULT_PARAMETERS:
             if not node.get(k):
                 self.log.error("Missing parameter or value '%s' in infile", k)
@@ -65,9 +70,18 @@ class VMware(WorkerInterface):
         self.user = node['user']
         self.password = node['pass']
 
+    def parameters(self):
+        """
+        Return default parameters
+
+        :return: default parameter dictionary
+        """
+        return self.DEFAULT_PARAMETERS
+
     def run(self):
         """
         Start worker.
+
         :return: Dictionary of the hosts in the worker scope.
         """
 
