@@ -46,8 +46,8 @@ def main():
     :return:
     """
     # pylint: disable=broad-except
+    options = parse_options()
     try:
-        options = parse_options()
         Gatherer(options).main()
     except Exception as ex:
         sys.stderr.write("General error: {0}\n".format(ex))
