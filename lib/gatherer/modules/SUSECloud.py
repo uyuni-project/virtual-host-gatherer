@@ -59,6 +59,7 @@ class SUSECloud(WorkerInterface):
 
         :return: void
         """
+
         for k in self.DEFAULT_PARAMETERS:
             if not node.get(k):
                 self.log.error("Missing parameter or value '%s' in infile", k)

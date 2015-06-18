@@ -18,6 +18,7 @@ Contains worker interface.
 
 import abc
 
+
 # pylint: disable=abstract-class-not-used
 class WorkerInterface(object):
     """

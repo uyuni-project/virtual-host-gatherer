@@ -60,6 +60,7 @@ class VMware(WorkerInterface):
 
         :return: void
         """
+
         for k in self.DEFAULT_PARAMETERS:
             if not node.get(k):
                 self.log.error("Missing parameter or value '%s' in infile", k)
@@ -76,6 +77,7 @@ class VMware(WorkerInterface):
 
         :return: default parameter dictionary
         """
+
         return self.DEFAULT_PARAMETERS
 
     def run(self):
@@ -139,4 +141,5 @@ class VMware(WorkerInterface):
         """
         Return True if pyVim module is installed.
         """
+
         return IS_VALID

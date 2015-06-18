@@ -72,6 +72,7 @@ class Gatherer(object):
     def __init__(self, opts):
         """
         Constructor.
+
         :param opts: Command line options.
         :return:
         """
@@ -179,6 +180,7 @@ class Gatherer(object):
 
         :return: void
         """
+
         mod_path = os.path.dirname(__import__('gatherer.modules', globals(), locals(), ['WorkerInterface'], 0).__file__)
         self.log.info("module path: %s", mod_path)
         for module_name in [item.split(".")[0] for item in os.listdir(mod_path)
