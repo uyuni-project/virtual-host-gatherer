@@ -62,7 +62,7 @@ class SUSECloud(WorkerInterface):
         """
 
         try:
-            self._validate_parameters()
+            self._validate_parameters(node)
         except AttributeError as error:
             self.log.error(error)
             raise error
