@@ -25,6 +25,7 @@ import logging
 import uuid
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
+from gatherer.modules import WorkerInterface
 
 
 def parse_options():
