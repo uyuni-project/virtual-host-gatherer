@@ -1,20 +1,27 @@
 #
-# spec file for package python-gatherer (Version 1.0.0)
+# spec file for package python-gatherer
 #
-# Copyright (c) 2015 SUSE LLC, Nuernberg, Germany.
-# This file and all modifications and additions to the pristine
-# package are under the same license as the package itself.
+# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
 #
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
 
 Name:           python-gatherer
 Version:        1.0.3
-Release:        1
+Release:        0
 Summary:        gather virtualization information
-Group:          Development/Languages
 License:        Apache-2.0
+Group:          Development/Languages
 Url:            http://www.suse.com
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
