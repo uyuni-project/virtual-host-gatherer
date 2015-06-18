@@ -128,12 +128,6 @@ class Gatherer(object):
             if modname not in self.modules:
                 self.log.error("Skipping unsupported module '%s'.", modname)
                 continue
-            if not node['host']:
-                self.log.error("Invalid 'host' entry. Skipping '%s'", node['name'])
-                continue
-            if not node['user'] or not node['pass']:
-                self.log.error("The 'user' or 'pass' entry is missing. Skipping '%s'", node['name'])
-                continue
 
             worker = self.modules[modname]
             worker.set_node(node)
