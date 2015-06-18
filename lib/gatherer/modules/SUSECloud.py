@@ -61,10 +61,11 @@ class SUSECloud(WorkerInterface):
         :return: void
         """
 
-        for k in self.DEFAULT_PARAMETERS:
-            if not node.get(k):
-                self.log.error("Missing parameter or value '%s' in infile", k)
-                raise AttributeError("Missing parameter or value '{0}' in infile".format(k))
+        try:
+            self._validate_parameters()
+        except AttributeError as error:
+            self.log.error(error)
+            raise error
 
         self.host = node['host']
         self.port = node.get('port', 5000)
