@@ -30,7 +30,6 @@ except ImportError as ex:
     IS_VALID = False
 
 
-# pylint: disable=too-few-public-methods, interface-not-implemented
 class VMware(WorkerInterface):
     """
     Worker class for the VMWare.
@@ -53,6 +52,7 @@ class VMware(WorkerInterface):
         self.log = logging.getLogger(__name__)
         self.host = self.port = self.user = self.password = None
 
+    # pylint: disable=R0801
     def set_node(self, node):
         """
         Set node information

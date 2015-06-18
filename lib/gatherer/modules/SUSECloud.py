@@ -28,7 +28,6 @@ except ImportError as ex:
     IS_VALID = False
 
 
-# pylint: disable=too-few-public-methods, interface-not-implemented
 class SUSECloud(WorkerInterface):
     """
     Worker class for the SUSE Cloud.
@@ -53,6 +52,7 @@ class SUSECloud(WorkerInterface):
         self.log = logging.getLogger(__name__)
         self.host = self.port = self.user = self.password = self.tenant = None
 
+    # pylint: disable=R0801
     def set_node(self, node):
         """
         Set node information

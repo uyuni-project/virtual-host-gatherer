@@ -72,7 +72,9 @@ disable=W0142,
   I0012,
   W1202,
   E8402,
-  E8731
+  E8731,
+  R0921,
+  R0923
 #  E8121,
 #  E8122,
 #  E8123,
@@ -94,6 +96,8 @@ disable=W0142,
 # I0011 (locally-disabling)
 # I0012 (locally-enabling)
 # W1202 (logging-format-interpolation)
+# R0921 (abstract-class-not-used)
+# R0923 (interface-not-implemented)
 
 
 [REPORTS]
