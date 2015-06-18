@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Jun 18 13:30:32 CEST 2015 - mc@suse.de
+
+- version 1.0.3-1
+- refactoring and cleanup
+- some python3 compatibility changes
+- update README
+- Build as noarch only on new distributions
+
+-------------------------------------------------------------------
 Tue May 26 11:55:04 CEST 2015 - mc@suse.de
 
 - version 1.0.2-1
