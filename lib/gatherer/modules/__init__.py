@@ -39,7 +39,7 @@ class WorkerInterface(object):
         """
         Return required parameters with default values
 
-        :return: Dictionary with paramters and default values
+        :return: Dictionary with parameters and default values
         """
 
     @abc.abstractmethod
