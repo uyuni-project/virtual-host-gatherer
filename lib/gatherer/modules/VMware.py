@@ -21,12 +21,17 @@ VMWare Worker module implementation.
 from __future__ import print_function, absolute_import, division
 import logging
 import atexit
+from gatherer.modules import WorkerInterface
 
-from pyVim.connect import SmartConnect, Disconnect
+try:
+    from pyVim.connect import SmartConnect, Disconnect
+    IS_VALID = True
+except ImportError as ex:
+    IS_VALID = False
 
 
-#pylint: disable=too-few-public-methods
-class VMwareWorker(object):
+# pylint: disable=too-few-public-methods, interface-not-implemented
+class VMware(WorkerInterface):
     """
     Worker class for the VMWare.
     """
@@ -38,28 +43,48 @@ class VMwareWorker(object):
         'pass': ''
     }
 
-    def __init__(self, node):
+    def __init__(self):
         """
         Constructor.
 
-        :param node: Dictionary of the node description.
         :return:
         """
 
         self.log = logging.getLogger(__name__)
-        for k in self.DEFAULT_PARAMETERS:
-            if k not in node:
-                self.log.error("Missing parameter '%s' in infile", k)
-                raise AttributeError("Missing parameter '%s' in infile" % k)
+        self.host = self.port = self.user = self.password = None
+
+    def set_node(self, node):
+        """
+        Set node information
+
+        :param node: Dictionary of the node description.
+        :return: void
+        """
+
+        try:
+            self._validate_parameters(node)
+        except AttributeError as error:
+            self.log.error(error)
+            raise error
 
         self.host = node['host']
-        self.port = node['port'] or 443
+        self.port = node.get('port', 443)
         self.user = node['user']
         self.password = node['pass']
+
+    def parameters(self):
+        """
+        Return default parameters
+
+        :return: default parameter dictionary
+        """
+
+        return self.DEFAULT_PARAMETERS
 
     def run(self):
         """
         Start worker.
+
         :return: Dictionary of the hosts in the worker scope.
         """
 
@@ -68,7 +93,7 @@ class VMwareWorker(object):
         if not connection:
             self.log.error(
                 "Could not connect to the specified host using specified "
-                "username and password"
+                "username and password."
             )
             return
 
@@ -113,15 +138,11 @@ class VMwareWorker(object):
         Disconnect(connection)
         return output
 
-parameters = VMwareWorker.DEFAULT_PARAMETERS
+    def valid(self):
+        """
+        Check plugin class validity.
 
-def worker(node):
-    """
-    Create new worker.
+        :return: True if pyVim module is installed.
+        """
 
-    :param node: Node description
-    :return: VMWareWorker object
-    """
-
-    return VMwareWorker(node)
-
+        return IS_VALID

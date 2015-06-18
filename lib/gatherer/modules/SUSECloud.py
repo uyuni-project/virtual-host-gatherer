@@ -19,11 +19,17 @@ SUSE Cloud Worker module implementation.
 from __future__ import print_function, absolute_import
 import json
 import logging
-from novaclient.v1_1 import client
+from gatherer.modules import WorkerInterface
+
+try:
+    from novaclient.v1_1 import client
+    IS_VALID = True
+except ImportError as ex:
+    IS_VALID = False
 
 
-#pylint: disable=too-few-public-methods
-class SUSECloudWorker(object):
+# pylint: disable=too-few-public-methods, interface-not-implemented
+class SUSECloud(WorkerInterface):
     """
     Worker class for the SUSE Cloud.
     """
@@ -37,25 +43,43 @@ class SUSECloudWorker(object):
         'tenant': 'openstack'
     }
 
-    def __init__(self, node):
+    def __init__(self):
         """
         Constructor.
 
-        :param node: Dictionary of the node description.
         :return:
         """
 
         self.log = logging.getLogger(__name__)
-        for k in self.DEFAULT_PARAMETERS:
-            if k not in node:
-                self.log.error("Missing parameter '%s' in infile", k)
-                raise AttributeError("Missing parameter '%s' in infile" % k)
+        self.host = self.port = self.user = self.password = self.tenant = None
+
+    def set_node(self, node):
+        """
+        Set node information
+
+        :param node: Dictionary of the node description.
+        :return: void
+        """
+
+        try:
+            self._validate_parameters(node)
+        except AttributeError as error:
+            self.log.error(error)
+            raise error
 
         self.host = node['host']
         self.port = node.get('port', 5000)
         self.user = node['user']
         self.password = node['pass']
         self.tenant = node['tenant']
+
+    def parameters(self):
+        """
+        Return default parameters
+
+        :return: default parameter dictionary
+        """
+        return self.DEFAULT_PARAMETERS
 
     def run(self):
         """
@@ -90,15 +114,10 @@ class SUSECloudWorker(object):
 
         return output
 
+    def valid(self):
+        """
+        Check plugin class validity.
 
-parameters = SUSECloudWorker.DEFAULT_PARAMETERS
-
-def worker(node):
-    """
-    Create new worker.
-
-    :param node: Node description
-    :return: SUSECloudWorker object
-    """
-
-    return SUSECloudWorker(node)
+        :return: True, if the current module has novaclient installed.
+        """
+        return IS_VALID
