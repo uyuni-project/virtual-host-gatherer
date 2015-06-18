@@ -21,3 +21,6 @@ py3k_in_docker ::
 
 docker_pylint ::
 	docker run --rm -e $(DOCKER_RUN_EXPORT) $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/$(DOCKER_CONTAINER_NAME) /bin/sh -c "cd /gatherer; make pylint_in_docker; make py3k_in_docker"
+
+docker_shell ::
+	docker run -t -i --rm -e $(DOCKER_RUN_EXPORT) $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/$(DOCKER_CONTAINER_NAME) /bin/bash
