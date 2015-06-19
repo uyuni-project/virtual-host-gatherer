@@ -17,8 +17,8 @@
 
 
 Name:           python-gatherer
-Version:        1.0.3
-Release:        0
+Version:        1.0.4
+Release:        1
 Summary:        gather virtualization information
 License:        Apache-2.0
 Group:          Development/Languages
