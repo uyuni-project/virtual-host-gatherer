@@ -143,3 +143,8 @@ Example output file (outfile.json):
 }
 ```
 -----------------------------------------
+
+References:
+
+* http://www.orionscache.com/2012/05/adding-a-read-only-user-in-vcenter/
+
