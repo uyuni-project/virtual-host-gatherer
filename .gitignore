@@ -1,6 +1,7 @@
 *~
 *.pyc
 MANIFEST
+bak/
 data/
 gatherer/reports/
 .idea/
