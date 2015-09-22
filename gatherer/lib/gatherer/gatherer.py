@@ -41,7 +41,7 @@ def parse_options():
         description='Process args for retrieving all the Virtual Machines')
     parser.add_argument(
         '-i', '--infile', action='store',
-        help='json input file'
+        help="json input file or '-' to read from stdin"
     )
     parser.add_argument(
         '-o', '--outfile', action='store',
@@ -116,8 +116,11 @@ class Gatherer(object):
         if not self.modules:
             self._load_modules()
 
-        with open(self.options.infile) as input_file:
-            mgm_nodes = json.load(input_file)
+        if self.options.infile == '-':
+            mgm_nodes = json.load(sys.stdin)
+        else:
+            with open(self.options.infile) as input_file:
+                mgm_nodes = json.load(input_file)
 
         output = dict()
         for node in mgm_nodes:
