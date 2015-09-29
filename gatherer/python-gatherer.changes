@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Sep 29 15:41:02 CEST 2015 - mc@suse.de
+
+- version 1.0.5-1
+- change json output format to be more specific about the dimensions
+- support reading from STDIN
+- update README
+
+-------------------------------------------------------------------
 Fri Jun 19 15:15:27 CEST 2015 - mc@suse.de
 
 - version 1.0.4-1

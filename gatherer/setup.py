@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from distutils.core import setup
 
 setup(name="gatherer",
-      version="1.0.4",
+      version="1.0.5",
       description="gather host and VM data",
       long_description="""\
 Gather host and VM data from different kind of hypervisors
