@@ -97,14 +97,14 @@ class SUSECloud(WorkerInterface):
                 'name': hyp.hypervisor_hostname,
                 'os': hyp.hypervisor_type,
                 'osVersion': hyp.hypervisor_version,
-                'sockets': cpu_info.get('topology', {}).get('sockets'),
-                'cores': cpu_info.get('topology', {}).get('cores'),
-                'threads': cpu_info.get('topology', {}).get('threads'),
-                'ghz': 0,
+                'totalCpuSockets': cpu_info.get('topology', {}).get('sockets'),
+                'totalCpuCores': cpu_info.get('topology', {}).get('cores'),
+                'totalCpuThreads': cpu_info.get('topology', {}).get('threads'),
+                'cpuMhz': 0,
                 'cpuVendor': cpu_info.get('vendor'),
                 'cpuDescription': cpu_info.get('model'),
                 'cpuArch': cpu_info.get('arch'),
-                'ram': hyp.memory_mb,
+                'ramMb': hyp.memory_mb,
                 'vms': {}
             }
             for result in cloud_client.hypervisors.search(hyp.hypervisor_hostname, True):

@@ -108,23 +108,20 @@ class VMware(WorkerInterface):
                 for cluster in cluster_list:
                     for host in cluster.host:
                         host_name = host.summary.config.name.split()[0]
-                        sockets = host.hardware.cpuInfo.numCpuPackages
-                        cores = (host.hardware.cpuInfo.numCpuCores / sockets)
-                        threads = (int(host.hardware.cpuInfo.numCpuThreads / cores / sockets))
-                        ghz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000 * 1000))
+                        mhz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000))
                         ram = (int(host.hardware.memorySize / (1024 * 1024)))
                         output[host_name] = {
                             'name': host_name,
                             'os': host.summary.config.product.name,
                             'osVersion': host.summary.config.product.version,
-                            'sockets': sockets,
-                            'cores': cores,
-                            'threads': threads,
-                            'ghz': ghz,
+                            'totalCpuSockets': host.hardware.cpuInfo.numCpuPackages,
+                            'totalCpuCores': host.hardware.cpuInfo.numCpuCores,
+                            'totalCpuThreads': host.hardware.cpuInfo.numCpuThreads,
+                            'cpuMhz': mhz,
                             'cpuVendor': host.hardware.cpuPkg[0].vendor,
                             'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
                             'cpuArch': 'x86_64',
-                            'ram': ram,
+                            'ramMb': ram,
                             'vms': {}
                         }
                         # If an additional hardware info is wanted:
