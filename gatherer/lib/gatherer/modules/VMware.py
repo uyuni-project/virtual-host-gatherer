@@ -111,6 +111,7 @@ class VMware(WorkerInterface):
                         mhz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000))
                         ram = (int(host.hardware.memorySize / (1024 * 1024)))
                         output[host_name] = {
+                            'type': 'vmware',
                             'name': host_name,
                             'os': host.summary.config.product.name,
                             'osVersion': host.summary.config.product.version,

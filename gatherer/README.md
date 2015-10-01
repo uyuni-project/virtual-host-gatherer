@@ -83,6 +83,7 @@ Example output file (outfile.json):
             "totalCpuCores": 6,
             "totalCpuSockets": 1,
             "totalCpuThreads": 1,
+            "type": "qemu",
             "vms": {}
         },
         "d00-53-00-bd-a3-c2.d3.mycloud.local": {
@@ -97,6 +98,7 @@ Example output file (outfile.json):
             "totalCpuCores": 6,
             "totalCpuSockets": 1,
             "totalCpuThreads": 1,
+            "type": "qemu",
             "vms": {
                 "instance-00000016": "e17366ac-e8e0-48e1-9af4-0044967733a0"
             }
@@ -115,6 +117,7 @@ Example output file (outfile.json):
             "totalCpuCores": 16,
             "totalCpuSockets": 2,
             "totalCpuThreads": 16,
+            "type": "vmware",
             "vms": {
                 "vCenter": "564d6d90-459c-2256-8f39-3cb2bd24b7b0"
             }
@@ -131,6 +134,7 @@ Example output file (outfile.json):
             "totalCpuCores": 16,
             "totalCpuSockets": 2,
             "totalCpuThreads": 16,
+            "type": "vmware",
             "vms": {
                 "49737e0a-c9e6-4ceb-aef8-6a9452f67cb5": "4230c60f-3f98-2a65-f7c3-600b26b79c22",
                 "5a2e4e63-a957-426b-bfa8-4169302e4fdb": "42307b15-1618-0595-01f2-427ffcddd88e",
@@ -143,6 +147,9 @@ Example output file (outfile.json):
 }
 ```
 -----------------------------------------
+
+The 'type' of a hypervisor must be one of 'fully_virtualized', 'para_virtualized', 'qemu',
+'vmware', 'hyperv', 'virtage' or 'virtualbox'
 
 References:
 
