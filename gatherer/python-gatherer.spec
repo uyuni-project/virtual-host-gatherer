@@ -15,6 +15,7 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
+%global with_susecloud 0
 
 Name:           python-gatherer
 Version:        1.0.5
@@ -46,6 +47,7 @@ Requires:       python-pyvmomi
 %description VMware
 VMware connection module for gatherer
 
+%if 0%{with_susecloud}
 %package SUSECloud
 Summary:        SUSE Cloud connection module
 Group:          Development/Languages
@@ -54,7 +56,7 @@ Requires:       python-novaclient
 
 %description SUSECloud
 SUSE Cloud connection module for gatherer
-
+%endif
 
 %prep
 %setup -q
@@ -64,6 +66,10 @@ python setup.py build
 
 %install
 python setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT
+
+%if ! 0%{with_susecloud}
+rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
+%endif
 
 %clean
 rm -rf %{buildroot}
@@ -82,8 +88,10 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/VMware.py*
 
+%if 0%{with_susecloud}
 %files SUSECloud
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/SUSECloud.py*
+%endif
 
 %changelog
