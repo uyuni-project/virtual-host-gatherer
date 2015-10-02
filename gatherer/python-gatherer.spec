@@ -27,6 +27,7 @@ Url:            http://www.suse.com
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
+BuildRequires:  python-urlgrabber
 %{py_requires}
 Requires:       python-urlgrabber
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
@@ -71,6 +72,11 @@ python setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT
 %if ! 0%{with_susecloud}
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
 %endif
+
+%check
+export PYTHONPATH=%{buildroot}%{python_sitelib}
+%{buildroot}%{_bindir}/gatherer -h
+%{buildroot}%{_bindir}/gatherer -l
 
 %clean
 rm -rf %{buildroot}
