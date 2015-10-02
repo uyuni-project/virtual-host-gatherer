@@ -28,6 +28,7 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
 %{py_requires}
+Requires:       python-urlgrabber
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
 %{!?python_sitelib: %global python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %else
@@ -83,6 +84,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/gatherer/modules/__init__.py*
 %{_bindir}/gatherer
 %{python_sitelib}/gatherer-*.egg-info
+%{python_sitelib}/gatherer/modules/File.py*
 
 %files VMware
 %defattr(-,root,root,-)
