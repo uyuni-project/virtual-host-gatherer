@@ -3,6 +3,6 @@
 MANIFEST
 bak/
 data/
-gatherer/reports/
+virtual-host-gatherer/reports/
 .idea/
 
