@@ -1,5 +1,6 @@
 Requires:
 
+* For File: install python-urlgrabber
 * For VMware: install python-pyvmomi from devel:languages:python
 * For SUSECloud: install python-novaclient
 
@@ -7,7 +8,7 @@ Example:
 
 List all installed modules with the required paramater:
 ```
-$> scripts/gatherer --list-modules
+$> scripts/virtual-host-gatherer --list-modules
 {
     "SUSECloud": {
         "host": "",
@@ -62,7 +63,7 @@ Example input file (infile.json):
 and call
 
 ```
-$> scripts/gatherer --infile ./infile.json --outfile ./outfile.json
+$> scripts/virtual-host-gatherer --infile ./infile.json --outfile ./outfile.json
 ```
 
 -----------------------------------------

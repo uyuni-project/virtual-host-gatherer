@@ -1,5 +1,5 @@
 #
-# spec file for package python-gatherer
+# spec file for package virtual-host-gatherer
 #
 # Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
 #
@@ -17,10 +17,10 @@
 
 %global with_susecloud 0
 
-Name:           python-gatherer
+Name:           virtual-host-gatherer
 Version:        1.0.6
 Release:        1
-Summary:        gather virtualization information
+Summary:        Gather virtualization information
 License:        Apache-2.0
 Group:          Development/Languages
 Url:            http://www.suse.com
@@ -88,7 +88,7 @@ rm -rf %{buildroot}
 %dir %{python_sitelib}/gatherer/modules
 %{python_sitelib}/gatherer/*.py*
 %{python_sitelib}/gatherer/modules/__init__.py*
-%{_bindir}/gatherer
+%{_bindir}/virtual-host-gatherer
 %{python_sitelib}/gatherer-*.egg-info
 %{python_sitelib}/gatherer/modules/File.py*
 
