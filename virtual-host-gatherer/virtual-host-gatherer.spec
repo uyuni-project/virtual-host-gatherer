@@ -18,7 +18,7 @@
 %global with_susecloud 0
 
 Name:           virtual-host-gatherer
-Version:        1.0.7
+Version:        1.0.8
 Release:        1
 Summary:        Gather virtualization information
 License:        Apache-2.0
