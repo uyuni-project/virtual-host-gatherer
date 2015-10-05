@@ -93,7 +93,8 @@ class SUSECloud(WorkerInterface):
         cloud_client = client.Client(self.user, self.password, self.tenant, url, service_type="compute")
         for hyp in cloud_client.hypervisors.list():
             htype = "qemu"
-            if hyp.hypervisor_type.lower() in ['fully_virtualized', 'para_virtualized', 'qemu', 'vmware', 'hyperv', 'virtage', 'virtualbox']:
+            if hyp.hypervisor_type.lower() in ['fully_virtualized', 'para_virtualized', 'qemu', \
+                    'vmware', 'hyperv', 'virtage', 'virtualbox']:
                 htype = hyp.hypervisor_type.lower()
             cpu_info = json.loads(hyp.cpu_info)
             output[hyp.hypervisor_hostname] = {

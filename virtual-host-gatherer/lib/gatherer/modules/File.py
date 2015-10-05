@@ -85,7 +85,7 @@ class File(WorkerInterface):
 
         self.log.debug("Fetching %s", self.url)
         if not urlparse.urlsplit(self.url).scheme:
-          self.url = "file://%s" % self.url
+            self.url = "file://%s" % self.url
 
         output = json.loads(urlgrabber.urlread(str(self.url), timeout=300))
 
