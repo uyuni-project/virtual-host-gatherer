@@ -1,0 +1,139 @@
+virtual-host-gatherer(1)
+========================
+:doctype: manpage
+
+NAME
+----
+virtual-host-gatherer - Gather information about virtual hosts
+
+SYNOPSIS
+--------
+*virtual-host-gatherer* ['OPTIONS']
+
+DESCRIPTION
+-----------
+virtual-host-gatherer(1) is used to gather information about virtual hosts
+with some hardware information and the virtual system running on them.
+virtual-host-gatherer(1) has modules for different kind of hypervisors.
+
+OPTIONS
+-------
+
+-h, --help::
+show this help message and exit
+
+-i 'INFILE', --infile='INFILE'
+json input file or '-' to read from stdin
+
+-o 'OUTFILE', --outfile='OUTFILE'
+to write the output (json) file instead of stdout
+
+-v, --verbose
+increase log output verbosity
+
+-l, --list-modules
+list available modules
+
+-L 'LOGFILE', --logfile='LOGFILE'
+path to logfile. Default: $HOME/gatherer.log
+
+EXAMPLES:
+---------
+
+List all installed modules with the required paramater:
+
+  $> scripts/virtual-host-gatherer --list-modules
+  {
+    "VMware": {
+        "host": "",
+        "module": "VMware",
+        "pass": "",
+        "port": 443,
+        "user": ""
+    }
+  }
+
+Example input file (infile.json):
+
+  [
+    {
+        "id": "myvcenter",
+        "module": "VMware",
+        "host": "vCenter.domain.top",
+        "user": "admin",
+        "pass": "secret",
+        "port": 443
+    },
+  ]
+
+$> virtual-host-gatherer --infile infile.json
+
+  {
+    "myvcenter": {
+        "10.0.1.1": {
+            "cpuArch": "x86_64",
+            "cpuDescription": "AMD Opteron(tm) Processor 4386",
+            "cpuMhz": 3092.212727,
+            "cpuVendor": "amd",
+            "name": "11.11.12.13",
+            "os": "VMware ESXi",
+            "osVersion": "5.5.0",
+            "ramMb": 65512,
+            "totalCpuCores": 16,
+            "totalCpuSockets": 2,
+            "totalCpuThreads": 16,
+            "type": "vmware",
+            "vms": {
+                "vCenter": "564d6d90-459c-2256-8f39-3cb2bd24b7b0"
+            }
+        },
+        "10.0.1.2": {
+            "cpuArch": "x86_64",
+            "cpuDescription": "AMD Opteron(tm) Processor 4386",
+            "cpuMhz": 3092.212639,
+            "cpuVendor": "amd",
+            "name": "10.0.1.2",
+            "os": "VMware ESXi",
+            "osVersion": "5.5.0",
+            "ramMb": 65512,
+            "totalCpuCores": 16,
+            "totalCpuSockets": 2,
+            "totalCpuThreads": 16,
+            "type": "vmware",
+            "vms": {
+                "49737e0a-c9e6-4ceb-aef8-6a9452f67cb5": "4230c60f-3f98-2a65-f7c3-600b26b79c22",
+                "5a2e4e63-a957-426b-bfa8-4169302e4fdb": "42307b15-1618-0595-01f2-427ffcddd88e",
+                "NSX-gateway": "4230d43e-aafe-38ba-5a9e-3cb67c03a16a",
+                "NSX-l3gateway": "4230b00f-0b21-0e9d-dfde-6c7b06909d5f",
+                "NSX-service": "4230e924-b714-198b-348b-25de01482fd9"
+            }
+        }
+    }
+  }
+
+
+
+SEE ALSO
+--------
+/usr/share/doc/packages/virtual-host-gatherer/README.md
+
+AUTHOR
+------
+The SUSE Manager Team
+
+COPYING
+-------
+Copyright (c) 2015 SUSE LLC. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+

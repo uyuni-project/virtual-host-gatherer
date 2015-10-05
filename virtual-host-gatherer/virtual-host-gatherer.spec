@@ -28,6 +28,8 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
 BuildRequires:  python-urlgrabber
+BuildRequires:  asciidoc
+BuildRequires:  libxslt-tools
 %{py_requires}
 Requires:       python-urlgrabber
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
@@ -73,10 +75,14 @@ python setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
 %endif
 
+a2x -v -d manpage -f manpage doc/%{name}.1.asciidoc
+mkdir -p %{buildroot}%{_mandir}/man1
+install -m 0644 doc/%{name}.1 $RPM_BUILD_ROOT%{_mandir}/man1/
+
 %check
 export PYTHONPATH=%{buildroot}%{python_sitelib}
-%{buildroot}%{_bindir}/virtual-host-gatherer -h
-%{buildroot}%{_bindir}/virtual-host-gatherer -l
+%{buildroot}%{_bindir}/%{name} -h
+%{buildroot}%{_bindir}/%{name} -l
 
 %clean
 rm -rf %{buildroot}
@@ -84,11 +90,12 @@ rm -rf %{buildroot}
 %files
 %defattr(-,root,root,-)
 %doc LICENSE README.md
+%doc %{_mandir}/man1/%{name}.1*
 %dir %{python_sitelib}/gatherer
 %dir %{python_sitelib}/gatherer/modules
 %{python_sitelib}/gatherer/*.py*
 %{python_sitelib}/gatherer/modules/__init__.py*
-%{_bindir}/virtual-host-gatherer
+%{_bindir}/%{name}
 %{python_sitelib}/virtual_host_gatherer-*.egg-info
 %{python_sitelib}/gatherer/modules/File.py*
 
