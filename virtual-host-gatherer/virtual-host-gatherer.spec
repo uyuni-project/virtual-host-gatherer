@@ -75,8 +75,8 @@ rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
 
 %check
 export PYTHONPATH=%{buildroot}%{python_sitelib}
-%{buildroot}%{_bindir}/gatherer -h
-%{buildroot}%{_bindir}/gatherer -l
+%{buildroot}%{_bindir}/virtual-host-gatherer -h
+%{buildroot}%{_bindir}/virtual-host-gatherer -l
 
 %clean
 rm -rf %{buildroot}
@@ -89,7 +89,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/gatherer/*.py*
 %{python_sitelib}/gatherer/modules/__init__.py*
 %{_bindir}/virtual-host-gatherer
-%{python_sitelib}/gatherer-*.egg-info
+%{python_sitelib}/virtual-host-gatherer-*.egg-info
 %{python_sitelib}/gatherer/modules/File.py*
 
 %files VMware
