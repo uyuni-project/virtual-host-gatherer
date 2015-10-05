@@ -89,7 +89,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/gatherer/*.py*
 %{python_sitelib}/gatherer/modules/__init__.py*
 %{_bindir}/virtual-host-gatherer
-%{python_sitelib}/virtual-host-gatherer-*.egg-info
+%{python_sitelib}/virtual_host_gatherer-*.egg-info
 %{python_sitelib}/gatherer/modules/File.py*
 
 %files VMware
