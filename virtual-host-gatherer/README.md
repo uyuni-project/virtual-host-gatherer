@@ -77,6 +77,7 @@ Example output file (outfile.json):
             "cpuDescription": "Opteron_G3",
             "cpuMhz": 0,
             "cpuVendor": "AMD",
+            "hostIdentifier": "d00-53-00-bd-a1-48.d3.mycloud.local",
             "name": "d00-53-00-bd-a1-48.d3.mycloud.local",
             "os": "QEMU",
             "osVersion": 1004002,
@@ -92,6 +93,7 @@ Example output file (outfile.json):
             "cpuDescription": "Opteron_G3",
             "cpuMhz": 0,
             "cpuVendor": "AMD",
+            "hostIdentifier": "d00-53-00-bd-a3-c2.d3.mycloud.local",
             "name": "d00-53-00-bd-a3-c2.d3.mycloud.local",
             "os": "QEMU",
             "osVersion": 1004002,
@@ -111,6 +113,7 @@ Example output file (outfile.json):
             "cpuDescription": "AMD Opteron(tm) Processor 4386",
             "cpuMhz": 3092.212727,
             "cpuVendor": "amd",
+            "hostIdentifier": "'vim.HostSystem:host-182'",
             "name": "10.0.0.1",
             "os": "VMware ESXi",
             "osVersion": "5.5.0",
@@ -128,6 +131,7 @@ Example output file (outfile.json):
             "cpuDescription": "AMD Opteron(tm) Processor 4386",
             "cpuMhz": 3092.212639,
             "cpuVendor": "amd",
+            "hostIdentifier": "'vim.HostSystem:host-183'",
             "name": "10.0.0.2",
             "os": "VMware ESXi",
             "osVersion": "5.5.0",
@@ -151,6 +155,8 @@ Example output file (outfile.json):
 
 The 'type' of a hypervisor must be one of 'fully_virtualized', 'para_virtualized', 'qemu',
 'vmware', 'hyperv', 'virtage' or 'virtualbox'
+
+The value of 'hostIdentifier' must be unique for the given virtual host manager (vCenter or ESX/i instance)
 
 References:
 

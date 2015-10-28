@@ -99,6 +99,7 @@ class SUSECloud(WorkerInterface):
             cpu_info = json.loads(hyp.cpu_info)
             output[hyp.hypervisor_hostname] = {
                 'name': hyp.hypervisor_hostname,
+                'hostIdentifier': hyp.hypervisor_hostname,
                 'type': htype,
                 'os': hyp.hypervisor_type,
                 'osVersion': hyp.hypervisor_version,

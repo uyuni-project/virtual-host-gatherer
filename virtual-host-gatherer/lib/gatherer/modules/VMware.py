@@ -113,6 +113,7 @@ class VMware(WorkerInterface):
                         output[host_name] = {
                             'type': 'vmware',
                             'name': host_name,
+                            'hostIdentifier': str(host),
                             'os': host.summary.config.product.name,
                             'osVersion': host.summary.config.product.version,
                             'totalCpuSockets': host.hardware.cpuInfo.numCpuPackages,
