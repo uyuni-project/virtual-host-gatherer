@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Oct 28 17:44:18 CET 2015 - mc@suse.de
+
+- version 1.0.9-1
+- introduce hostIdentifier in the gatherer output
+
+-------------------------------------------------------------------
 Mon Oct 05 15:03:54 CEST 2015 - mc@suse.de
 
 - version 1.0.8-1
