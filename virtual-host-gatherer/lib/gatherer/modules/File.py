@@ -88,7 +88,13 @@ class File(WorkerInterface):
             self.url = "file://%s" % self.url
 
         output = json.loads(urlgrabber.urlread(str(self.url), timeout=300))
-
+        # pylint: disable=W1622
+        first = output.itervalues().next()
+        if "vms" not in first:
+            # run() should return a dict of host entries
+            # but here the first value is a virtual host manager
+            # and not a host entry
+            return first
         return output
 
     def valid(self):
