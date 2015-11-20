@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri Nov 20 12:57:42 CET 2015 - mc@suse.de
+
+- version 1.0.10-1
+- change module keys to better names
+- sort output of list modules
+- file module should be able to handle gatherer output as input
+
+-------------------------------------------------------------------
 Wed Oct 28 17:44:18 CET 2015 - mc@suse.de
 
 - version 1.0.9-1
