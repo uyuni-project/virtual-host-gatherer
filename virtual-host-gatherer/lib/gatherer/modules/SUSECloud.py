@@ -35,11 +35,11 @@ class SUSECloud(WorkerInterface):
     """
 
     DEFAULT_PARAMETERS = OrderedDict([
-        ('host', ''),
+        ('hostname', ''),
         ('port', 5000),
-        ('user', ''),
-        ('pass', ''),
-        ('proto', 'https'),
+        ('username', ''),
+        ('password', ''),
+        ('protocol', 'https'),
         ('tenant', 'openstack')])
 
     def __init__(self):
@@ -67,10 +67,10 @@ class SUSECloud(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.host = node['host']
+        self.host = node['hostname']
         self.port = node.get('port', 5000)
-        self.user = node['user']
-        self.password = node['pass']
+        self.user = node['username']
+        self.password = node['password']
         self.tenant = node['tenant']
 
     def parameters(self):

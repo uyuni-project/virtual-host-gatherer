@@ -37,10 +37,10 @@ class VMware(WorkerInterface):
     """
 
     DEFAULT_PARAMETERS = OrderedDict([
-        ('host', ''),
+        ('hostname', ''),
         ('port', 443),
-        ('user', ''),
-        ('pass', '')])
+        ('username', ''),
+        ('password', '')])
 
     def __init__(self):
         """
@@ -67,10 +67,10 @@ class VMware(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.host = node['host']
+        self.host = node['hostname']
         self.port = node.get('port', 443)
-        self.user = node['user']
-        self.password = node['pass']
+        self.user = node['username']
+        self.password = node['password']
 
     def parameters(self):
         """
