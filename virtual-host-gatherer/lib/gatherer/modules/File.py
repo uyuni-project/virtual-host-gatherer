@@ -21,6 +21,7 @@ File Worker module implementation.
 from __future__ import print_function, absolute_import, division
 import logging
 from gatherer.modules import WorkerInterface
+from collections import OrderedDict
 import json
 
 try:
@@ -36,9 +37,7 @@ class File(WorkerInterface):
     Worker class for the VMWare.
     """
 
-    DEFAULT_PARAMETERS = {
-        'url': ''
-    }
+    DEFAULT_PARAMETERS = OrderedDict([('url', '')])
 
     def __init__(self):
         """

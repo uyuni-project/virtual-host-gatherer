@@ -22,6 +22,7 @@ from __future__ import print_function, absolute_import, division
 import logging
 import atexit
 from gatherer.modules import WorkerInterface
+from collections import OrderedDict
 
 try:
     from pyVim.connect import SmartConnect, Disconnect
@@ -35,12 +36,11 @@ class VMware(WorkerInterface):
     Worker class for the VMWare.
     """
 
-    DEFAULT_PARAMETERS = {
-        'host': '',
-        'port': 443,
-        'user': '',
-        'pass': ''
-    }
+    DEFAULT_PARAMETERS = OrderedDict([
+        ('host', ''),
+        ('port', 443),
+        ('user', ''),
+        ('pass', '')])
 
     def __init__(self):
         """

@@ -26,6 +26,7 @@ import uuid
 from logging.handlers import RotatingFileHandler
 from os.path import expanduser
 from gatherer.modules import WorkerInterface
+from collections import OrderedDict
 
 
 def parse_options():
@@ -102,8 +103,8 @@ class Gatherer(object):
         if not self.modules:
             self._load_modules()
         for modname, inst in self.modules.items():
-            params[modname] = inst.parameters()
-            params[modname]['module'] = modname
+            moditem = OrderedDict([('module', modname)])
+            params[modname] = OrderedDict(moditem.items() + inst.parameters().items())
         return params
 
     def _run(self):
@@ -157,9 +158,9 @@ class Gatherer(object):
             installed_modules = self.list_modules()
             if self.options.outfile:
                 with open(self.options.outfile, 'w') as output_file:
-                    json.dump(installed_modules, output_file, sort_keys=True, indent=4, separators=(',', ': '))
+                    json.dump(installed_modules, output_file, sort_keys=False, indent=4, separators=(',', ': '))
             else:
-                print(json.dumps(installed_modules, sort_keys=True, indent=4, separators=(',', ': ')))
+                print(json.dumps(installed_modules, sort_keys=False, indent=4, separators=(',', ': ')))
             return
 
         if not self.options.infile:

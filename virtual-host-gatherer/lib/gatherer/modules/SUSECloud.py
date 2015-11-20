@@ -20,6 +20,7 @@ from __future__ import print_function, absolute_import
 import json
 import logging
 from gatherer.modules import WorkerInterface
+from collections import OrderedDict
 
 try:
     from novaclient.v1_1 import client
@@ -33,14 +34,13 @@ class SUSECloud(WorkerInterface):
     Worker class for the SUSE Cloud.
     """
 
-    DEFAULT_PARAMETERS = {
-        'host': '',
-        'port': 5000,
-        'user': '',
-        'pass': '',
-        'proto': 'https',
-        'tenant': 'openstack'
-    }
+    DEFAULT_PARAMETERS = OrderedDict([
+        ('host', ''),
+        ('port', 5000),
+        ('user', ''),
+        ('pass', ''),
+        ('proto', 'https'),
+        ('tenant', 'openstack')])
 
     def __init__(self):
         """
