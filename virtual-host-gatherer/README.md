@@ -11,23 +11,26 @@ List all installed modules with the required paramater:
 $> scripts/virtual-host-gatherer --list-modules
 {
     "SUSECloud": {
-        "host": "",
         "module": "SUSECloud",
-        "pass": "",
+        "hostname": "",
         "port": 5000,
-        "proto": "https",
-        "tenant": "openstack",
-        "user": ""
+        "username": "",
+        "password": "",
+        "protocol": "https",
+        "tenant": "openstack"
+    },
+    "File": {
+        "module": "File",
+        "url": ""
     },
     "VMware": {
-        "host": "",
         "module": "VMware",
-        "pass": "",
+        "hostname": "",
         "port": 443,
-        "user": ""
+        "username": "",
+        "password": ""
     }
 }
-
 ```
 
 Additionally you can provide an *id* parameter. This will be used as key
@@ -41,19 +44,19 @@ Example input file (infile.json):
     {
         "id": "myvcenter",
         "module": "VMware",
-        "host": "vCenter.domain.top",
-        "user": "admin",
-        "pass": "secret",
+        "hostname": "vCenter.domain.top",
+        "username": "admin",
+        "password": "secret",
         "port": 443
     },
     {
         "id": "mysusecloud",
         "module" : "SUSECloud",
-        "proto" : "http",
-        "host" : "susecloud.domain.top",
+        "protocol" : "http",
+        "hostname" : "susecloud.domain.top",
         "port" : 5000,
-        "user" : "admin",
-        "pass" : "secret",
+        "username" : "admin",
+        "password" : "secret",
         "tenant" : "openstack"
   }
 ]

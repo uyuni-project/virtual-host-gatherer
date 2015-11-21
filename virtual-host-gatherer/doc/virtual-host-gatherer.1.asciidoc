@@ -44,12 +44,16 @@ List all installed modules with the required paramater:
 
   $> scripts/virtual-host-gatherer --list-modules
   {
+    "File": {
+        "module": "File",
+        "url": ""
+    },
     "VMware": {
-        "host": "",
         "module": "VMware",
-        "pass": "",
+        "hostname": "",
         "port": 443,
-        "user": ""
+        "username": "",
+        "password": ""
     }
   }
 
@@ -59,9 +63,9 @@ Example input file (infile.json):
     {
         "id": "myvcenter",
         "module": "VMware",
-        "host": "vCenter.domain.top",
-        "user": "admin",
-        "pass": "secret",
+        "hostname": "vCenter.domain.top",
+        "username": "admin",
+        "password": "secret",
         "port": 443
     },
   ]
