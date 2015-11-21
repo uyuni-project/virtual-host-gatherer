@@ -85,8 +85,11 @@ class File(WorkerInterface):
         self.log.debug("Fetching %s", self.url)
         if not urlparse.urlsplit(self.url).scheme:
             self.url = "file://%s" % self.url
-
-        output = json.loads(urlgrabber.urlread(str(self.url), timeout=300))
+        try:
+            output = json.loads(urlgrabber.urlread(str(self.url), timeout=300))
+        except Exception, e:
+            self.log.error("Unable to fetch '%s': %s" % (str(self.url), e))
+            return None
         # pylint: disable=W1622
         first = output.itervalues().next()
         if "vms" not in first:
