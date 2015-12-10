@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Dec 10 17:46:25 CET 2015 - mc@suse.de
+
+- version 1.0.11-1
+- rename parameter in the README and manpage
+- catch exception and write error message in the log
+
+-------------------------------------------------------------------
 Fri Nov 20 12:57:42 CET 2015 - mc@suse.de
 
 - version 1.0.10-1
