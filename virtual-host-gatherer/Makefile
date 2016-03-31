@@ -19,8 +19,12 @@ py3k ::
 py3k_in_docker ::
 	pylint --py3k --rcfile ./.pylintrc --output-format=parseable --reports=y lib/gatherer scripts/virtual-host-gathererr > reports/py3k.log ||:
 
-docker_pylint ::
+docker_pylint :: pull_container
 	docker run --rm -e $(DOCKER_RUN_EXPORT) $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/$(DOCKER_CONTAINER_NAME) /bin/sh -c "cd /gatherer; make pylint_in_docker; make py3k_in_docker"
 
 docker_shell ::
 	docker run -t -i --rm -e $(DOCKER_RUN_EXPORT) $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/$(DOCKER_CONTAINER_NAME) /bin/bash
+
+pull_container ::
+	@echo "Pulling container"
+	docker pull $(DOCKER_REGISTRY)/$(DOCKER_CONTAINER_NAME)
