@@ -1,6 +1,6 @@
 # Docker tests variables
 DOCKER_CONTAINER_NAME = suma-head-gatherer
-DOCKER_REGISTRY       = suma-docker-${DOCKER_REGISTRY}
+DOCKER_REGISTRY       = ${DOCKER_REGISTRY}
 DOCKER_RUN_EXPORT     = "PYTHONPATH=/gatherer/"
 DOCKER_VOLUMES        = -v "$(CURDIR)/:/gatherer"
 
