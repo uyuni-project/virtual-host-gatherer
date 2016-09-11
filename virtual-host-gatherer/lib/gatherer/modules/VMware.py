@@ -102,6 +102,11 @@ class VMware(WorkerInterface):
             )
             return
 
+        vmState = {
+                'poweredOff': 'stopped',
+                'poweredOn': 'running',
+                'suspended': 'paused'
+                }
 
         content = connection.RetrieveContent()
         output = dict()
@@ -128,7 +133,8 @@ class VMware(WorkerInterface):
                             'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
                             'cpuArch': 'x86_64',
                             'ramMb': ram,
-                            'vms': {}
+                            'vms': {},
+                            'optionalVmData': {}
                         }
                         # If an additional hardware info is wanted:
                         # print "pciDevice: %s" % host.hardware.pciDevice
@@ -137,7 +143,10 @@ class VMware(WorkerInterface):
                             # print "Guest State: %s" % vm.runtime.powerState
                             # print "Guest CPUs: %s" % vm.summary.config.numCpu
                             # print "Guest RAM: %s" % vm.summary.config.memorySizeMB
-                            output[host_name]['vms'][virtual_machine.config.name] = virtual_machine.config.uuid
+                            vmname = virtual_machine.config.name
+                            output[host_name]['vms'][vmname] = virtual_machine.config.uuid
+                            output[host_name]['optionalVmData'][vmname]['vmState'] = vmState.get(virtual_machine.runtime.powerState, 'unknown')
+
         Disconnect(connection)
         return output
 
