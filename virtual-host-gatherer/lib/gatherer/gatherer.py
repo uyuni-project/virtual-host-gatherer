@@ -125,6 +125,9 @@ class Gatherer(object):
 
         output = dict()
         for node in mgm_nodes:
+            if self.options.verbose >= 2:
+                self.log.debug("Input Node: '%s'", self._sanitize_passwords(node))
+
             if 'module' not in node:
                 self.log.error("Skipping undefined module in the input file.")
                 continue
@@ -136,6 +139,9 @@ class Gatherer(object):
             worker = self.modules[modname]
             worker.set_node(node)
             output[node.get("id", str(uuid.uuid4()))] = worker.run()
+
+        if self.options.verbose >= 2:
+            self.log.debug("Output: '%s'", json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 
         if self.options.outfile:
             with open(self.options.outfile, 'w') as input_file:
@@ -207,3 +213,19 @@ class Gatherer(object):
             except ImportError:
                 self.log.debug('Module "%s" was not loaded.', module_name)
                 raise
+
+    def _sanitize_passwords(self, indict):
+        """
+        Remove passwords from input dict
+
+        :return dict
+        """
+
+        match_list = ['pass', 'password']
+        ret = indict.copy()
+
+        for match in match_list:
+            for key in ret:
+                if match in key.lower() and ret[key]:
+                    ret[key] = '**secret**'
+        return ret
