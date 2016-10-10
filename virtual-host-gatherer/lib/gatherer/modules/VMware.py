@@ -89,7 +89,12 @@ class VMware(WorkerInterface):
         """
 
         self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
-        connection = SmartConnect(host=self.host, user=self.user, pwd=self.password, port=int(self.port))
+        try:
+            connection = SmartConnect(host=self.host, user=self.user, pwd=self.password, port=int(self.port))
+            atexit.register(Disconnect, connection)
+        except IOError as ex:
+            self.log.error(ex)
+            connection = None
         if not connection:
             self.log.error(
                 "Could not connect to the specified host using specified "
@@ -97,7 +102,6 @@ class VMware(WorkerInterface):
             )
             return
 
-        atexit.register(Disconnect, connection)
 
         content = connection.RetrieveContent()
         output = dict()
