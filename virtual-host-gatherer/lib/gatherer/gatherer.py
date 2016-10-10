@@ -168,7 +168,11 @@ class Gatherer(object):
             return
 
         self.log.warning("Scanning began")
-        self._run()
+        try:
+            self._run()
+        except Exception as ex:
+            self.log.error(ex)
+            raise
         self.log.warning("Scanning finished")
 
     def _load_modules(self):
