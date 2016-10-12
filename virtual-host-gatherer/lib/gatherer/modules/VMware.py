@@ -95,7 +95,7 @@ class VMware(WorkerInterface):
         except IOError as ex:
             self.log.error(ex)
             connection = None
-        if not connection:
+        if connection is None:
             self.log.error(
                 "Could not connect to the specified host using specified "
                 "username and password."
