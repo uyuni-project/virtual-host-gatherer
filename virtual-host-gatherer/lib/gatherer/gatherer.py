@@ -216,16 +216,14 @@ class Gatherer(object):
 
     def _sanitize_passwords(self, indict):
         """
-        Remove passwords from input dict
+        Return a copy of indict and remove passwords from it
 
         :return dict
         """
 
-        match_list = ['pass', 'password']
         ret = indict.copy()
 
-        for match in match_list:
-            for key in ret:
-                if match in key.lower() and ret[key]:
-                    ret[key] = '**secret**'
+        for key in ret:
+            if key.lower().startswith('pass'):
+                ret[key] = '**secret**'
         return ret
