@@ -216,7 +216,8 @@ class Gatherer(object):
 
     def _sanitize_passwords(self, indict):
         """
-        Return a copy of indict and remove passwords from it
+        Return a carbon copy of the input data dictionary without
+        possible passwords in keys like "password", "passwd", "pass".
 
         :return dict
         """
