@@ -126,7 +126,7 @@ class Gatherer(object):
         output = dict()
         for node in mgm_nodes:
             if self.options.verbose >= 2:
-                self.log.debug("Input Node: '%s'", self._sanitize_passwords(node))
+                self.log.debug("Input Node: '%s'", self._remove_passwords(node))
 
             if 'module' not in node:
                 self.log.error("Skipping undefined module in the input file.")
@@ -214,7 +214,7 @@ class Gatherer(object):
                 self.log.debug('Module "%s" was not loaded.', module_name)
                 raise
 
-    def _sanitize_passwords(self, indict):
+    def _remove_passwords(self, indict):
         """
         Return a carbon copy of the input data dictionary without
         possible passwords in keys like "password", "passwd", "pass".
