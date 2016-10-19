@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Wed Oct 19 13:47:04 CEST 2016 - mc@suse.de
+
+- version 1.0.12-1
+- log input and output in debug mode
+- improve error logging in VMware module
+
+-------------------------------------------------------------------
 Thu Dec 10 17:46:25 CET 2015 - mc@suse.de
 
 - version 1.0.11-1
