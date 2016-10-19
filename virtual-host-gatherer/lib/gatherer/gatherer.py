@@ -125,6 +125,9 @@ class Gatherer(object):
 
         output = dict()
         for node in mgm_nodes:
+            if self.options.verbose >= 2:
+                self.log.debug("Input Node: '%s'", self._remove_passwords(node))
+
             if 'module' not in node:
                 self.log.error("Skipping undefined module in the input file.")
                 continue
@@ -136,6 +139,9 @@ class Gatherer(object):
             worker = self.modules[modname]
             worker.set_node(node)
             output[node.get("id", str(uuid.uuid4()))] = worker.run()
+
+        if self.options.verbose >= 2:
+            self.log.debug("Output: '%s'", json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 
         if self.options.outfile:
             with open(self.options.outfile, 'w') as input_file:
@@ -168,7 +174,11 @@ class Gatherer(object):
             return
 
         self.log.warning("Scanning began")
-        self._run()
+        try:
+            self._run()
+        except Exception as ex:
+            self.log.error(ex)
+            raise
         self.log.warning("Scanning finished")
 
     def _load_modules(self):
@@ -203,3 +213,18 @@ class Gatherer(object):
             except ImportError:
                 self.log.debug('Module "%s" was not loaded.', module_name)
                 raise
+
+    def _remove_passwords(self, indict):
+        """
+        Return a carbon copy of the input data dictionary without
+        possible passwords in keys like "password", "passwd", "pass".
+
+        :return dict
+        """
+
+        ret = indict.copy()
+
+        for key in ret:
+            if key.lower().startswith('pass'):
+                ret[key] = '**secret**'
+        return ret
