@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Wed Mar 01 10:49:54 WET 2017 - psuarezhernandez@suse.com
+
+- version 1.0.13-1
+- Adding support for exploring 'vim.Folder' (bsc#1025421)
+
+-------------------------------------------------------------------
 Wed Oct 19 13:47:04 CEST 2016 - mc@suse.de
 
 - version 1.0.12-1
