@@ -20,6 +20,10 @@ Kubernetes Worker module implementation.
 
 from __future__ import print_function, absolute_import, division
 import logging
+import tempfile
+import os
+import base64
+import re
 from gatherer.modules import WorkerInterface
 from collections import OrderedDict
 
@@ -72,11 +76,11 @@ class Kubernetes(WorkerInterface):
             raise error
 
         self.url = node['url']
-        self.user = node['username']
-        self.password = node['password']
-        self.client_cert = node['client-cert']
-        self.client_key = node['client-key']
-        self.ca_cert = node['ca-cert']
+        self.user = node.get('username')
+        self.password = node.get('password')
+        self.client_cert = node.get('client-cert')
+        self.client_key = node.get('client-key')
+        self.ca_cert = node.get('ca-cert')
 
     def parameters(self):
         """
@@ -95,16 +99,93 @@ class Kubernetes(WorkerInterface):
         """
 
         output = dict()
+        self._setup_connection()
+        try:
+            api_instance = kubernetes.client.CoreV1Api()
+            api_response = api_instance.list_node()
+
+            for node in api_response.items:
+                cpu = node.status.capacity.get('cpu')
+                memory = 0
+                reg = re.compile('^(\d+)(\w+)$')
+                if reg.match(node.status.capacity.get('memory')):
+                    memory, unit = reg.match(node.status.capacity.get('memory')).groups()
+                    if unit == "Ki":
+                        memory = int(memory) / 1024
+                    if unit == "Gi":
+                        memory = int(memory) * 1024
+                arch = node.status.node_info.architecture
+                if arch.lower() == "amd64":
+                    arch = "x86_64"
+
+                output[node.metadata.name] = {
+                        'type': 'kubernetes',
+                        'cpuArch': arch,
+                        'cpuDescription': "(unknown)",
+                        'cpuMhz': cpu,
+                        'cpuVendor': "(unknown)",
+                        'hostIdentifier': node.status.node_info.machine_id,
+                        'name': node.metadata.name,
+                        'os': node.status.node_info.os_image,
+                        'osVersion': 1,
+                        'ramMb': int(memory),
+                        'totalCpuCores': cpu,
+                        'totalCpuSockets': cpu,
+                        'totalCpuThreads': 1,
+                        'vms': {}
+                        }
+
+        except (ApiException, HTTPError) as exc:
+            if isinstance(exc, ApiException) and exc.status == 404:
+                self.log.error("API Endpoint not found (404)")
+                return None
+            else:
+                self.log.exception(
+                    'Exception when calling CoreV1Api->list_node: {0}'.format(exc)
+                )
+                return None
+
+        finally:
+            self._cleanup()
         return output
 
     def valid(self):
         """
         Check plugin class validity.
 
-        :return: True if pyVim module is installed.
+        :return: True if kubernetes module is installed.
         """
 
         return IS_VALID
+
+    def _setup_connection(self):
+        kubernetes.client.configuration.__init__()
+        kubernetes.client.configuration.host = self.url
+        kubernetes.client.configuration.user = self.user
+        kubernetes.client.configuration.passwd = self.password
+        if self.ca_cert:
+            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as ca:
+                ca.write(base64.b64decode(self.ca_cert))
+                kubernetes.client.configuration.ssl_ca_cert = ca.name
+        if self.client_cert:
+            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as c:
+                c.write(base64.b64decode(self.client_cert))
+                kubernetes.client.configuration.cert_file = c.name
+        if self.client_key:
+            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as k:
+                k.write(base64.b64decode(self.client_key))
+                kubernetes.client.configuration.key_file = k.name
+
+    def _cleanup(self):
+        ca = kubernetes.client.configuration.ssl_ca_cert
+        cert = kubernetes.client.configuration.cert_file
+        key = kubernetes.client.configuration.key_file
+        if cert and os.path.exists(cert):
+            Kubernetes._safe_rm(cert)
+        if key and os.path.exists(key):
+            Kubernetes._safe_rm(key)
+        if ca and os.path.exists(ca):
+            Kubernetes._safe_rm(ca)
 
     def _validate_parameters(self, node):
         """
@@ -114,6 +195,16 @@ class Kubernetes(WorkerInterface):
         :return:
         """
 
-        if not node.get('url')
+        if not node.get('url'):
             raise AttributeError("Missing parameter or value '{0}' in infile".format(url))
+
+    @staticmethod
+    def _safe_rm(tgt):
+        '''
+        Safely remove a file
+        '''
+        try:
+            os.remove(tgt)
+        except (IOError, OSError):
+            pass
 
