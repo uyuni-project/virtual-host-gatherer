@@ -82,6 +82,10 @@ class VMware(WorkerInterface):
         return self.DEFAULT_PARAMETERS
 
     def __process_node(self, node, output):
+        """
+        Process parameters of a node and fill the output structure
+        """
+
         if hasattr(node, "host"):
             # vim.ClusterComputeResource
             for host in node.host:
