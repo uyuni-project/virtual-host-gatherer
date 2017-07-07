@@ -58,7 +58,8 @@ class Kubernetes(WorkerInterface):
         """
 
         self.log = logging.getLogger(__name__)
-        self.host = self.port = self.user = self.password = None
+        self.url = self.user = self.password = None
+        self.client_cert = self.client_key = self.ca_cert = None
 
     # pylint: disable=R0801
     def set_node(self, node):
@@ -107,7 +108,7 @@ class Kubernetes(WorkerInterface):
             for node in api_response.items:
                 cpu = node.status.capacity.get('cpu')
                 memory = 0
-                reg = re.compile('^(\d+)(\w+)$')
+                reg = re.compile(r'^(\d+)(\w+)$')
                 if reg.match(node.status.capacity.get('memory')):
                     memory, unit = reg.match(node.status.capacity.get('memory')).groups()
                     if unit == "Ki":
@@ -159,33 +160,41 @@ class Kubernetes(WorkerInterface):
         return IS_VALID
 
     def _setup_connection(self):
+        """
+        Setup and configure connection to Kubernetes
+        """
+
         kubernetes.client.configuration.__init__()
         kubernetes.client.configuration.host = self.url
         kubernetes.client.configuration.user = self.user
         kubernetes.client.configuration.passwd = self.password
         if self.ca_cert:
-            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as ca:
-                ca.write(base64.b64decode(self.ca_cert))
-                kubernetes.client.configuration.ssl_ca_cert = ca.name
+            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cacert:
+                cacert.write(base64.b64decode(self.ca_cert))
+                kubernetes.client.configuration.ssl_ca_cert = cacert.name
         if self.client_cert:
-            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as c:
-                c.write(base64.b64decode(self.client_cert))
-                kubernetes.client.configuration.cert_file = c.name
+            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cert:
+                cert.write(base64.b64decode(self.client_cert))
+                kubernetes.client.configuration.cert_file = cert.name
         if self.client_key:
-            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as k:
-                k.write(base64.b64decode(self.client_key))
-                kubernetes.client.configuration.key_file = k.name
+            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as key:
+                key.write(base64.b64decode(self.client_key))
+                kubernetes.client.configuration.key_file = key.name
 
     def _cleanup(self):
-        ca = kubernetes.client.configuration.ssl_ca_cert
+        """
+        Remove temporary created files
+        """
+
+        cacert = kubernetes.client.configuration.ssl_ca_cert
         cert = kubernetes.client.configuration.cert_file
         key = kubernetes.client.configuration.key_file
         if cert and os.path.exists(cert):
             Kubernetes._safe_rm(cert)
         if key and os.path.exists(key):
             Kubernetes._safe_rm(key)
-        if ca and os.path.exists(ca):
-            Kubernetes._safe_rm(ca)
+        if cacert and os.path.exists(cacert):
+            Kubernetes._safe_rm(cacert)
 
     def _validate_parameters(self, node):
         """
@@ -196,13 +205,13 @@ class Kubernetes(WorkerInterface):
         """
 
         if not node.get('url'):
-            raise AttributeError("Missing parameter or value '{0}' in infile".format(url))
+            raise AttributeError("Missing parameter or value 'url' in infile")
 
     @staticmethod
     def _safe_rm(tgt):
-        '''
+        """
         Safely remove a file
-        '''
+        """
         try:
             os.remove(tgt)
         except (IOError, OSError):
