@@ -48,7 +48,10 @@ class Kubernetes(WorkerInterface):
         ('password', ''),
         ('client-cert', ''),
         ('client-key', ''),
-        ('ca-cert', '')])
+        ('ca-cert', ''),
+        ('kubeconfig', ''),
+        ('context', '')
+    ])
 
     def __init__(self):
         """
@@ -76,12 +79,14 @@ class Kubernetes(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.url = node['url']
+        self.url = node.get('url')
         self.user = node.get('username')
         self.password = node.get('password')
         self.client_cert = node.get('client-cert')
         self.client_key = node.get('client-key')
         self.ca_cert = node.get('ca-cert')
+        self.kubeconfig = node.get('kubeconfig')
+        self.context = node.get('context')
 
     def parameters(self):
         """
@@ -163,23 +168,25 @@ class Kubernetes(WorkerInterface):
         """
         Setup and configure connection to Kubernetes
         """
-
-        kubernetes.client.configuration.__init__()
-        kubernetes.client.configuration.host = self.url
-        kubernetes.client.configuration.user = self.user
-        kubernetes.client.configuration.passwd = self.password
-        if self.ca_cert:
-            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cacert:
-                cacert.write(base64.b64decode(self.ca_cert))
-                kubernetes.client.configuration.ssl_ca_cert = cacert.name
-        if self.client_cert:
-            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cert:
-                cert.write(base64.b64decode(self.client_cert))
-                kubernetes.client.configuration.cert_file = cert.name
-        if self.client_key:
-            with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as key:
-                key.write(base64.b64decode(self.client_key))
-                kubernetes.client.configuration.key_file = key.name
+        if self.kubeconfig and self.context:
+            kubernetes.config.load_kube_config(config_file=self.kubeconfig, context=self.context)
+        else:
+            kubernetes.client.configuration.__init__()
+            kubernetes.client.configuration.host = self.url
+            kubernetes.client.configuration.user = self.user
+            kubernetes.client.configuration.passwd = self.password
+            if self.ca_cert:
+                with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cacert:
+                    cacert.write(base64.b64decode(self.ca_cert))
+                    kubernetes.client.configuration.ssl_ca_cert = cacert.name
+            if self.client_cert:
+                with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cert:
+                    cert.write(base64.b64decode(self.client_cert))
+                    kubernetes.client.configuration.cert_file = cert.name
+            if self.client_key:
+                with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as key:
+                    key.write(base64.b64decode(self.client_key))
+                    kubernetes.client.configuration.key_file = key.name
 
     def _cleanup(self):
         """
@@ -204,8 +211,8 @@ class Kubernetes(WorkerInterface):
         :return:
         """
 
-        if not node.get('url'):
-            raise AttributeError("Missing parameter or value 'url' in infile")
+        if not node.get('url') and not (node.get('kubeconfig') and node.get('context')):
+            raise AttributeError("Missing either parameter or value 'url' or 'kubeconfig' and 'context' in infile")
 
     @staticmethod
     def _safe_rm(tgt):
