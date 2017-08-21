@@ -24,6 +24,7 @@ import tempfile
 import os
 import base64
 import re
+import errno
 from gatherer.modules import WorkerInterface
 from collections import OrderedDict
 
@@ -32,9 +33,9 @@ try:
     import kubernetes.client
     from kubernetes.client.rest import ApiException
     from urllib3.exceptions import HTTPError
-    IS_VALID = True
+    HAS_REQUIRED_MODULES = True
 except ImportError as ex:
-    IS_VALID = False
+    HAS_REQUIRED_MODULES = False
 
 
 class Kubernetes(WorkerInterface):
@@ -144,12 +145,12 @@ class Kubernetes(WorkerInterface):
         except (ApiException, HTTPError) as exc:
             if isinstance(exc, ApiException) and exc.status == 404:
                 self.log.error("API Endpoint not found (404)")
-                return None
+                output = None
             else:
                 self.log.exception(
                     'Exception when calling CoreV1Api->list_node: {0}'.format(exc)
                 )
-                return None
+                output = None
 
         finally:
             self._cleanup()
@@ -162,7 +163,7 @@ class Kubernetes(WorkerInterface):
         :return: True if kubernetes module is installed.
         """
 
-        return IS_VALID
+        return HAS_REQUIRED_MODULES
 
     def _setup_connection(self):
         """
@@ -193,15 +194,10 @@ class Kubernetes(WorkerInterface):
         Remove temporary created files
         """
 
-        cacert = kubernetes.client.configuration.ssl_ca_cert
-        cert = kubernetes.client.configuration.cert_file
-        key = kubernetes.client.configuration.key_file
-        if cert and os.path.exists(cert):
-            Kubernetes._safe_rm(cert)
-        if key and os.path.exists(key):
-            Kubernetes._safe_rm(key)
-        if cacert and os.path.exists(cacert):
-            Kubernetes._safe_rm(cacert)
+        for path in [kubernetes.client.configuration.ssl_ca_cert,
+                     kubernetes.client.configuration.cert_file,
+                     kubernetes.client.configuration.key_file]:
+            Kubernetes._safe_rm(path)
 
     def _validate_parameters(self, node):
         """
@@ -215,12 +211,17 @@ class Kubernetes(WorkerInterface):
             raise AttributeError("Missing either parameter or value 'url' or 'kubeconfig' and 'context' in infile")
 
     @staticmethod
-    def _safe_rm(tgt):
+    def _safe_rm(path):
         """
-        Safely remove a file
+        Safely remove a file. Do not raise any error. Just log possible problems
         """
-        try:
-            os.remove(tgt)
-        except (IOError, OSError):
-            pass
+        if path is None:
+            path = ''
+        if os.path.exists(path):  # Empty path returns to False
+            try:
+                os.remove(path)
+            except (IOError, OSError) as ex:
+                if ex.errno != errno.ENOENT:
+                    log.error('Unable to remove file "{0}": {1}'.format(path, ex.message))
+                pass
 
