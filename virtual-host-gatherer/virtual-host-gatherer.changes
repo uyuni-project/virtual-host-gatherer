@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Tue Aug 22 11:05:03 CEST 2017 - mc@suse.de
+
+- version 1.0.14-1
+- Params to configure Kuberntes module from kubeconfig
+- implement kubernetes gatherer module
+
+-------------------------------------------------------------------
 Wed Mar 01 10:49:54 WET 2017 - psuarezhernandez@suse.com
 
 - version 1.0.13-1
