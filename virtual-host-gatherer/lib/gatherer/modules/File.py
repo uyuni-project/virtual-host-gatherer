@@ -87,8 +87,8 @@ class File(WorkerInterface):
             self.url = "file://%s" % self.url
         try:
             output = json.loads(urlgrabber.urlread(str(self.url), timeout=300))
-        except Exception, e:
-            self.log.error("Unable to fetch '%s': %s" % (str(self.url), e))
+        except Exception as exc:
+            self.log.error("Unable to fetch '{0}': {1}".format(str(self.url), exc))
             return None
         # pylint: disable=W1622
         first = output.itervalues().next()

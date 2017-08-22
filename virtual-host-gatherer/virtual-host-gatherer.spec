@@ -62,6 +62,15 @@ Requires:       python-novaclient
 SUSE Cloud connection module for gatherer
 %endif
 
+%package Kubernetes
+Summary:        Kubernetes connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+Requires:       python-kubernetes
+
+%description Kubernetes
+Kubernetes connection module for gatherer
+
 %prep
 %setup -q
 
@@ -108,5 +117,9 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/SUSECloud.py*
 %endif
+
+%files Kubernetes
+%defattr(-,root,root,-)
+%{python_sitelib}/gatherer/modules/Kubernetes.py*
 
 %changelog
