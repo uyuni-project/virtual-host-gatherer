@@ -1,3 +1,7 @@
+-------------------------------------------------------------------
+Tue Nov 07 15:29:51 WET 2017 - psuarezhernandez@suse.com
+
+- version 1.0.15-1
 - Skip safely VMs which have no config attribute on VMware (bsc#1066923)
 
 -------------------------------------------------------------------
