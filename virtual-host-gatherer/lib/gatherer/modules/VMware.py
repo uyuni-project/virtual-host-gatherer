@@ -115,7 +115,12 @@ class VMware(WorkerInterface):
                     # print "Guest State: %s" % vm.runtime.powerState
                     # print "Guest CPUs: %s" % vm.summary.config.numCpu
                     # print "Guest RAM: %s" % vm.summary.config.memorySizeMB
-                    output[host_name]['vms'][virtual_machine.config.name] = virtual_machine.config.uuid
+                    # NOTE: 'vm.config is not always available. Skipping vm if an exception is raised.
+                    # Ref: https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html
+                    try:
+                        output[host_name]['vms'][virtual_machine.config.name] = virtual_machine.config.uuid
+                    except AttributeError:
+                        self.log.warning("Missing config for vm {0}. Skipping it.".format(virtual_machine.summary.vm))
 
         elif hasattr(node, "childEntity"):
             # vim.Folder
