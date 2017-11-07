@@ -1,3 +1,5 @@
+- Skip safely VMs which have no config attribute on VMware (bsc#1066923)
+
 -------------------------------------------------------------------
 Tue Aug 22 11:05:03 CEST 2017 - mc@suse.de
 
