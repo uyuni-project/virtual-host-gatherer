@@ -81,12 +81,31 @@ class VMware(WorkerInterface):
 
         return self.DEFAULT_PARAMETERS
 
+    def __explore_nodes(self, node, output):
+        """
+        Explore tree nodes in depth and process hosts
+        """
+        try:
+            if hasattr(node, 'hostFolder'):
+                # child is now a "datacenter" and it can contain
+                # clusters or folders.
+                for child in node.hostFolder.childEntity:
+                    self.__explore_nodes(child, output)
+            elif hasattr(node, 'childEntity'):
+                # vim.Folder
+                for child in node.childEntity:
+                    self.__explore_nodes(child, output)
+            elif hasattr(node, "host"):
+                # vim.Host
+                self.__process_node(node, output)
+        except Exception as exc:
+            self.log.error("Unexpected error exploring nodes: {0}".format(exc))
+
     def __process_node(self, node, output):
         """
         Process parameters of a node and fill the output structure
         """
-
-        if hasattr(node, "host"):
+        try:
             # vim.ClusterComputeResource
             for host in node.host:
                 host_name = host.summary.config.name.split()[0]
@@ -121,11 +140,8 @@ class VMware(WorkerInterface):
                         output[host_name]['vms'][virtual_machine.config.name] = virtual_machine.config.uuid
                     except AttributeError:
                         self.log.warning("Missing config for vm {0}. Skipping it.".format(virtual_machine.summary.vm))
-
-        elif hasattr(node, "childEntity"):
-            # vim.Folder
-            for child in node.childEntity:
-                self.__process_node(child, output)
+        except (AttributeError, KeyError, IndexError) as exc:
+            self.log.error("Unexpected error processing node: {0}".format(exc))
 
     def run(self):
         """
@@ -148,20 +164,10 @@ class VMware(WorkerInterface):
             )
             return
 
-
         content = connection.RetrieveContent()
         output = dict()
         for child in content.rootFolder.childEntity:
-            if hasattr(child, 'hostFolder'):
-                # child is now a "datacenter" and it can contain
-                # clusters or folders.
-                children_list = child.hostFolder.childEntity
-                for children in children_list:
-                    try:
-                        self.__process_node(children, output)
-                    except (AttributeError, KeyError, IndexError) as exc:
-                        self.log.error("Unexpected error processing node: {0}".format(exc))
-
+            self.__explore_nodes(child, output)
         Disconnect(connection)
         return output
 
