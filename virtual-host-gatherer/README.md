@@ -127,6 +127,11 @@ Example output file (outfile.json):
             "type": "vmware",
             "vms": {
                 "vCenter": "564d6d90-459c-2256-8f39-3cb2bd24b7b0"
+            },
+            "optionalVmData": {
+                "vCenter": {
+                    "vmState": "stopped"
+                }
             }
         },
         "10.0.0.2": {
@@ -149,6 +154,23 @@ Example output file (outfile.json):
                 "NSX-gateway": "4230d43e-aafe-38ba-5a9e-3cb67c03a16a",
                 "NSX-l3gateway": "4230b00f-0b21-0e9d-dfde-6c7b06909d5f",
                 "NSX-service": "4230e924-b714-198b-348b-25de01482fd9"
+            },
+            "optionalVmData": {
+                "49737e0a-c9e6-4ceb-aef8-6a9452f67cb5": {
+                    "vmState": "unknown"
+                },
+                "5a2e4e63-a957-426b-bfa8-4169302e4fdb": {
+                    "vmState": "running"
+                },
+                "NSX-gateway": {
+                    "vmState": "running"
+                },
+                "NSX-l3gateway": {
+                    "vmState": "running"
+                },
+                "NSX-service": {
+                    "vmState": "stopped"
+                }
             }
         }
     }

@@ -42,6 +42,12 @@ class VMware(WorkerInterface):
         ('username', ''),
         ('password', '')])
 
+    VMSTATE = {
+        'poweredOff': 'stopped',
+        'poweredOn': 'running',
+        'suspended': 'paused'
+    }
+
     def __init__(self):
         """
         Constructor.
@@ -125,7 +131,8 @@ class VMware(WorkerInterface):
                     'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
                     'cpuArch': 'x86_64',
                     'ramMb': ram,
-                    'vms': {}
+                    'vms': {},
+                    'optionalVmData': {}
                 }
                 # If an additional hardware info is wanted:
                 # print "pciDevice: %s" % host.hardware.pciDevice
@@ -137,9 +144,17 @@ class VMware(WorkerInterface):
                     # NOTE: 'vm.config is not always available. Skipping vm if an exception is raised.
                     # Ref: https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html
                     try:
-                        output[host_name]['vms'][virtual_machine.config.name] = virtual_machine.config.uuid
+                        vmname = virtual_machine.config.name
+                        output[host_name]['vms'][vmname] = virtual_machine.config.uuid
+                        output[host_name]['optionalVmData'][vmname] = {}
+                        output[host_name]['optionalVmData'][vmname]['vmState'] = self.VMSTATE.get(
+                            virtual_machine.runtime.powerState, 'unknown'
+                        )
                     except AttributeError:
-                        self.log.warning("Missing config for vm {0}. Skipping it.".format(virtual_machine.summary.vm))
+                        self.log.warning(
+                            "Missing config for vm {0}. Skipping it.".format(virtual_machine.summary.vm)
+                        )
+
         except (AttributeError, KeyError, IndexError) as exc:
             self.log.error("Unexpected error processing node: {0}".format(exc))
 
