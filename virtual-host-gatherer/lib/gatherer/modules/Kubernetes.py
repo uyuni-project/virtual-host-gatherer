@@ -44,12 +44,6 @@ class Kubernetes(WorkerInterface):
     """
 
     DEFAULT_PARAMETERS = OrderedDict([
-        ('url', ''),
-        ('username', ''),
-        ('password', ''),
-        ('client-cert', ''),
-        ('client-key', ''),
-        ('ca-cert', ''),
         ('kubeconfig', ''),
         ('context', '')
     ])
@@ -62,8 +56,7 @@ class Kubernetes(WorkerInterface):
         """
 
         self.log = logging.getLogger(__name__)
-        self.url = self.user = self.password = None
-        self.client_cert = self.client_key = self.ca_cert = None
+        self.kubeconfig = self.context = None
 
     # pylint: disable=R0801
     def set_node(self, node):
@@ -80,12 +73,6 @@ class Kubernetes(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.url = node.get('url')
-        self.user = node.get('username')
-        self.password = node.get('password')
-        self.client_cert = node.get('client-cert')
-        self.client_key = node.get('client-key')
-        self.ca_cert = node.get('ca-cert')
         self.kubeconfig = node.get('kubeconfig')
         self.context = node.get('context')
 
@@ -152,8 +139,6 @@ class Kubernetes(WorkerInterface):
                 )
                 output = None
 
-        finally:
-            self._cleanup()
         return output
 
     def valid(self):
@@ -169,35 +154,7 @@ class Kubernetes(WorkerInterface):
         """
         Setup and configure connection to Kubernetes
         """
-        if self.kubeconfig and self.context:
-            kubernetes.config.load_kube_config(config_file=self.kubeconfig, context=self.context)
-        else:
-            kubernetes.client.configuration.__init__()
-            kubernetes.client.configuration.host = self.url
-            kubernetes.client.configuration.user = self.user
-            kubernetes.client.configuration.passwd = self.password
-            if self.ca_cert:
-                with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cacert:
-                    cacert.write(base64.b64decode(self.ca_cert))
-                    kubernetes.client.configuration.ssl_ca_cert = cacert.name
-            if self.client_cert:
-                with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as cert:
-                    cert.write(base64.b64decode(self.client_cert))
-                    kubernetes.client.configuration.cert_file = cert.name
-            if self.client_key:
-                with tempfile.NamedTemporaryFile(prefix='kube-', delete=False) as key:
-                    key.write(base64.b64decode(self.client_key))
-                    kubernetes.client.configuration.key_file = key.name
-
-    def _cleanup(self):
-        """
-        Remove temporary created files
-        """
-
-        for path in [kubernetes.client.configuration.ssl_ca_cert,
-                     kubernetes.client.configuration.cert_file,
-                     kubernetes.client.configuration.key_file]:
-            Kubernetes._safe_rm(path)
+        kubernetes.config.load_kube_config(config_file=self.kubeconfig, context=self.context)
 
     def _validate_parameters(self, node):
         """
@@ -207,21 +164,5 @@ class Kubernetes(WorkerInterface):
         :return:
         """
 
-        if not node.get('url') and not (node.get('kubeconfig') and node.get('context')):
-            raise AttributeError("Missing either parameter or value 'url' or 'kubeconfig' and 'context' in infile")
-
-    @staticmethod
-    def _safe_rm(path):
-        """
-        Safely remove a file. Do not raise any error. Just log possible problems
-        """
-        if path is None:
-            path = ''
-        if os.path.exists(path):  # Empty path returns to False
-            try:
-                os.remove(path)
-            except (IOError, OSError) as ex:
-                if ex.errno != errno.ENOENT:
-                    log.error('Unable to remove file "{0}": {1}'.format(path, ex.message))
-                pass
-
+        if not (node.get('kubeconfig') and node.get('context')):
+            raise AttributeError("Missing parameter 'kubeconfig' and 'context' in infile")
