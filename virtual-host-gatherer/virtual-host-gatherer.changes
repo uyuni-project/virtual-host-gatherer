@@ -1,3 +1,7 @@
+- Support kubernetes access configuration only via kubeconfig.
+  Remove other configuration options like url, username, password
+  and certificates.
+
 -------------------------------------------------------------------
 Fri Dec 22 12:07:56 WET 2017 - psuarezhernandez@suse.com
 
