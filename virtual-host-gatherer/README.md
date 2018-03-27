@@ -134,13 +134,13 @@ Example output file (outfile.json):
                 }
             }
         },
-        "10.0.0.2": {
+        "10.162.186.112": {
             "cpuArch": "x86_64",
             "cpuDescription": "AMD Opteron(tm) Processor 4386",
             "cpuMhz": 3092.212639,
             "cpuVendor": "amd",
             "hostIdentifier": "'vim.HostSystem:host-183'",
-            "name": "10.0.0.2",
+            "name": "10.162.186.112",
             "os": "VMware ESXi",
             "osVersion": "5.5.0",
             "ramMb": 65512,
