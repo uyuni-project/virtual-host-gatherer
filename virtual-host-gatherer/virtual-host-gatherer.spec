@@ -17,6 +17,13 @@
 
 %global with_susecloud 0
 
+%if 0%{?suse_version} > 1320
+# SLE15 builds on Python 3
+%global build_py3   1
+%endif
+%define pythonX %{?build_py3:python3}%{!?build_py3:python2}
+%define python_sitelib %(%{pythonX} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+
 Name:           virtual-host-gatherer
 Version:        1.0.17
 Release:        1
@@ -27,11 +34,9 @@ Url:            http://www.suse.com
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
-BuildRequires:  python-urlgrabber
 BuildRequires:  asciidoc
 BuildRequires:  libxslt-tools
 %{py_requires}
-Requires:       python-urlgrabber
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
 %{!?python_sitelib: %global python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %else
