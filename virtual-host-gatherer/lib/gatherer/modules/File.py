@@ -91,7 +91,7 @@ class File(WorkerInterface):
             self.log.error("Unable to fetch '{0}': {1}".format(str(self.url), exc))
             return None
         # pylint: disable=W1622
-        first = output.itervalues().next()
+        first = next(iter(list(output.values())))
         if "vms" not in first:
             # run() should return a dict of host entries
             # but here the first value is a virtual host manager
