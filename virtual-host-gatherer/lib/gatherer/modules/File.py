@@ -25,8 +25,12 @@ from collections import OrderedDict
 import json
 
 try:
-    import urlparse
-    import urlgrabber
+    try:
+        import urllib.parse as urlparse
+        from urllib.request import urlopen
+    except ImportError:
+        import urlparse
+        from urllib2 import urlopen
     IS_VALID = True
 except ImportError as ex:
     IS_VALID = False
@@ -86,7 +90,7 @@ class File(WorkerInterface):
         if not urlparse.urlsplit(self.url).scheme:
             self.url = "file://%s" % self.url
         try:
-            output = json.loads(urlgrabber.urlread(str(self.url), timeout=300))
+            output = json.load(urlopen(str(self.url), timeout=300))
         except Exception as exc:
             self.log.error("Unable to fetch '{0}': {1}".format(str(self.url), exc))
             return None
