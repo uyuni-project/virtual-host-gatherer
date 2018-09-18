@@ -36,6 +36,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  python-devel
 BuildRequires:  asciidoc
 BuildRequires:  libxslt-tools
+%if 0%{?build_py3}
+Requires:       python3-six
+%else
+Requires:       python2-six
+%endif
 %{py_requires}
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
 %{!?python_sitelib: %global python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
