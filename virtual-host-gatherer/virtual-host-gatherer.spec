@@ -39,10 +39,12 @@ BuildRequires:  libxslt-tools
 BuildRequires:  python3-devel
 BuildRequires:  python3-six
 Requires:       python3-six
+Requires:       python3-pycurl
 %else
 BuildRequires:  python-devel
 BuildRequires:  python2-six
 Requires:       python2-six
+Requires:       python-pycurl
 %endif
 %{py_requires}
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
