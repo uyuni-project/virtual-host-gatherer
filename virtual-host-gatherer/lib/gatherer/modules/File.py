@@ -23,13 +23,32 @@ import logging
 from gatherer.modules import WorkerInterface
 from collections import OrderedDict
 import json
+import pycurl
 
 try:
-    import urlparse
-    import urlgrabber
+    try:
+        import urllib.parse as urlparse
+        from io import BytesIO as StringIO
+    except ImportError:
+        import urlparse
+        from StringIO import StringIO
     IS_VALID = True
 except ImportError as ex:
     IS_VALID = False
+
+
+def _urlopen(url=None, timeout=60):
+    if url is None:
+        return ''
+    buffer = StringIO()
+    c = pycurl.Curl()
+    c.setopt(c.URL, str(url))
+    c.setopt(c.WRITEDATA, buffer)
+    c.setopt(c.CONNECTTIMEOUT, timeout)
+    c.setopt(c.TIMEOUT, timeout)
+    c.perform()
+    c.close()
+    return buffer.getvalue()
 
 
 class File(WorkerInterface):
@@ -86,12 +105,12 @@ class File(WorkerInterface):
         if not urlparse.urlsplit(self.url).scheme:
             self.url = "file://%s" % self.url
         try:
-            output = json.loads(urlgrabber.urlread(str(self.url), timeout=300))
+            output = json.loads(_urlopen(str(self.url), timeout=300))
         except Exception as exc:
             self.log.error("Unable to fetch '{0}': {1}".format(str(self.url), exc))
             return None
         # pylint: disable=W1622
-        first = output.itervalues().next()
+        first = next(iter(output.values()))
         if "vms" not in first:
             # run() should return a dict of host entries
             # but here the first value is a virtual host manager

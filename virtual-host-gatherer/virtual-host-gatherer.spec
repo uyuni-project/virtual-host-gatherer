@@ -17,6 +17,13 @@
 
 %global with_susecloud 0
 
+%if 0%{?suse_version} > 1320
+# SLE15 builds on Python 3
+%global build_py3   1
+%endif
+%define pythonX %{?build_py3:python3}%{!?build_py3:python2}
+%define python_sitelib %(%{pythonX} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+
 Name:           virtual-host-gatherer
 Version:        1.0.17
 Release:        1
@@ -26,12 +33,20 @@ Group:          Development/Languages
 Url:            http://www.suse.com
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-BuildRequires:  python-devel
-BuildRequires:  python-urlgrabber
 BuildRequires:  asciidoc
 BuildRequires:  libxslt-tools
+%if 0%{?build_py3}
+BuildRequires:  python3-devel
+BuildRequires:  python3-six
+Requires:       python3-six
+Requires:       python3-pycurl
+%else
+BuildRequires:  python-devel
+BuildRequires:  python2-six
+Requires:       python2-six
+Requires:       python-pycurl
+%endif
 %{py_requires}
-Requires:       python-urlgrabber
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
 %{!?python_sitelib: %global python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 %else
@@ -75,10 +90,17 @@ Kubernetes connection module for gatherer
 %setup -q
 
 %build
-python setup.py build
+# Fixing shebang for Python 3
+%if 0%{?build_py3}
+for i in `find . -type f`;
+do
+    sed -i '1s=^#!/usr/bin/\(python\|env python\)[0-9.]*=#!/usr/bin/python3=' $i;
+done
+%endif
+%{pythonX} setup.py build
 
 %install
-python setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT
+%{pythonX} setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT
 
 %if ! 0%{with_susecloud}
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
@@ -107,6 +129,12 @@ rm -rf %{buildroot}
 %{_bindir}/%{name}
 %{python_sitelib}/virtual_host_gatherer-*.egg-info
 %{python_sitelib}/gatherer/modules/File.py*
+%if 0%{?build_py3}
+%dir %{python_sitelib}/gatherer/__pycache__
+%dir %{python_sitelib}/gatherer/modules/__pycache__
+%{python_sitelib}/gatherer/__pycache__/*
+%{python_sitelib}/gatherer/modules/__pycache__/*
+%endif
 
 %files VMware
 %defattr(-,root,root,-)

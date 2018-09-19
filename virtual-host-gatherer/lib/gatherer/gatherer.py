@@ -102,9 +102,9 @@ class Gatherer(object):
         params = dict()
         if not self.modules:
             self._load_modules()
-        for modname, inst in self.modules.items():
+        for modname, inst in list(self.modules.items()):
             moditem = OrderedDict([('module', modname)])
-            params[modname] = OrderedDict(moditem.items() + inst.parameters().items())
+            params[modname] = OrderedDict(list(moditem.items()) + list(inst.parameters().items()))
         return params
 
     def _run(self):

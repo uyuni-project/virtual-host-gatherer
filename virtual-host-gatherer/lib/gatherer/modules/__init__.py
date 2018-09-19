@@ -17,15 +17,15 @@ Contains worker interface.
 """
 
 from __future__ import absolute_import
+from six import with_metaclass
 import abc
 
 
 # pylint: disable=abstract-class-not-used
-class WorkerInterface(object):
+class WorkerInterface(with_metaclass(abc.ABCMeta, object)):
     """
     Worker definition interface.
     """
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def set_node(self, node):
