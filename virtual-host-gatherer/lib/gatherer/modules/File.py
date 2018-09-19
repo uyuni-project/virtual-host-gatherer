@@ -28,17 +28,13 @@ import pycurl
 try:
     try:
         import urllib.parse as urlparse
+        from io import BytesIO as StringIO
     except ImportError:
         import urlparse
+        from StringIO import StringIO
     IS_VALID = True
 except ImportError as ex:
     IS_VALID = False
-
-
-try:
-    from io import BytesIO as StringIO
-except ImportError:
-    from StringIO import StringIO
 
 
 def _urlopen(url=None, timeout=60):
