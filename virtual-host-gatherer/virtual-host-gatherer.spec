@@ -42,8 +42,8 @@ Requires:       python3-six
 Requires:       python3-pycurl
 %else
 BuildRequires:  python-devel
-BuildRequires:  python2-six
-Requires:       python2-six
+BuildRequires:  python-six
+Requires:       python-six
 Requires:       python-pycurl
 %endif
 %{py_requires}
