@@ -61,7 +61,11 @@ running on different kind of hypervisors.
 Summary:        VMware connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
+%if 0%{?build_py3}
+Requires:       python3-pyvmomi
+%else
 Requires:       python-pyvmomi
+%endif
 
 %description VMware
 VMware connection module for gatherer
@@ -71,7 +75,11 @@ VMware connection module for gatherer
 Summary:        SUSE Cloud connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
+%if 0%{?build_py3}
+Requires:       python3-novaclient
+%else
 Requires:       python-novaclient
+%endif
 
 %description SUSECloud
 SUSE Cloud connection module for gatherer
@@ -81,7 +89,11 @@ SUSE Cloud connection module for gatherer
 Summary:        Kubernetes connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
+%if 0%{?build_py3}
+Requires:       python3-kubernetes
+%else
 Requires:       python-kubernetes
+%endif
 
 %description Kubernetes
 Kubernetes connection module for gatherer
