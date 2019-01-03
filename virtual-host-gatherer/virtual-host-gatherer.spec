@@ -29,7 +29,7 @@ Version:        1.0.17
 Release:        1
 Summary:        Gather virtualization information
 License:        Apache-2.0
-Group:          Development/Languages
+Group:          Development/Languages/Python
 Url:            http://www.suse.com
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -38,11 +38,13 @@ BuildRequires:  libxslt-tools
 %if 0%{?build_py3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-six
+BuildRequires:  python3-pycurl
 Requires:       python3-six
 Requires:       python3-pycurl
 %else
 BuildRequires:  python-devel
 BuildRequires:  python-six
+BuildRequires:  python-pycurl
 Requires:       python-six
 Requires:       python-pycurl
 %endif
@@ -116,6 +118,7 @@ done
 
 %if ! 0%{with_susecloud}
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
+rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
 %endif
 
 a2x -v -d manpage -f manpage doc/%{name}.1.asciidoc
@@ -145,21 +148,31 @@ rm -rf %{buildroot}
 %dir %{python_sitelib}/gatherer/__pycache__
 %dir %{python_sitelib}/gatherer/modules/__pycache__
 %{python_sitelib}/gatherer/__pycache__/*
-%{python_sitelib}/gatherer/modules/__pycache__/*
+%{python_sitelib}/gatherer/modules/__pycache__/File.*
+%{python_sitelib}/gatherer/modules/__pycache__/__init__.*
 %endif
 
 %files VMware
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/VMware.py*
+%if 0%{?build_py3}
+%{python_sitelib}/gatherer/modules/__pycache__/VMware.*
+%endif
 
 %if 0%{with_susecloud}
 %files SUSECloud
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/SUSECloud.py*
+%if 0%{?build_py3}
+%{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
+%endif
 %endif
 
 %files Kubernetes
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/Kubernetes.py*
+%if 0%{?build_py3}
+%{python_sitelib}/gatherer/modules/__pycache__/Kubernetes.*
+%endif
 
 %changelog
