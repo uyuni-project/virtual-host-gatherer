@@ -41,14 +41,12 @@ BuildRequires:  python3-six
 BuildRequires:  python3-pycurl
 Requires:       python3-six
 Requires:       python3-pycurl
-Requires:       python3-apache-libcloud
 %else
 BuildRequires:  python-devel
 BuildRequires:  python-six
 BuildRequires:  python-pycurl
 Requires:       python-six
 Requires:       python-pycurl
-Requires:       python-apache-libcloud
 %endif
 %{py_requires}
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
@@ -102,6 +100,19 @@ Requires:       python-kubernetes
 %description Kubernetes
 Kubernetes connection module for gatherer
 
+%package libcloud
+Summary:        Azure, Amazon AWS EC2 and Google Compute connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+%if 0%{?build_py3}
+Requires:       python3-apache-libcloud
+%else
+Requires:       python-apache-libcloud
+%endif
+
+%description libcloud
+Azure, Amazon AWS EC2 and Google Compute Engine connection module
+
 %prep
 %setup -q
 
@@ -146,17 +157,11 @@ rm -rf %{buildroot}
 %{_bindir}/%{name}
 %{python_sitelib}/virtual_host_gatherer-*.egg-info
 %{python_sitelib}/gatherer/modules/File.py*
-%{python_sitelib}/gatherer/modules/Azure.py*
-%{python_sitelib}/gatherer/modules/GoogleCE.py*
-%{python_sitelib}/gatherer/modules/AmazonEC2.py*
 %if 0%{?build_py3}
 %dir %{python_sitelib}/gatherer/__pycache__
 %dir %{python_sitelib}/gatherer/modules/__pycache__
 %{python_sitelib}/gatherer/__pycache__/*
 %{python_sitelib}/gatherer/modules/__pycache__/File.*
-%{python_sitelib}/gatherer/modules/__pycache__/Azure.*
-%{python_sitelib}/gatherer/modules/__pycache__/GoogleCE.*
-%{python_sitelib}/gatherer/modules/__pycache__/AmazonEC2.*
 %{python_sitelib}/gatherer/modules/__pycache__/__init__.*
 %endif
 
@@ -181,6 +186,17 @@ rm -rf %{buildroot}
 %{python_sitelib}/gatherer/modules/Kubernetes.py*
 %if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/Kubernetes.*
+%endif
+
+%files libcloud
+%defattr(-,root,root,-)
+%{python_sitelib}/gatherer/modules/Azure.py*
+%{python_sitelib}/gatherer/modules/GoogleCE.py*
+%{python_sitelib}/gatherer/modules/AmazonEC2.py*
+%if 0%{?build_py3}
+%{python_sitelib}/gatherer/modules/__pycache__/Azure.*
+%{python_sitelib}/gatherer/modules/__pycache__/GoogleCE.*
+%{python_sitelib}/gatherer/modules/__pycache__/AmazonEC2.*
 %endif
 
 %changelog
