@@ -120,8 +120,8 @@ class Azure(WorkerInterface):
         }
 
         for node in driver.list_nodes():
-            if node.extra['availability'] == self.zone:
-                output[self.node_id]['vms'][node.name] = node.id
+            if node.extra['location'] == self.zone:
+                output[self.node_id]['vms'][node.name] = node.extra['properties']['vmId']
                 output[self.node_id]['optionalVmData'][node.name] = {}
                 output[self.node_id]['optionalVmData'][node.name]['vmState'] = node.state
         return output
