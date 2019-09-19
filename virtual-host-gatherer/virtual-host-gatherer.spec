@@ -100,6 +100,19 @@ Requires:       python-kubernetes
 %description Kubernetes
 Kubernetes connection module for gatherer
 
+%package libcloud
+Summary:        Azure, Amazon AWS EC2 and Google Compute connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+%if 0%{?build_py3}
+Requires:       python3-apache-libcloud
+%else
+Requires:       python-apache-libcloud
+%endif
+
+%description libcloud
+Azure, Amazon AWS EC2 and Google Compute Engine connection module
+
 %prep
 %setup -q
 
@@ -173,6 +186,17 @@ rm -rf %{buildroot}
 %{python_sitelib}/gatherer/modules/Kubernetes.py*
 %if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/Kubernetes.*
+%endif
+
+%files libcloud
+%defattr(-,root,root,-)
+%{python_sitelib}/gatherer/modules/Azure.py*
+%{python_sitelib}/gatherer/modules/GoogleCE.py*
+%{python_sitelib}/gatherer/modules/AmazonEC2.py*
+%if 0%{?build_py3}
+%{python_sitelib}/gatherer/modules/__pycache__/Azure.*
+%{python_sitelib}/gatherer/modules/__pycache__/GoogleCE.*
+%{python_sitelib}/gatherer/modules/__pycache__/AmazonEC2.*
 %endif
 
 %changelog
