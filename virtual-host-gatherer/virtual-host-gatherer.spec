@@ -25,7 +25,7 @@
 %define python_sitelib %(%{pythonX} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 Name:           virtual-host-gatherer
-Version:        1.0.18
+Version:        1.0.19
 Release:        1
 Summary:        Gather virtualization information
 License:        Apache-2.0
