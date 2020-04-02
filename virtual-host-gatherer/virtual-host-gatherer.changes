@@ -1,3 +1,5 @@
+- Cast to NodeState to str to allow serialization on libcloud 2.8.1 (bsc#1167052)
+
 -------------------------------------------------------------------
 Fri Sep 20 10:15:47 WEST 2019 - psuarezhernandez@suse.com
 

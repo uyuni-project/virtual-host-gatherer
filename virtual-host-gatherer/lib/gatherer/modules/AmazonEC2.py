@@ -121,7 +121,7 @@ class AmazonEC2(WorkerInterface):
             if node.extra['availability'] == self.zone:
                 output[self.node_id]['vms'][node.name] = node.id
                 output[self.node_id]['optionalVmData'][node.name] = {}
-                output[self.node_id]['optionalVmData'][node.name]['vmState'] = node.state
+                output[self.node_id]['optionalVmData'][node.name]['vmState'] = str(node.state)
         return output
 
     def valid(self):
