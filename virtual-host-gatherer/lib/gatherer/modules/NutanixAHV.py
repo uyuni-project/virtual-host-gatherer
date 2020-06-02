@@ -18,11 +18,22 @@ NutanixAHV Worker module implementation.
 
 from __future__ import print_function, absolute_import
 import logging
+import base64
+import json
 from gatherer.modules import WorkerInterface
 from collections import OrderedDict
 
 
-IS_VALID = True
+try:
+    try:
+        from urllib.request import urlopen, Request
+    except ImportError:
+        from urllib2 import urlopen, Request
+    IS_VALID = True
+except ImportError:
+    IS_VALID = False
+
+
 
 
 class NutanixAHV(WorkerInterface):
