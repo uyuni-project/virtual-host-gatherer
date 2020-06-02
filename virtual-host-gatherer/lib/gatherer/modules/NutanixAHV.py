@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Nutanix Worker module implementation.
+NutanixAHV Worker module implementation.
 """
 
 from __future__ import print_function, absolute_import
@@ -25,9 +25,9 @@ from collections import OrderedDict
 IS_VALID = True
 
 
-class Nutanix(WorkerInterface):
+class NutanixAHV(WorkerInterface):
     """
-    Worker class for Nutanix.
+    Worker class for NutanixAHV.
     """
 
     DEFAULT_PARAMETERS = OrderedDict([
