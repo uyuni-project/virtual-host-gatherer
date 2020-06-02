@@ -34,6 +34,8 @@ except ImportError:
     IS_VALID = False
 
 
+_PRISM_V2_API_HOSTS_ENDPOINT = 'hosts'
+_PRISM_V2_API_VMS_ENDPOINT = 'vms'
 
 
 class NutanixAHV(WorkerInterface):
@@ -46,6 +48,11 @@ class NutanixAHV(WorkerInterface):
         ('port', 443),
         ('username', ''),
         ('password', '')])
+
+    VMSTATE = {
+        'OFF': 'stopped',
+        'ON': 'running',
+    }
 
     def __init__(self):
         """
@@ -92,9 +99,48 @@ class NutanixAHV(WorkerInterface):
 
         :return: Dictionary of the hosts in the worker scope.
         """
-
-        self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
         output = dict()
+        self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
+
+        base_url = "https://%s:%s/" % (self.host, self.port)
+        auth_b64 = base64.b64encode('{}:{}'.format(self.user, self.password).encode()).decode()
+
+        try:
+            req = Request(base_url + _PRISM_V2_API_HOSTS_ENDPOINT)
+            req.add_header("Authorization", "Basic %s" % auth_b64)
+            hosts_list = json.load(urlopen(req))
+
+            req = Request(base_url + _PRISM_V2_API_VMS_ENDPOINT)
+            req.add_header("Authorization", "Basic %s" % auth_b64)
+            vms_list = json.load(urlopen(req))
+
+            for host in hosts_list['entities']:
+                output[host['name']] = {
+                    'name': host['name'],
+                    'hostIdentifier': host['name'],
+                    'type': 'fake',
+                    'os': host['bios_model'],
+                    'osVersion': host['bios_version'],
+                    'totalCpuSockets': host['num_cpu_sockets'],
+                    'totalCpuCores': host['num_cpu_cores'],
+                    'totalCpuThreads': host['num_cpu_threads'],
+                    'cpuMhz': host['cpu_capacity_in_hz'],
+                    'cpuVendor': host['cpu_model'],
+                    'cpuDescription': host['cpu_model'],
+                    'cpuArch': "x86_64",
+                    'ramMb': int(host['memory_capacity_in_bytes'] / 1000 / 1000),
+                    'vms': {},
+                    'optionalVmData': {}
+                }
+
+                for vm in filter(lambda x: x['host_uuid'] == host['uuid'], vms_list['entities']):
+                    output[host['name']]['vms'][vm['name']] = vm['uuid']
+                    output[host['name']]['optionalVmData'][vm['name']] = {}
+                    output[host['name']]['optionalVmData'][vm['name']]['vmState'] = self.VMSTATE.get(vm['power_state'])
+
+        except Exception as exc:
+            self.log.error(exc)
+
         return output
 
     def valid(self):
