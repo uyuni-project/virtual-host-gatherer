@@ -49,11 +49,6 @@ class NutanixAHV(WorkerInterface):
         ('username', ''),
         ('password', '')])
 
-    VMSTATE = {
-        'OFF': 'stopped',
-        'ON': 'running',
-    }
-
     def __init__(self):
         """
         Constructor.
@@ -136,7 +131,7 @@ class NutanixAHV(WorkerInterface):
                 for vm in filter(lambda x: x['host_uuid'] == host['uuid'], vms_list['entities']):
                     output[host['name']]['vms'][vm['name']] = vm['uuid']
                     output[host['name']]['optionalVmData'][vm['name']] = {}
-                    output[host['name']]['optionalVmData'][vm['name']]['vmState'] = self.VMSTATE.get(vm['power_state'])
+                    output[host['name']]['optionalVmData'][vm['name']]['vmState'] = vm['power_state']
 
         except Exception as exc:
             self.log.error(exc)
