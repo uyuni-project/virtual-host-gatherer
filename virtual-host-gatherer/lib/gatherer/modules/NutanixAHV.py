@@ -174,7 +174,7 @@ class NutanixAHV(WorkerInterface):
                 'vms': {},
                 'optionalVmData': {}
             }
-            for vm in filter(lambda x: x.get('host_uuid', 'missing')) == 'missing', vms_list['entities']):
+            for vm in filter(lambda x: x.get('host_uuid', 'missing') == 'missing', vms_list['entities']):
                 output["DetachedVMs"]['vms'][vm['name']] == vm['uuid']
                 output["DetachedVMs"]['optionalVmData'][vm['name']] == {}
                 output["DetachedVMs"]['optionalVmData'][vm['name']]['vmState'] == self.VMSTATE.get(vm['power_state'], 'unknown')
