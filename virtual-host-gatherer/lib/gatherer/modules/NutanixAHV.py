@@ -22,7 +22,7 @@ import base64
 import json
 from gatherer.modules import WorkerInterface
 from collections import OrderedDict
-
+import ssl
 
 try:
     try:
@@ -34,8 +34,9 @@ except ImportError:
     IS_VALID = False
 
 
-_PRISM_V2_API_HOSTS_ENDPOINT = 'hosts'
-_PRISM_V2_API_VMS_ENDPOINT = 'vms'
+_PRISM_V2_API_PREFIX = 'PrismGateway/services/rest/v2.0/'
+_PRISM_V2_API_HOSTS_ENDPOINT = _PRISM_V2_API_PREFIX + 'hosts'
+_PRISM_V2_API_VMS_ENDPOINT = _PRISM_V2_API_PREFIX + 'vms'
 
 
 class NutanixAHV(WorkerInterface):
@@ -114,14 +115,17 @@ class NutanixAHV(WorkerInterface):
         base_url = "https://%s:%s/" % (self.host, self.port)
         auth_b64 = base64.b64encode('{}:{}'.format(self.user, self.password).encode()).decode()
 
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
         try:
             req = Request(base_url + _PRISM_V2_API_HOSTS_ENDPOINT)
             req.add_header("Authorization", "Basic %s" % auth_b64)
-            hosts_list = json.load(urlopen(req))
+            hosts_list = json.load(urlopen(req, context=ctx))
 
             req = Request(base_url + _PRISM_V2_API_VMS_ENDPOINT)
             req.add_header("Authorization", "Basic %s" % auth_b64)
-            vms_list = json.load(urlopen(req))
+            vms_list = json.load(urlopen(req, context=ctx))
 
             for host in hosts_list['entities']:
                 output[host['name']] = {
