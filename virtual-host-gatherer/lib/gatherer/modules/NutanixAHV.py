@@ -157,8 +157,24 @@ class NutanixAHV(WorkerInterface):
                     output[host['name']]['optionalVmData'][vm['name']] = {}
                     output[host['name']]['optionalVmData'][vm['name']]['vmState'] = self.VMSTATE.get(vm['power_state'], 'unknown')
 
-            #TODO: Add stopped VMs that are not attached no any host.
-
+            output["DetachedVMs"] = {
+                'name': "DetachedVMs",
+                'hostIdentifier':  "DetachedVMs",
+                'type': 'nutanix',
+                'os': 'Nutanix AHV',
+                'osVersion': "Fake Host",
+                'totalCpuSockets': 0,
+                'totalCpuCores': 0,
+                'cpuMhz': 0,
+                'cpuArch': "x86_64",
+                'ramMb': 0,
+                'vms': {},
+                'optionalVmData': {}
+            }
+            for vm in filter(lambda x: x.get('host_uuid', 'missing')) == 'missing', vms_list['entities']):
+                output["DetachedVMs"]['vms'][vm['name']] == vm['uuid']
+                output["DetachedVMs"]['optionalVmData'][vm['name']] == {}
+                output["DetachedVMs"]['optionalVmData'][vm['name']]['vmState'] == self.VMSTATE.get(vm['power_state'], 'unknown')
 
         except Exception as exc:
             self.log.error(exc)
