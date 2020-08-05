@@ -48,7 +48,8 @@ class NutanixAHV(WorkerInterface):
         ('hostname', ''),
         ('port', 9440),
         ('username', ''),
-        ('password', '')])
+        ('password', ''),
+        ('disable_ssl', False])
 
     VMSTATE = {
         'off': 'stopped',
@@ -93,6 +94,7 @@ class NutanixAHV(WorkerInterface):
         self.port = node.get('port', 9440)
         self.user = node['username']
         self.password = node['password']
+        self.disable_ssl = node.get('disable_ssl', False)
 
     def parameters(self):
         """
@@ -116,8 +118,9 @@ class NutanixAHV(WorkerInterface):
         auth_b64 = base64.b64encode('{}:{}'.format(self.user, self.password).encode()).decode()
 
         ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
+        if self.disable_ssl:
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
         try:
             req = Request(base_url + _PRISM_V2_API_HOSTS_ENDPOINT)
             req.add_header("Authorization", "Basic %s" % auth_b64)
