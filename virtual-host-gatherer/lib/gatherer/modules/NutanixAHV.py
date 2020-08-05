@@ -128,6 +128,12 @@ class NutanixAHV(WorkerInterface):
             vms_list = json.load(urlopen(req, context=ctx))
 
             for host in hosts_list['entities']:
+                self.log.debug("Host={0}, uuid={1}".format(host["name"], host["uuid"]))
+
+            for vm in vms_list['entities']:
+                self.log.debug("VM={0}, host_uuid={1}, state={2}".format(vm["name"], vm.get("host_uuid"), vm["power_state"]))
+
+            for host in hosts_list['entities']:
                 output[host['name']] = {
                     'name': host['name'],
                     'hostIdentifier': host['name'],
@@ -146,10 +152,13 @@ class NutanixAHV(WorkerInterface):
                     'optionalVmData': {}
                 }
 
-                for vm in filter(lambda x: x['host_uuid'] == host['uuid'], vms_list['entities']):
+                for vm in filter(lambda x: x.get('host_uuid', '') == host['uuid'], vms_list['entities']):
                     output[host['name']]['vms'][vm['name']] = vm['uuid']
                     output[host['name']]['optionalVmData'][vm['name']] = {}
                     output[host['name']]['optionalVmData'][vm['name']]['vmState'] = self.VMSTATE.get(vm['power_state'], 'unknown')
+
+            #TODO: Add stopped VMs that are not attached no any host.
+
 
         except Exception as exc:
             self.log.error(exc)
