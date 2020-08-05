@@ -49,7 +49,7 @@ class NutanixAHV(WorkerInterface):
         ('port', 9440),
         ('username', ''),
         ('password', ''),
-        ('disable_ssl', False])
+        ('disable_ssl', False)])
 
     VMSTATE = {
         'off': 'stopped',
