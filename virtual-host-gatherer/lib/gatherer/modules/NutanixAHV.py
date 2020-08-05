@@ -45,7 +45,7 @@ class NutanixAHV(WorkerInterface):
 
     DEFAULT_PARAMETERS = OrderedDict([
         ('hostname', ''),
-        ('port', 443),
+        ('port', 9440),
         ('username', ''),
         ('password', '')])
 
@@ -89,7 +89,7 @@ class NutanixAHV(WorkerInterface):
             raise error
 
         self.host = node['hostname']
-        self.port = node.get('port', 443)
+        self.port = node.get('port', 9440)
         self.user = node['username']
         self.password = node['password']
 
