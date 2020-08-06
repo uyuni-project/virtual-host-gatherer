@@ -48,8 +48,7 @@ class NutanixAHV(WorkerInterface):
         ('hostname', ''),
         ('port', 9440),
         ('username', ''),
-        ('password', ''),
-        ('disable_ssl', False)])
+        ('password', '')])
 
     VMSTATE = {
         'off': 'stopped',
@@ -94,7 +93,6 @@ class NutanixAHV(WorkerInterface):
         self.port = node.get('port', 9440)
         self.user = node['username']
         self.password = node['password']
-        self.disable_ssl = node.get('disable_ssl', False)
 
     def parameters(self):
         """
@@ -117,18 +115,14 @@ class NutanixAHV(WorkerInterface):
         base_url = "https://%s:%s/" % (self.host, self.port)
         auth_b64 = base64.b64encode('{}:{}'.format(self.user, self.password).encode()).decode()
 
-        ctx = ssl.create_default_context()
-        if self.disable_ssl:
-            ctx.check_hostname = False
-            ctx.verify_mode = ssl.CERT_NONE
         try:
             req = Request(base_url + _PRISM_V2_API_HOSTS_ENDPOINT)
             req.add_header("Authorization", "Basic %s" % auth_b64)
-            hosts_list = json.load(urlopen(req, context=ctx))
+            hosts_list = json.load(urlopen(req))
 
             req = Request(base_url + _PRISM_V2_API_VMS_ENDPOINT)
             req.add_header("Authorization", "Basic %s" % auth_b64)
-            vms_list = json.load(urlopen(req, context=ctx))
+            vms_list = json.load(urlopen(req))
 
             for host in hosts_list['entities']:
                 self.log.debug("Host={0}, uuid={1}".format(host["name"], host["uuid"]))
