@@ -147,7 +147,6 @@ class NutanixAHV(WorkerInterface):
                     'totalCpuCores': host['num_cpu_cores'],
                     'totalCpuThreads': host['num_cpu_threads'],
                     'cpuMhz': float(host['cpu_capacity_in_hz']) / float(1000 * 1000),
-                    'cpuVendor': host['cpu_model'],
                     'cpuDescription': host['cpu_model'],
                     'cpuArch': "x86_64",
                     'ramMb': int(host['memory_capacity_in_bytes'] / (1024 * 1024)),
