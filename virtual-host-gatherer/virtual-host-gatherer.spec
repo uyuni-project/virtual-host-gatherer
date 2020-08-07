@@ -113,6 +113,14 @@ Requires:       python-apache-libcloud
 %description libcloud
 Azure, Amazon AWS EC2 and Google Compute Engine connection module
 
+%package Nutanix
+Summary:        Nutanix AHV connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+
+%description Nutanix
+Nutanix AHV connection module for gatherer
+
 %prep
 %setup -q
 
@@ -197,6 +205,13 @@ rm -rf %{buildroot}
 %{python_sitelib}/gatherer/modules/__pycache__/Azure.*
 %{python_sitelib}/gatherer/modules/__pycache__/GoogleCE.*
 %{python_sitelib}/gatherer/modules/__pycache__/AmazonEC2.*
+%endif
+
+%files Nutanix
+%defattr(-,root,root,-)
+%{python_sitelib}/gatherer/modules/NutanixAHV.py*
+%if 0%{?build_py3}
+%{python_sitelib}/gatherer/modules/__pycache__/NutanixAHV.*
 %endif
 
 %changelog
