@@ -1,6 +1,11 @@
 - Add new gatherer module for Nutanix AHV.
 
 -------------------------------------------------------------------
+Fri Apr 24 11:55:05 UTC 2020 - Michael Calmer <mc@suse.com>
+
+- use %py_requires macro only for python2 to fix build with python3 only
+
+-------------------------------------------------------------------
 Thu Apr 02 09:53:31 WEST 2020 - psuarezhernandez@suse.com
 
 - version 1.0.20-1
