@@ -1,7 +1,7 @@
 #
 # spec file for package virtual-host-gatherer
 #
-# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2019 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -12,8 +12,9 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
 #
+
 
 %global with_susecloud 0
 
@@ -37,16 +38,16 @@ BuildRequires:  asciidoc
 BuildRequires:  libxslt-tools
 %if 0%{?build_py3}
 BuildRequires:  python3-devel
-BuildRequires:  python3-six
 BuildRequires:  python3-pycurl
-Requires:       python3-six
+BuildRequires:  python3-six
 Requires:       python3-pycurl
+Requires:       python3-six
 %else
 BuildRequires:  python-devel
-BuildRequires:  python-six
 BuildRequires:  python-pycurl
-Requires:       python-six
+BuildRequires:  python-six
 Requires:       python-pycurl
+Requires:       python-six
 %{py_requires}
 %endif
 %if 0%{?suse_version} && 0%{?suse_version} <= 1110
