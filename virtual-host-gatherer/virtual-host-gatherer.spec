@@ -18,7 +18,7 @@
 
 %global with_susecloud 0
 
-%if 0%{?suse_version} > 1320
+%if 0%{?suse_version} > 1320 || 0%{?rhel}
 # SLE15 builds on Python 3
 %global build_py3   1
 %endif
@@ -35,7 +35,11 @@ Url:            http://www.suse.com
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  asciidoc
+%if 0%{?rhel}
+BuildRequires:  libxslt-devel
+%else
 BuildRequires:  libxslt-tools
+%endif
 %if 0%{?build_py3}
 BuildRequires:  python3-devel
 BuildRequires:  python3-pycurl
