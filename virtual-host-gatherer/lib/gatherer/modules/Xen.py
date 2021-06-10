@@ -107,12 +107,8 @@ class Xen(WorkerInterface):
             vms = []
             for vm_ref in session.xenapi.VM.get_all():
                 vm = session.xenapi.VM.get_record(vm_ref)
-                # if not vm['is_a_template'] and not vm['is_control_domain']:
                 if not vm['is_a_template']:
                     vms.append(vm)
-
-            # for vm in vms:
-            #     self.log.debug('VM=%s, host_uuid=%s, state=%s', vm["name_label"], hosts[vm['resident_on']]["uuid"], vm["power_state"])
 
             for ref, host in hosts.items():
                 output[host['name_label']] = {
@@ -132,9 +128,6 @@ class Xen(WorkerInterface):
                     'optionalVmData': {}
                 }
 
-                # This only considers running machines,
-                # vms = [session.xenapi.VM.get_record(vm_ref) for vm_ref in host['resident_VMs']]
-                # print(f'resident vms {host["resident_VMs"]}')
                 for vm in filter(lambda x: x['resident_on'] == ref, vms):
                     output[host['name_label']]['vms'][vm['name_label']] = vm['uuid']
                     output[host['name_label']]['optionalVmData'][vm['name_label']] = {}
