@@ -57,7 +57,6 @@ class Xen(WorkerInterface):
         self.log = logging.getLogger(__name__)
         self.host = self.port = self.user = self.password = None
 
-    # pylint: disable=R0801
     def set_node(self, node):
         """
         Set node information
