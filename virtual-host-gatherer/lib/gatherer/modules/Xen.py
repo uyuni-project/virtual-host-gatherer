@@ -100,7 +100,7 @@ class Xen(WorkerInterface):
 
             # Dictionary {opaque_reference: host_data}
             hosts = {ref: session.xenapi.host.get_record(ref) for ref in session.xenapi.host.get_all()}
-            for _ref, host in hosts.items():
+            for host in hosts.values():
                 self.log.debug('Host=%s, uuid=%s', host["name_label"], host["uuid"])
 
             vms = []
