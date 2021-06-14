@@ -154,7 +154,8 @@ class Xen(WorkerInterface):
                 output[host['name_label']]['optionalVmData'][vm['name_label']]['vmState'] = self.VMSTATE.get(vm['power_state'], 'unknown')
 
         except Exception as ex:
-            self.log.error(ex)
+            self.log.exception('Unable to fetch data from Xen Server: {0}'.format(ex))
+            output = None
 
 
         return output
