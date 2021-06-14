@@ -36,8 +36,7 @@ class Xen(WorkerInterface):
 
     DEFAULT_PARAMETERS = OrderedDict([
         ('hostname', ''),
-        ('port', '80'),
-        # ('port', '443'),
+        ('port', '443'),
         ('username', ''),
         ('password', '')])
 
@@ -74,7 +73,7 @@ class Xen(WorkerInterface):
             raise error
 
         self.host = node['hostname']
-        self.port = node.get('port', 80)
+        self.port = node['port']
         self.user = node['username']
         self.password = node['password']
 
@@ -96,7 +95,8 @@ class Xen(WorkerInterface):
         output = dict()
         self.log.info('Connect Xen Server %s:%s as user %s', self.host, self.port, self.user)
         try:
-            session = XenAPI.Session("http://%s:%s" % (self.host, self.port))
+            protocol = 'https' if self.port == 443 else 'http'
+            session = XenAPI.Session("%s://%s:%s" % (protocol, self.host, self.port))
             session.xenapi.login_with_password(self.user, self.password, "2.3", "Xen Gatherer")
 
             # Dictionary {opaque_reference: host_data}
