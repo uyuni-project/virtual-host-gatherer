@@ -68,7 +68,7 @@ class Xen(WorkerInterface):
         try:
             self._validate_parameters(node)
         except AttributeError as error:
-            self.log.error(error)
+            self.log.exception(error)
             raise error
 
         self.host = node['hostname']
