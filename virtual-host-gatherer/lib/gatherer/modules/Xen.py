@@ -118,7 +118,7 @@ class Xen(WorkerInterface):
                     'osVersion': host['software_version']['product_version'],
                     'totalCpuSockets': host['cpu_info']['socket_count'],
                     'totalCpuCores': host['cpu_info']['cpu_count'],
-                    'totalCpuThreads': 1,
+                    'totalCpuThreads': host['cpu_configuration'].get('threads_per_core', 1),
                     'cpuMhz': float(host['cpu_info']['speed']),
                     'cpuDescription': host['cpu_info']['modelname'],
                     'cpuArch': "x86_64",
