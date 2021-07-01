@@ -1,7 +1,7 @@
 #
 # spec file for package virtual-host-gatherer
 #
-# Copyright (c) 2019 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2021 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -27,11 +27,11 @@
 
 Name:           virtual-host-gatherer
 Version:        1.0.22
-Release:        1
+Release:        0
 Summary:        Gather virtualization information
 License:        Apache-2.0
 Group:          Development/Languages/Python
-Url:            http://www.suse.com
+URL:            https://github.com/uyuni-project/virtual-host-gatherer
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  asciidoc
