@@ -17,14 +17,9 @@
 
 
 %global with_susecloud 0
+%define skip_python2 1
 
-%if 0%{?suse_version} > 1320 || 0%{?rhel}
-# SLE15 builds on Python 3
-%global build_py3   1
-%endif
-%define pythonX %{?build_py3:python3}%{!?build_py3:python2}
-%define python_sitelib %(%{pythonX} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
-
+%{?!python_module:%define python_module() python-%{**} python3-%{**}}
 Name:           virtual-host-gatherer
 Version:        1.0.22
 Release:        0
@@ -35,30 +30,18 @@ URL:            https://github.com/uyuni-project/virtual-host-gatherer
 Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 BuildRequires:  asciidoc
+BuildRequires:  python-rpm-macros
 %if 0%{?rhel}
 BuildRequires:  libxslt-devel
 %else
 BuildRequires:  libxslt-tools
 %endif
-%if 0%{?build_py3}
-BuildRequires:  python3-devel
-BuildRequires:  python3-pycurl
-BuildRequires:  python3-six
-Requires:       python3-pycurl
-Requires:       python3-six
-%else
-BuildRequires:  python-devel
-BuildRequires:  python-pycurl
-BuildRequires:  python-six
+BuildRequires:  %{python_module devel}
+BuildRequires:  %{python_module pycurl}
+BuildRequires:  %{python_module six}
 Requires:       python-pycurl
 Requires:       python-six
-%{py_requires}
-%endif
-%if 0%{?suse_version} && 0%{?suse_version} <= 1110
-%{!?python_sitelib: %global python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%else
 BuildArch:      noarch
-%endif
 
 %description
 This package contains a script to gather information about virtual system
@@ -68,11 +51,7 @@ running on different kind of hypervisors.
 Summary:        VMware connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
-%if 0%{?build_py3}
-Requires:       python3-pyvmomi
-%else
-Requires:       python-pyvmomi
-%endif
+Requires:       %{python_module pyvmomi}
 
 %description VMware
 VMware connection module for gatherer
@@ -82,11 +61,7 @@ VMware connection module for gatherer
 Summary:        SUSE Cloud connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
-%if 0%{?build_py3}
-Requires:       python3-novaclient
-%else
-Requires:       python-novaclient
-%endif
+Requires:       %{python_module novaclient}
 
 %description SUSECloud
 SUSE Cloud connection module for gatherer
@@ -96,11 +71,7 @@ SUSE Cloud connection module for gatherer
 Summary:        Kubernetes connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
-%if 0%{?build_py3}
-Requires:       python3-kubernetes
-%else
-Requires:       python-kubernetes
-%endif
+Requires:       %{python_module kubernetes}
 
 %description Kubernetes
 Kubernetes connection module for gatherer
@@ -109,11 +80,7 @@ Kubernetes connection module for gatherer
 Summary:        Azure, Amazon AWS EC2 and Google Compute connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
-%if 0%{?build_py3}
-Requires:       python3-apache-libcloud
-%else
-Requires:       python-apache-libcloud
-%endif
+Requires:       %{python_module apache-libcloud}
 
 %description libcloud
 Azure, Amazon AWS EC2 and Google Compute Engine connection module
@@ -143,18 +110,10 @@ Libvirt connection module for gatherer
 %setup -q
 
 %build
-# Fixing shebang for Python 3
-%if 0%{?build_py3}
-for i in `find . -type f`;
-do
-    sed -i '1s=^#!/usr/bin/\(python\|env python\)[0-9.]*=#!/usr/bin/python3=' $i;
-done
-%endif
-%{pythonX} setup.py build
+%python_build
 
 %install
-%{pythonX} setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT
-
+%python_install
 %if ! 0%{with_susecloud}
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
@@ -178,59 +137,47 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man1/%{name}.1*
 %dir %{python_sitelib}/gatherer
 %dir %{python_sitelib}/gatherer/modules
+%{_bindir}/%{name}
 %{python_sitelib}/gatherer/*.py*
 %{python_sitelib}/gatherer/modules/__init__.py*
-%{_bindir}/%{name}
 %{python_sitelib}/virtual_host_gatherer-*.egg-info
 %{python_sitelib}/gatherer/modules/File.py*
-%if 0%{?build_py3}
 %dir %{python_sitelib}/gatherer/__pycache__
 %dir %{python_sitelib}/gatherer/modules/__pycache__
 %{python_sitelib}/gatherer/__pycache__/*
 %{python_sitelib}/gatherer/modules/__pycache__/File.*
 %{python_sitelib}/gatherer/modules/__pycache__/__init__.*
-%endif
 
 %files VMware
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/VMware.py*
-%if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/VMware.*
-%endif
 
 %if 0%{with_susecloud}
 %files SUSECloud
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/SUSECloud.py*
-%if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
-%endif
 %endif
 
 %files Kubernetes
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/Kubernetes.py*
-%if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/Kubernetes.*
-%endif
 
 %files libcloud
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/Azure.py*
 %{python_sitelib}/gatherer/modules/GoogleCE.py*
 %{python_sitelib}/gatherer/modules/AmazonEC2.py*
-%if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/Azure.*
 %{python_sitelib}/gatherer/modules/__pycache__/GoogleCE.*
 %{python_sitelib}/gatherer/modules/__pycache__/AmazonEC2.*
-%endif
 
 %files Nutanix
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/NutanixAHV.py*
-%if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/NutanixAHV.*
-%endif
 
 %files Libvirt
 %defattr(-,root,root,-)
