@@ -1,3 +1,4 @@
+- Fix shebangs to use python3
 - Implement libvirt module
 
 -------------------------------------------------------------------
