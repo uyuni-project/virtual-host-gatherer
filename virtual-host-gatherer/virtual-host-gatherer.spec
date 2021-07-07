@@ -126,6 +126,14 @@ Requires:       %{name} = %{version}
 %description Nutanix
 Nutanix AHV connection module for gatherer
 
+%package Xen
+Summary:        Xen connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+
+%description Xen
+Xen connection module for gatherer
+
 %prep
 %setup -q
 
