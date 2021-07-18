@@ -130,6 +130,11 @@ Nutanix AHV connection module for gatherer
 Summary:        Xen connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
+%if 0%{?build_py3}
+Requires:       python3-XenAPI
+%else
+Requires:       python-XenAPI
+%endif
 
 %description Xen
 Xen connection module for gatherer
