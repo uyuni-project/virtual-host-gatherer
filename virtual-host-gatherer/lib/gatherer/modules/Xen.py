@@ -96,7 +96,7 @@ class Xen(WorkerInterface):
         try:
             protocol = 'https' if self.port == 443 else 'http'
             session = XenAPI.Session("%s://%s:%s" % (protocol, self.host, self.port))
-            session.xenapi.login_with_password(self.user, self.password, "2.3", "Xen Gatherer")
+            session.xenapi.login_with_password(self.user, self.password)
 
             # Dictionary {opaque_reference: host_data}
             hosts = {ref: session.xenapi.host.get_record(ref) for ref in session.xenapi.host.get_all()}
