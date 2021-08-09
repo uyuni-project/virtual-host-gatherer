@@ -1,6 +1,6 @@
 # Docker tests variables
 DOCKER_CONTAINER_NAME = systemsmanagement/uyuni/master/docker/containers/uyuni-master-gatherer
-DOCKER_REGISTRY       = ${DOCKER_REGISTRY}
+DOCKER_REGISTRY       = registry.opensuse.org
 DOCKER_RUN_EXPORT     = "PYTHONPATH=/gatherer/"
 DOCKER_VOLUMES        = -v "$(CURDIR)/:/gatherer"
 
