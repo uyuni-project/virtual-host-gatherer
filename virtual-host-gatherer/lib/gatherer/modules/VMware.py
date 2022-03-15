@@ -145,11 +145,12 @@ class VMware(WorkerInterface):
                     # Ref: https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html
                     try:
                         vmname = virtual_machine.config.name
-                        output[host_name]['vms'][vmname] = virtual_machine.config.uuid
+                        output[host_name]['vms'][vmname] = self.get_vm_uuid(virtual_machine)
                         output[host_name]['optionalVmData'][vmname] = {}
                         output[host_name]['optionalVmData'][vmname]['vmState'] = self.VMSTATE.get(
                             virtual_machine.runtime.powerState, 'unknown'
                         )
+                        output[host_name]['optionalVmData'][vmname]['vmware_uuid'] = virtual_machine.config.uuid
                     except AttributeError:
                         self.log.warning(
                             "Missing config for vm {0}. Skipping it.".format(virtual_machine.summary.vm)
@@ -194,3 +195,23 @@ class VMware(WorkerInterface):
         """
 
         return IS_VALID
+
+    def get_vm_uuid(self, virtual_machine):
+        # For hardware verions >=13, convert endianess on the first 3 groups
+        # For example:
+        # 42224e1b-f0b3-bd55-39c2-263f3860836f - vmware (for hardware versions >=13)
+        # is converted to
+        # 1b4e2242-b3f0-55bd-39c2-263f3860836f - dmidecode
+        uuid_s = virtual_machine.config.uuid
+        if virtual_machine.config.version:
+            version = int(virtual_machine.config.version.split('-')[1])
+            if (version >= 13):
+                group1 = uuid_s[6:8] + uuid_s[4:6] + uuid_s[2:4] + uuid_s[0:2] + "-"
+                group2 = uuid_s[11:13] + uuid_s[9:11] + "-"
+                group3 = uuid_s[16:18] + uuid_s[14:16]
+                remaining = uuid_s[18:]
+                return group1 + group2 + group3 + remaining
+            else:
+                return uuid_s
+        else:
+            return uuid_s
