@@ -182,8 +182,6 @@ rm -rf %{buildroot}
 %files Libvirt
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/Libvirt.py*
-%if 0%{?build_py3}
 %{python_sitelib}/gatherer/modules/__pycache__/Libvirt.*
-%endif
 
 %changelog
