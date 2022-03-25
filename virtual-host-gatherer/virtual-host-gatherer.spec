@@ -18,8 +18,12 @@
 
 %global with_susecloud 0
 %define skip_python2 1
+%global __python /usr/bin/python3
 
 %{?!python_module:%define python_module() python-%{**} python3-%{**}}
+%{?!python_build:%define python_build %{expand:%py3_build}}
+%{?!python_install:%define python_install %{expand:%py3_install}}
+
 Name:           virtual-host-gatherer
 Version:        1.0.23
 Release:        1
