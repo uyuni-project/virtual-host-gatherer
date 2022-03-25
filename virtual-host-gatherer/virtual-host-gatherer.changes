@@ -1,5 +1,11 @@
-- Fix shebangs to use python3
-- Implement libvirt module
+-------------------------------------------------------------------
+Fri Mar 25 09:26:46 CET 2022 - mc@suse.de
+
+- version 1.0.23-1
+  * reformat the first 3 groups of the UUID for hardware versions >=13
+    in VMWare environment.
+  * Fix shebangs to use python3
+  * Implement libvirt module
 
 -------------------------------------------------------------------
 Sat Dec 05 13:13:42 CET 2020 - mc@suse.de

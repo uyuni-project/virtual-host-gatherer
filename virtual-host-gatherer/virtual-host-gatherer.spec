@@ -21,8 +21,8 @@
 
 %{?!python_module:%define python_module() python-%{**} python3-%{**}}
 Name:           virtual-host-gatherer
-Version:        1.0.22
-Release:        0
+Version:        1.0.23
+Release:        1
 Summary:        Gather virtualization information
 License:        Apache-2.0
 Group:          Development/Languages/Python
