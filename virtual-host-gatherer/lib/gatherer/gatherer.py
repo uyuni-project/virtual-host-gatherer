@@ -70,16 +70,35 @@ class Gatherer(object):
     Gatherer class.
     """
 
-    def __init__(self, opts):
+    def __init__(self, opts=None):
         """
         Constructor.
 
-        :param opts: Command line options.
+        :param opts: Command line options (optional).
         :return:
         """
 
+        # Define a minimal opts if not provided.
+        if opts is None:
+            opts = argparse.Namespace(verbose=0, infile='-')
         self.options = opts
+
         self.log = logging.getLogger('')
+
+        # Should be skipped when no opts was provided.
+        if 'logfile' in self.options:
+            self._setup_logging()
+
+        self.modules = dict()
+
+    def _setup_logging(self):
+        """
+        Setup logging for use as a command line tool.
+
+        Note that self.options.logfile must exist to call this method.
+
+        :return: void
+        """
         self.log.setLevel(logging.WARNING)
 
         stream_handler = logging.StreamHandler(sys.stderr)
@@ -89,8 +108,6 @@ class Gatherer(object):
         file_handler = RotatingFileHandler(self.options.logfile, maxBytes=(0x100000 * 5), backupCount=5)
         file_handler.setFormatter(logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s"))
         self.log.addHandler(file_handler)
-
-        self.modules = dict()
 
     def list_modules(self):
         """
