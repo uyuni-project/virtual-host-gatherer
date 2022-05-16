@@ -196,6 +196,19 @@ class Libvirt(WorkerInterface):
 
         return capabilities_xml.find('host/cpu/topology')
 
+    @staticmethod
+    def get_host_memory(conn):
+        """
+        Get information about the memory of the host
+
+        :param conn: a :py:class:`virConnect` instance
+        :return: memory in Megabyte
+
+        """
+        buf = conn.getMemoryStats(cellNum=libvirt.VIR_NODE_MEMORY_STATS_ALL_CELLS, flags=0)
+        return float(buf.get('total', 0)) / 1024
+
+
     def get_host_guest_mapping(self, conn):
         """
         Process host/guest mapping info and fill the output structure
@@ -213,12 +226,13 @@ class Libvirt(WorkerInterface):
                 'name': hypervisor_hostname,
                 'hostIdentifier': host_capabilities_xml.find('host/uuid').text,
                 'type': conn.getType(),
-                'totalCpuSockets': host_cpu_topology.get('sockets'),
-                'totalCpuCores': host_cpu_topology.get('cores'),
-                'totalCpuThreads': host_cpu_topology.get('threads'),
+                'totalCpuSockets': int(host_cpu_topology.get('sockets'), 0),
+                'totalCpuCores': int(host_cpu_topology.get('cores'), 0),
+                'totalCpuThreads': int(host_cpu_topology.get('threads'), 0),
                 'cpuVendor': host_capabilities_xml.find('host/cpu/vendor').text,
                 'cpuDescription': host_capabilities_xml.find('host/cpu/model').text,
                 'cpuArch': host_capabilities_xml.find('host/cpu/arch').text,
+                'ramMb': int(self.get_host_memory(conn)),
                 'vms': {},
                 'optionalVmData': {}
             }
