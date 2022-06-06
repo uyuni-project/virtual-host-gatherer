@@ -1,4 +1,9 @@
 -------------------------------------------------------------------
+Mon Jun  6 13:48:03 UTC 2022 - Julio González Gil <jgonzalez@suse.com>
+
+- Declare the LICENSE file as license and not doc
+
+-------------------------------------------------------------------
 Fri Mar 25 09:26:46 CET 2022 - mc@suse.de
 
 - version 1.0.23-1
