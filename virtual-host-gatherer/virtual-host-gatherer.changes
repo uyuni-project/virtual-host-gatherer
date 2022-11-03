@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Mon Nov 14 11:59:45 CET 2022 - Alexander Graul <agraul@suse.com>
+
+- version 1.0.24-1
+  * Report total memory of a libvirt hypervisor
+  * Improve interoperability with other Python projects
+
+-------------------------------------------------------------------
 Mon Jun  6 13:48:03 UTC 2022 - Julio González Gil <jgonzalez@suse.com>
 
 - Declare the LICENSE file as license and not doc
