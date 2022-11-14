@@ -18,11 +18,15 @@
 
 %global with_susecloud 0
 %define skip_python2 1
+%global __python /usr/bin/python3
 
-%{?!python_module:%define python_module() python-%{**} python3-%{**}}
+%{?!python_module:%define python_module() python3-%{**}}
+%{?!python_build:%define python_build %{expand:%py3_build}}
+%{?!python_install:%define python_install %{expand:%py3_install}}
+
 Name:           virtual-host-gatherer
 Version:        1.0.23
-Release:        1
+Release:        0
 Summary:        Gather virtualization information
 License:        Apache-2.0
 Group:          Development/Languages/Python
@@ -39,8 +43,8 @@ BuildRequires:  libxslt-tools
 BuildRequires:  %{python_module devel}
 BuildRequires:  %{python_module pycurl}
 BuildRequires:  %{python_module six}
-Requires:       python-pycurl
-Requires:       python-six
+Requires:       %{python_module pycurl}
+Requires:       %{python_module six}
 BuildArch:      noarch
 
 %description
@@ -97,11 +101,7 @@ Nutanix AHV connection module for gatherer
 Summary:        Libvirt connection module
 Group:          Development/Languages
 Requires:       %{name} = %{version}
-%if 0%{?build_py3}
-Requires:       python3-libvirt-python
-%else
-Requires:       python-libvirt-python
-%endif
+Requires:       %{python_module libvirt-python}
 
 %description Libvirt
 Libvirt connection module for gatherer
