@@ -222,13 +222,16 @@ class Libvirt(WorkerInterface):
             hypervisor_hostname = conn.getHostname()
             host_capabilities_xml = self.get_host_capabilities(conn)
             host_cpu_topology = self.get_host_cpu_topology(host_capabilities_xml)
+            totalCpuSockets = int(host_cpu_topology.get('sockets'), 1)
+            totalCpuCores = int(host_cpu_topology.get('cores'), 1) * totalSockets
+            totalCpuThreads = int(host_cpu_topology.get('threads'), 1) * totalCores
             output[hypervisor_hostname] = {
                 'name': hypervisor_hostname,
                 'hostIdentifier': host_capabilities_xml.find('host/uuid').text,
                 'type': conn.getType(),
-                'totalCpuSockets': int(host_cpu_topology.get('sockets'), 0),
-                'totalCpuCores': int(host_cpu_topology.get('cores'), 0),
-                'totalCpuThreads': int(host_cpu_topology.get('threads'), 0),
+                'totalCpuSockets': totalCpuSockets,
+                'totalCpuCores': totalCpuCores,
+                'totalCpuThreads': totalCpuThreads,
                 'cpuVendor': host_capabilities_xml.find('host/cpu/vendor').text,
                 'cpuDescription': host_capabilities_xml.find('host/cpu/model').text,
                 'cpuArch': host_capabilities_xml.find('host/cpu/arch').text,
