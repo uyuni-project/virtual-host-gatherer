@@ -1,4 +1,8 @@
-- Report total CPU numbers in the libvirt module
+-------------------------------------------------------------------
+Sat Feb 11 13:47:54 CET 2023 - mc@suse.de
+
+- version 1.0.25-1
+  * Report total CPU numbers in the libvirt module
 
 -------------------------------------------------------------------
 Mon Nov 14 11:59:45 CET 2022 - Alexander Graul <agraul@suse.com>
