@@ -220,6 +220,9 @@ class Libvirt(WorkerInterface):
         output = {}
         try:
             hypervisor_hostname = conn.getHostname()
+            libversion = conn.getLibVersion()
+            maj = int(libversion/1000000)
+            min = int((libversion-maj*1000000)/1000)
             host_capabilities_xml = self.get_host_capabilities(conn)
             host_cpu_topology = self.get_host_cpu_topology(host_capabilities_xml)
             totalCpuSockets = int(host_cpu_topology.get('sockets'))
@@ -228,16 +231,19 @@ class Libvirt(WorkerInterface):
             output[hypervisor_hostname] = {
                 'name': hypervisor_hostname,
                 'hostIdentifier': host_capabilities_xml.find('host/uuid').text,
-                'type': conn.getType(),
+                'type': conn.getType().lower(),
                 'totalCpuSockets': totalCpuSockets,
                 'totalCpuCores': totalCpuCores,
                 'totalCpuThreads': totalCpuThreads,
                 'cpuVendor': host_capabilities_xml.find('host/cpu/vendor').text,
                 'cpuDescription': host_capabilities_xml.find('host/cpu/model').text,
                 'cpuArch': host_capabilities_xml.find('host/cpu/arch').text,
+                'cpuMhz': 0,
                 'ramMb': int(self.get_host_memory(conn)),
                 'vms': {},
-                'optionalVmData': {}
+                'optionalVmData': {},
+                'os': 'libvirt',
+                'osVersion': f"{maj}.{min}"
             }
             for domain in conn.listAllDomains(0):
                 domain_name = domain.name()
