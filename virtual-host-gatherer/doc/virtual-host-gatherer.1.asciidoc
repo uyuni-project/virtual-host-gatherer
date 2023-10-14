@@ -123,6 +123,11 @@ SEE ALSO
 --------
 /usr/share/doc/packages/virtual-host-gatherer/README.md
 
+https://libcloud.readthedocs.io/en/stable/compute/drivers/azure_arm.html#connecting-to-azure
+
+https://libcloud.readthedocs.io/en/stable/compute/drivers/gce.html#service-account
+
+
 AUTHOR
 ------
 The SUSE Manager Team
