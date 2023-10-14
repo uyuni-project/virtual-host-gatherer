@@ -119,11 +119,18 @@ class Azure(WorkerInterface):
             'optionalVmData': {}
         }
 
+        skipped_regions = set()
         for node in driver.list_nodes():
             if node.extra['location'] == self.zone:
                 output[self.node_id]['vms'][node.name] = node.extra['properties']['vmId']
                 output[self.node_id]['optionalVmData'][node.name] = {}
                 output[self.node_id]['optionalVmData'][node.name]['vmState'] = str(node.state)
+            else:
+                skipped_regions.add(node.extra['location'])
+
+        if skipped_regions:
+            self.log.info("Found nodes in other regions than {}".format(self.zone))
+            self.log.info("Skipped regions: {}".format(skipped_regions))
         return output
 
     def valid(self):

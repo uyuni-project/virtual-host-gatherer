@@ -117,11 +117,18 @@ class AmazonEC2(WorkerInterface):
             'optionalVmData': {}
         }
 
+        skipped_regions = set()
         for node in driver.list_nodes():
             if node.extra['availability'] == self.zone:
                 output[self.node_id]['vms'][node.name] = node.id
                 output[self.node_id]['optionalVmData'][node.name] = {}
                 output[self.node_id]['optionalVmData'][node.name]['vmState'] = str(node.state)
+            else:
+                skipped_regions.add(node.extra['availability'])
+
+        if skipped_regions:
+            self.log.info("Found nodes in other regions than {}".format(self.zone))
+            self.log.info("Skipped regions: {}".format(skipped_regions))
         return output
 
     def valid(self):
