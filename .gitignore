@@ -5,4 +5,4 @@ bak/
 data/
 virtual-host-gatherer/reports/
 .idea/
-
+build/
