@@ -118,6 +118,13 @@ class VMware(WorkerInterface):
                 mhz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000))
                 ram = (int(host.hardware.memorySize / (1024 * 1024)))
 
+                self.log.debug("Host identification for {0} -> UUID: {1} Vendor: {2} Serial Number: {3}".format(
+                    str(host),
+                    host.hardware.systemInfo.uuid,
+                    host.hardware.systemInfo.vendor,
+                    host.hardware.systemInfo.serialNumber
+                ))
+
                 output[host_name] = {
                     'type': 'vmware',
                     'name': host_name,
