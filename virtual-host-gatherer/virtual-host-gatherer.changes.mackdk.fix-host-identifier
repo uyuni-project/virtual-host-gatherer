@@ -1,0 +1,2 @@
+- Use uuid as host indentifier for VMWare hosted machines 
+  (bsc#1218724)

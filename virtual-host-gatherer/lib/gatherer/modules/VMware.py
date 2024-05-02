@@ -117,10 +117,19 @@ class VMware(WorkerInterface):
                 host_name = host.summary.config.name.split()[0]
                 mhz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000))
                 ram = (int(host.hardware.memorySize / (1024 * 1024)))
+
+                self.log.debug("Host identification for {0} -> UUID: {1} Vendor: {2} Serial Number: {3}".format(
+                    str(host),
+                    host.hardware.systemInfo.uuid,
+                    host.hardware.systemInfo.vendor,
+                    host.hardware.systemInfo.serialNumber
+                ))
+
                 output[host_name] = {
                     'type': 'vmware',
                     'name': host_name,
-                    'hostIdentifier': str(host),
+                    'hostIdentifier': host.hardware.systemInfo.uuid,
+                    'fallbackHostIdentifier': str(host),
                     'os': host.summary.config.product.name,
                     'osVersion': host.summary.config.product.version,
                     'totalCpuSockets': host.hardware.cpuInfo.numCpuPackages,
@@ -134,6 +143,7 @@ class VMware(WorkerInterface):
                     'vms': {},
                     'optionalVmData': {}
                 }
+
                 # If an additional hardware info is wanted:
                 # print "pciDevice: %s" % host.hardware.pciDevice
                 for virtual_machine in host.vm:
