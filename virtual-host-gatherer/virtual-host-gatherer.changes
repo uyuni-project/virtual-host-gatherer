@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Fri May 17 15:03:22 CEST 2024 - thomas.florio@suse.com
+
+- version 1.0.27-1
+  * Use uuid as host indentifier for VMWare hosted machines 
+    (bsc#1218724)
+  * Log if regions are skipped during import
+
+-------------------------------------------------------------------
 Wed Apr 19 10:43:14 CEST 2023 - mc@suse.de
 
 - version 1.0.26-1
