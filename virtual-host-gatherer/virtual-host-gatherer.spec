@@ -1,7 +1,7 @@
 #
 # spec file for package virtual-host-gatherer
 #
-# Copyright (c) 2022 SUSE LLC
+# Copyright (c) 2025 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -17,6 +17,7 @@
 
 
 %global with_susecloud 0
+%global with_kubernetes 0
 %define skip_python2 1
 %global __python /usr/bin/python3
 
@@ -71,6 +72,7 @@ Requires:       %{python_module novaclient}
 SUSE Cloud connection module for gatherer
 %endif
 
+%if 0%{with_kubernetes}
 %package Kubernetes
 Summary:        Kubernetes connection module
 Group:          Development/Languages
@@ -79,6 +81,7 @@ Requires:       %{python_module kubernetes}
 
 %description Kubernetes
 Kubernetes connection module for gatherer
+%endif
 
 %package libcloud
 Summary:        Azure, Amazon AWS EC2 and Google Compute connection module
@@ -117,6 +120,10 @@ Libvirt connection module for gatherer
 %if ! 0%{with_susecloud}
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
+%endif
+%if ! 0%{with_kubernetes}
+rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/Kubernetes.py*
+rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/__pycache__/Kubernetes.*
 %endif
 
 a2x -v -d manpage -f manpage doc/%{name}.1.asciidoc
@@ -161,10 +168,12 @@ rm -rf %{buildroot}
 %{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
 %endif
 
+%if 0%{with_kubernetes}
 %files Kubernetes
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/Kubernetes.py*
 %{python_sitelib}/gatherer/modules/__pycache__/Kubernetes.*
+%endif
 
 %files libcloud
 %defattr(-,root,root,-)
