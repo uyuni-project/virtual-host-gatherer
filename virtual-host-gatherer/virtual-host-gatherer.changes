@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri Jan 10 16:06:34 CET 2025 - michael.calmer@suse.com
+
+- version 1.0.28-1
+  * Do not build kubernetes module by default
+
+-------------------------------------------------------------------
 Fri May 17 15:03:22 CEST 2024 - thomas.florio@suse.com
 
 - version 1.0.27-1
