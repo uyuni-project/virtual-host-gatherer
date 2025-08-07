@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 # Copyright (c) 2022 SUSE LLC, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,12 +39,11 @@ class Libvirt(WorkerInterface):
     Worker class for Libvirt.
     """
 
-    DEFAULT_PARAMETERS = OrderedDict([
-        ('uri', ''),
-        ('sasl_username', None),
-        ('sasl_password', None)])
+    DEFAULT_PARAMETERS = OrderedDict(
+        [("uri", ""), ("sasl_username", None), ("sasl_password", None)]
+    )
 
-
+    # pylint: disable-next=super-init-not-called
     def __init__(self):
         """
         Constructor.
@@ -65,7 +65,7 @@ class Libvirt(WorkerInterface):
                 libvirt.VIR_DOMAIN_SHUTDOWN: "in shutdown",
                 libvirt.VIR_DOMAIN_SHUTOFF: "shut off",
                 libvirt.VIR_DOMAIN_CRASHED: "crashed",
-                libvirt.VIR_DOMAIN_NOSTATE: "no state"
+                libvirt.VIR_DOMAIN_NOSTATE: "no state",
             }
 
     # pylint: disable=R0801
@@ -84,15 +84,15 @@ class Libvirt(WorkerInterface):
             self.log.error(error)
             raise error
 
-        splitted_url = urllib.parse.urlsplit(node.get('uri'))
+        splitted_url = urllib.parse.urlsplit(node.get("uri"))
 
         if splitted_url.query:
-            self.uri = node.get('uri') + '&no_tty=1'
+            self.uri = node.get("uri") + "&no_tty=1"
         else:
-            self.uri = node.get('uri') + '?no_tty=1'
+            self.uri = node.get("uri") + "?no_tty=1"
 
-        self.sasl_username = node.get('sasl_username')
-        self.sasl_password = node.get('sasl_password')
+        self.sasl_username = node.get("sasl_username")
+        self.sasl_password = node.get("sasl_password")
 
     def parameters(self):
         """
@@ -120,7 +120,6 @@ class Libvirt(WorkerInterface):
             if conn:
                 conn.close()
 
-
     def valid(self):
         """
         Check plugin class validity.
@@ -138,14 +137,15 @@ class Libvirt(WorkerInterface):
         :return:
         """
 
-        if not node.get('uri'):
+        if not node.get("uri"):
             raise AttributeError("Missing uri parameter in infile")
 
-        splitted_url = urllib.parse.urlsplit(node.get('uri'))
+        splitted_url = urllib.parse.urlsplit(node.get("uri"))
 
         if not splitted_url.scheme:
             raise AttributeError(
-                "Missing scheme in uri. Few examples of a valid scheme: qemu, qemu+ssh, qemu+tcp")
+                "Missing scheme in uri. Few examples of a valid scheme: qemu, qemu+ssh, qemu+tcp"
+            )
 
         if len(splitted_url.path) < 1:
             raise AttributeError("path to libvirt not specified in the uri")
@@ -164,8 +164,11 @@ class Libvirt(WorkerInterface):
             if self.sasl_username and self.sasl_password:
                 # username/password authentication with SASL
                 user_data = [self.sasl_username, self.sasl_password]
-                auth = [[libvirt.VIR_CRED_AUTHNAME,
-                         libvirt.VIR_CRED_PASSPHRASE], self.request_cred, user_data]
+                auth = [
+                    [libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE],
+                    self.request_cred,
+                    user_data,
+                ]
                 flags = libvirt.VIR_CONNECT_RO
                 conn = libvirt.openAuth(self.uri, auth, flags)
             else:
@@ -194,7 +197,7 @@ class Libvirt(WorkerInterface):
         :return: xml representation of the host topology
         """
 
-        return capabilities_xml.find('host/cpu/topology')
+        return capabilities_xml.find("host/cpu/topology")
 
     @staticmethod
     def get_host_memory(conn):
@@ -205,9 +208,10 @@ class Libvirt(WorkerInterface):
         :return: memory in Megabyte
 
         """
-        buf = conn.getMemoryStats(cellNum=libvirt.VIR_NODE_MEMORY_STATS_ALL_CELLS, flags=0)
-        return float(buf.get('total', 0)) / 1024
-
+        buf = conn.getMemoryStats(
+            cellNum=libvirt.VIR_NODE_MEMORY_STATS_ALL_CELLS, flags=0
+        )
+        return float(buf.get("total", 0)) / 1024
 
     def get_host_guest_mapping(self, conn):
         """
@@ -221,37 +225,38 @@ class Libvirt(WorkerInterface):
         try:
             hypervisor_hostname = conn.getHostname()
             libversion = conn.getLibVersion()
-            maj = int(libversion/1000000)
-            min = int((libversion-maj*1000000)/1000)
+            maj = int(libversion / 1000000)
+            minor = int((libversion - maj * 1000000) / 1000)
             host_capabilities_xml = self.get_host_capabilities(conn)
             host_cpu_topology = self.get_host_cpu_topology(host_capabilities_xml)
-            totalCpuSockets = int(host_cpu_topology.get('sockets'))
-            totalCpuCores = int(host_cpu_topology.get('cores')) * totalCpuSockets
-            totalCpuThreads = int(host_cpu_topology.get('threads')) * totalCpuCores
+            totalCpuSockets = int(host_cpu_topology.get("sockets"))
+            totalCpuCores = int(host_cpu_topology.get("cores")) * totalCpuSockets
+            totalCpuThreads = int(host_cpu_topology.get("threads")) * totalCpuCores
             output[hypervisor_hostname] = {
-                'name': hypervisor_hostname,
-                'hostIdentifier': host_capabilities_xml.find('host/uuid').text,
-                'type': conn.getType().lower(),
-                'totalCpuSockets': totalCpuSockets,
-                'totalCpuCores': totalCpuCores,
-                'totalCpuThreads': totalCpuThreads,
-                'cpuVendor': host_capabilities_xml.find('host/cpu/vendor').text,
-                'cpuDescription': host_capabilities_xml.find('host/cpu/model').text,
-                'cpuArch': host_capabilities_xml.find('host/cpu/arch').text,
-                'cpuMhz': 0,
-                'ramMb': int(self.get_host_memory(conn)),
-                'vms': {},
-                'optionalVmData': {},
-                'os': 'libvirt',
-                'osVersion': f"{maj}.{min}"
+                "name": hypervisor_hostname,
+                "hostIdentifier": host_capabilities_xml.find("host/uuid").text,
+                "type": conn.getType().lower(),
+                "totalCpuSockets": totalCpuSockets,
+                "totalCpuCores": totalCpuCores,
+                "totalCpuThreads": totalCpuThreads,
+                "cpuVendor": host_capabilities_xml.find("host/cpu/vendor").text,
+                "cpuDescription": host_capabilities_xml.find("host/cpu/model").text,
+                "cpuArch": host_capabilities_xml.find("host/cpu/arch").text,
+                "cpuMhz": 0,
+                "ramMb": int(self.get_host_memory(conn)),
+                "vms": {},
+                "optionalVmData": {},
+                "os": "libvirt",
+                "osVersion": f"{maj}.{minor}",
             }
             for domain in conn.listAllDomains(0):
                 domain_name = domain.name()
                 uuid = domain.UUIDString()
-                output[hypervisor_hostname]['vms'][domain_name] = uuid
-                output[hypervisor_hostname]['optionalVmData'][domain_name] = {}
-                output[hypervisor_hostname]['optionalVmData'][domain_name]['vmState'] = \
-                    self.VMSTATE.get(domain.info()[0], 'unknown')
+                output[hypervisor_hostname]["vms"][domain_name] = uuid
+                output[hypervisor_hostname]["optionalVmData"][domain_name] = {}
+                output[hypervisor_hostname]["optionalVmData"][domain_name][
+                    "vmState"
+                ] = self.VMSTATE.get(domain.info()[0], "unknown")
         except libvirt.libvirtError as err:
             self.log.error(err)
         return output

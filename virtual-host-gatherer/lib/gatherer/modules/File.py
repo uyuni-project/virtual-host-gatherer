@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 # Copyright (c) 2015 SUSE LLC, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +40,7 @@ except ImportError as ex:
 
 def _urlopen(url=None, timeout=60):
     if url is None:
-        return ''
+        return ""
     buffer = StringIO()
     c = pycurl.Curl()
     c.setopt(c.URL, str(url))
@@ -56,8 +57,9 @@ class File(WorkerInterface):
     Worker class for the VMWare.
     """
 
-    DEFAULT_PARAMETERS = OrderedDict([('url', '')])
+    DEFAULT_PARAMETERS = OrderedDict([("url", "")])
 
+    # pylint: disable-next=super-init-not-called
     def __init__(self):
         """
         Constructor.
@@ -83,7 +85,7 @@ class File(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.url = node['url']
+        self.url = node["url"]
 
     def parameters(self):
         """
@@ -103,11 +105,11 @@ class File(WorkerInterface):
 
         self.log.debug("Fetching %s", self.url)
         if not urlparse.urlsplit(self.url).scheme:
-            self.url = "file://%s" % self.url
+            self.url = f"file://{self.url}"
         try:
             output = json.loads(_urlopen(str(self.url), timeout=300))
-        except Exception as exc:
-            self.log.error("Unable to fetch '{0}': {1}".format(str(self.url), exc))
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            self.log.error("Unable to fetch '%s': %s", str(self.url), exc)
             return None
         # pylint: disable=W1622
         first = next(iter(output.values()))

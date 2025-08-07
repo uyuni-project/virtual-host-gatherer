@@ -35,31 +35,40 @@ def parse_options():
     """
 
     home = expanduser("~")
-    if home == '/root':
-        home = '/var/log'
-    log_destination = "%s/gatherer.log" % home
+    if home == "/root":
+        home = "/var/log"
+    log_destination = f"{home}/gatherer.log"
     parser = argparse.ArgumentParser(
-        description='Process args for retrieving all the Virtual Machines')
-    parser.add_argument(
-        '-i', '--infile', action='store',
-        help="json input file or '-' to read from stdin"
+        description="Process args for retrieving all the Virtual Machines"
     )
     parser.add_argument(
-        '-o', '--outfile', action='store',
-        help='to write the output (json) file instead of stdout'
+        "-i",
+        "--infile",
+        action="store",
+        help="json input file or '-' to read from stdin",
     )
     parser.add_argument(
-        '-v', '--verbose', action='count', default=0,
-        help='increase log output verbosity'
+        "-o",
+        "--outfile",
+        action="store",
+        help="to write the output (json) file instead of stdout",
     )
     parser.add_argument(
-        '-l', '--list-modules', action='store_true',
-        help="list modules with options"
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="increase log output verbosity",
     )
     parser.add_argument(
-        '-L', '--logfile', action='store',
+        "-l", "--list-modules", action="store_true", help="list modules with options"
+    )
+    parser.add_argument(
+        "-L",
+        "--logfile",
+        action="store",
         default=log_destination,
-        help="path to logfile. Default: %s" % log_destination
+        help=f"path to logfile. Default: {log_destination}",
     )
 
     return parser.parse_args()
@@ -80,13 +89,13 @@ class Gatherer(object):
 
         # Define a minimal opts if not provided.
         if opts is None:
-            opts = argparse.Namespace(verbose=0, infile='-')
+            opts = argparse.Namespace(verbose=0, infile="-")
         self.options = opts
 
-        self.log = logging.getLogger('')
+        self.log = logging.getLogger("")
 
         # Should be skipped when no opts was provided.
-        if 'logfile' in self.options:
+        if "logfile" in self.options:
             self._setup_logging()
 
         self.modules = dict()
@@ -105,8 +114,12 @@ class Gatherer(object):
         stream_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
         self.log.addHandler(stream_handler)
 
-        file_handler = RotatingFileHandler(self.options.logfile, maxBytes=(0x100000 * 5), backupCount=5)
-        file_handler.setFormatter(logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s"))
+        file_handler = RotatingFileHandler(
+            self.options.logfile, maxBytes=(0x100000 * 5), backupCount=5
+        )
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s %(name)s - %(levelname)s: %(message)s")
+        )
         self.log.addHandler(file_handler)
 
     def list_modules(self):
@@ -120,8 +133,10 @@ class Gatherer(object):
         if not self.modules:
             self._load_modules()
         for modname, inst in list(self.modules.items()):
-            moditem = OrderedDict([('module', modname)])
-            params[modname] = OrderedDict(list(moditem.items()) + list(inst.parameters().items()))
+            moditem = OrderedDict([("module", modname)])
+            params[modname] = OrderedDict(
+                list(moditem.items()) + list(inst.parameters().items())
+            )
         return params
 
     def _run(self):
@@ -134,10 +149,10 @@ class Gatherer(object):
         if not self.modules:
             self._load_modules()
 
-        if self.options.infile == '-':
+        if self.options.infile == "-":
             mgm_nodes = json.load(sys.stdin)
         else:
-            with open(self.options.infile) as input_file:
+            with open(self.options.infile, encoding="utf-8") as input_file:
                 mgm_nodes = json.load(input_file)
 
         output = dict()
@@ -145,10 +160,10 @@ class Gatherer(object):
             if self.options.verbose >= 2:
                 self.log.debug("Input Node: '%s'", self._remove_passwords(node))
 
-            if 'module' not in node:
+            if "module" not in node:
                 self.log.error("Skipping undefined module in the input file.")
                 continue
-            modname = node['module']
+            modname = node["module"]
             if modname not in self.modules:
                 self.log.error("Skipping unsupported module '%s'.", modname)
                 continue
@@ -158,13 +173,18 @@ class Gatherer(object):
             output[node.get("id", str(uuid.uuid4()))] = worker.run()
 
         if self.options.verbose >= 2:
-            self.log.debug("Output: '%s'", json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
+            self.log.debug(
+                "Output: '%s'",
+                json.dumps(output, sort_keys=True, indent=4, separators=(",", ": ")),
+            )
 
         if self.options.outfile:
-            with open(self.options.outfile, 'w') as input_file:
-                json.dump(output, input_file, sort_keys=True, indent=4, separators=(',', ': '))
+            with open(self.options.outfile, "w", encoding="utf-8") as input_file:
+                json.dump(
+                    output, input_file, sort_keys=True, indent=4, separators=(",", ": ")
+                )
         else:
-            print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
+            print(json.dumps(output, sort_keys=True, indent=4, separators=(",", ": ")))
 
     def main(self):
         """
@@ -180,10 +200,23 @@ class Gatherer(object):
         if self.options.list_modules:
             installed_modules = self.list_modules()
             if self.options.outfile:
-                with open(self.options.outfile, 'w') as output_file:
-                    json.dump(installed_modules, output_file, sort_keys=False, indent=4, separators=(',', ': '))
+                with open(self.options.outfile, "w", encoding="utf-8") as output_file:
+                    json.dump(
+                        installed_modules,
+                        output_file,
+                        sort_keys=False,
+                        indent=4,
+                        separators=(",", ": "),
+                    )
             else:
-                print(json.dumps(installed_modules, sort_keys=False, indent=4, separators=(',', ': ')))
+                print(
+                    json.dumps(
+                        installed_modules,
+                        sort_keys=False,
+                        indent=4,
+                        separators=(",", ": "),
+                    )
+                )
             return
 
         if not self.options.infile:
@@ -206,22 +239,38 @@ class Gatherer(object):
         :return: void
         """
 
-        mod_path = os.path.dirname(__import__('gatherer.modules', globals(), locals(), ['WorkerInterface'], 0).__file__)
+        mod_path = os.path.dirname(
+            __import__(
+                "gatherer.modules", globals(), locals(), ["WorkerInterface"], 0
+            ).__file__
+        )
         self.log.info("module path: %s", mod_path)
-        for module_name in [item.split(".")[0] for item in os.listdir(mod_path)
-                            if item.endswith(".py") and not item.startswith("__init__")]:
+        for module_name in [
+            item.split(".")[0]
+            for item in os.listdir(mod_path)
+            if item.endswith(".py") and not item.startswith("__init__")
+        ]:
             try:
                 self.log.debug('Loading module "%s"', module_name)
-                mod = __import__('gatherer.modules.{0}'.format(module_name), globals(),
-                                 locals(), ['WorkerInterface'], 0)
+                mod = __import__(
+                    f"gatherer.modules.{module_name}",
+                    globals(),
+                    locals(),
+                    ["WorkerInterface"],
+                    0,
+                )
                 self.log.debug("Introspection: %s", dir(mod))
                 class_ = getattr(mod, module_name)
                 if not issubclass(class_, WorkerInterface):
-                    self.log.error('Module "%s" is not a gatherer module, skipping.', module_name)
+                    self.log.error(
+                        'Module "%s" is not a gatherer module, skipping.', module_name
+                    )
                     continue
                 instance = class_()
                 if not instance.valid():
-                    self.log.error('Module "%s" is broken, import aborted.', module_name)
+                    self.log.error(
+                        'Module "%s" is broken, import aborted.', module_name
+                    )
                     continue
                 self.modules[module_name] = instance
             except (TypeError, AttributeError, NotImplementedError) as ex:
@@ -242,6 +291,6 @@ class Gatherer(object):
         ret = indict.copy()
 
         for key in ret:
-            if key.lower().startswith('pass'):
-                ret[key] = '**secret**'
+            if key.lower().startswith("pass"):
+                ret[key] = "**secret**"
         return ret

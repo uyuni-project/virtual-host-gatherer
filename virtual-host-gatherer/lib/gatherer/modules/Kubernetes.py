@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 # Copyright (c) 2017 SUSE LLC, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,11 +21,7 @@ Kubernetes Worker module implementation.
 
 from __future__ import print_function, absolute_import, division
 import logging
-import tempfile
-import os
-import base64
 import re
-import errno
 from gatherer.modules import WorkerInterface
 from collections import OrderedDict
 
@@ -33,6 +30,7 @@ try:
     import kubernetes.client
     from kubernetes.client.rest import ApiException
     from urllib3.exceptions import HTTPError
+
     HAS_REQUIRED_MODULES = True
 except ImportError as ex:
     HAS_REQUIRED_MODULES = False
@@ -43,11 +41,9 @@ class Kubernetes(WorkerInterface):
     Worker class for the Kubernetes.
     """
 
-    DEFAULT_PARAMETERS = OrderedDict([
-        ('kubeconfig', ''),
-        ('context', '')
-    ])
+    DEFAULT_PARAMETERS = OrderedDict([("kubeconfig", ""), ("context", "")])
 
+    # pylint: disable-next=super-init-not-called
     def __init__(self):
         """
         Constructor.
@@ -73,8 +69,8 @@ class Kubernetes(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.kubeconfig = node.get('kubeconfig')
-        self.context = node.get('context')
+        self.kubeconfig = node.get("kubeconfig")
+        self.context = node.get("context")
 
     def parameters(self):
         """
@@ -99,11 +95,13 @@ class Kubernetes(WorkerInterface):
             api_response = api_instance.list_node()
 
             for node in api_response.items:
-                cpu = node.status.capacity.get('cpu')
+                cpu = node.status.capacity.get("cpu")
                 memory = 0
-                reg = re.compile(r'^(\d+)(\w+)$')
-                if reg.match(node.status.capacity.get('memory')):
-                    memory, unit = reg.match(node.status.capacity.get('memory')).groups()
+                reg = re.compile(r"^(\d+)(\w+)$")
+                if reg.match(node.status.capacity.get("memory")):
+                    memory, unit = reg.match(
+                        node.status.capacity.get("memory")
+                    ).groups()
                     if unit == "Ki":
                         memory = int(memory) / 1024
                     if unit == "Gi":
@@ -113,21 +111,21 @@ class Kubernetes(WorkerInterface):
                     arch = "x86_64"
 
                 output[node.metadata.name] = {
-                        'type': 'kubernetes',
-                        'cpuArch': arch,
-                        'cpuDescription': "(unknown)",
-                        'cpuMhz': cpu,
-                        'cpuVendor': "(unknown)",
-                        'hostIdentifier': node.status.node_info.machine_id,
-                        'name': node.metadata.name,
-                        'os': node.status.node_info.os_image,
-                        'osVersion': 1,
-                        'ramMb': int(memory),
-                        'totalCpuCores': cpu,
-                        'totalCpuSockets': cpu,
-                        'totalCpuThreads': 1,
-                        'vms': {}
-                        }
+                    "type": "kubernetes",
+                    "cpuArch": arch,
+                    "cpuDescription": "(unknown)",
+                    "cpuMhz": cpu,
+                    "cpuVendor": "(unknown)",
+                    "hostIdentifier": node.status.node_info.machine_id,
+                    "name": node.metadata.name,
+                    "os": node.status.node_info.os_image,
+                    "osVersion": 1,
+                    "ramMb": int(memory),
+                    "totalCpuCores": cpu,
+                    "totalCpuSockets": cpu,
+                    "totalCpuThreads": 1,
+                    "vms": {},
+                }
 
         except (ApiException, HTTPError) as exc:
             if isinstance(exc, ApiException) and exc.status == 404:
@@ -135,7 +133,7 @@ class Kubernetes(WorkerInterface):
                 output = None
             else:
                 self.log.exception(
-                    'Exception when calling CoreV1Api->list_node: {0}'.format(exc)
+                    "Exception when calling CoreV1Api->list_node: %s", exc
                 )
                 output = None
 
@@ -154,7 +152,9 @@ class Kubernetes(WorkerInterface):
         """
         Setup and configure connection to Kubernetes
         """
-        kubernetes.config.load_kube_config(config_file=self.kubeconfig, context=self.context)
+        kubernetes.config.load_kube_config(
+            config_file=self.kubeconfig, context=self.context
+        )
 
     def _validate_parameters(self, node):
         """
@@ -164,5 +164,7 @@ class Kubernetes(WorkerInterface):
         :return:
         """
 
-        if not (node.get('kubeconfig') and node.get('context')):
-            raise AttributeError("Missing parameter 'kubeconfig' and 'context' in infile")
+        if not (node.get("kubeconfig") and node.get("context")):
+            raise AttributeError(
+                "Missing parameter 'kubeconfig' and 'context' in infile"
+            )
