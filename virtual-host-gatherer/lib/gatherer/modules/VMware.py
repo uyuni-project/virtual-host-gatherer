@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 # Copyright (c) 2015 SUSE LLC, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +27,7 @@ from collections import OrderedDict
 
 try:
     from pyVim.connect import SmartConnect, Disconnect
+
     IS_VALID = True
 except ImportError as ex:
     IS_VALID = False
@@ -36,18 +38,13 @@ class VMware(WorkerInterface):
     Worker class for the VMWare.
     """
 
-    DEFAULT_PARAMETERS = OrderedDict([
-        ('hostname', ''),
-        ('port', 443),
-        ('username', ''),
-        ('password', '')])
+    DEFAULT_PARAMETERS = OrderedDict(
+        [("hostname", ""), ("port", 443), ("username", ""), ("password", "")]
+    )
 
-    VMSTATE = {
-        'poweredOff': 'stopped',
-        'poweredOn': 'running',
-        'suspended': 'paused'
-    }
+    VMSTATE = {"poweredOff": "stopped", "poweredOn": "running", "suspended": "paused"}
 
+    # pylint: disable-next=super-init-not-called
     def __init__(self):
         """
         Constructor.
@@ -73,10 +70,10 @@ class VMware(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.host = node['hostname']
-        self.port = node.get('port', 443)
-        self.user = node['username']
-        self.password = node['password']
+        self.host = node["hostname"]
+        self.port = node.get("port", 443)
+        self.user = node["username"]
+        self.password = node["password"]
 
     def parameters(self):
         """
@@ -92,20 +89,20 @@ class VMware(WorkerInterface):
         Explore tree nodes in depth and process hosts
         """
         try:
-            if hasattr(node, 'hostFolder'):
+            if hasattr(node, "hostFolder"):
                 # child is now a "datacenter" and it can contain
                 # clusters or folders.
                 for child in node.hostFolder.childEntity:
                     self.__explore_nodes(child, output)
-            elif hasattr(node, 'childEntity'):
+            elif hasattr(node, "childEntity"):
                 # vim.Folder
                 for child in node.childEntity:
                     self.__explore_nodes(child, output)
             elif hasattr(node, "host"):
                 # vim.Host
                 self.__process_node(node, output)
-        except Exception as exc:
-            self.log.error("Unexpected error exploring nodes: {0}".format(exc))
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            self.log.error("Unexpected error exploring nodes: %s", exc)
 
     def __process_node(self, node, output):
         """
@@ -115,33 +112,34 @@ class VMware(WorkerInterface):
             # vim.ClusterComputeResource
             for host in node.host:
                 host_name = host.summary.config.name.split()[0]
-                mhz = (float(host.hardware.cpuInfo.hz) / float(1000 * 1000))
-                ram = (int(host.hardware.memorySize / (1024 * 1024)))
+                mhz = float(host.hardware.cpuInfo.hz) / float(1000 * 1000)
+                ram = int(host.hardware.memorySize / (1024 * 1024))
 
-                self.log.debug("Host identification for {0} -> UUID: {1} Vendor: {2} Serial Number: {3}".format(
+                self.log.debug(
+                    "Host identification for %s -> UUID: %s Vendor: %s Serial Number: %s",
                     str(host),
                     host.hardware.systemInfo.uuid,
                     host.hardware.systemInfo.vendor,
-                    host.hardware.systemInfo.serialNumber
-                ))
+                    host.hardware.systemInfo.serialNumber,
+                )
 
                 output[host_name] = {
-                    'type': 'vmware',
-                    'name': host_name,
-                    'hostIdentifier': host.hardware.systemInfo.uuid,
-                    'fallbackHostIdentifier': str(host),
-                    'os': host.summary.config.product.name,
-                    'osVersion': host.summary.config.product.version,
-                    'totalCpuSockets': host.hardware.cpuInfo.numCpuPackages,
-                    'totalCpuCores': host.hardware.cpuInfo.numCpuCores,
-                    'totalCpuThreads': host.hardware.cpuInfo.numCpuThreads,
-                    'cpuMhz': mhz,
-                    'cpuVendor': host.hardware.cpuPkg[0].vendor,
-                    'cpuDescription': host.hardware.cpuPkg[0].description.strip(),
-                    'cpuArch': 'x86_64',
-                    'ramMb': ram,
-                    'vms': {},
-                    'optionalVmData': {}
+                    "type": "vmware",
+                    "name": host_name,
+                    "hostIdentifier": host.hardware.systemInfo.uuid,
+                    "fallbackHostIdentifier": str(host),
+                    "os": host.summary.config.product.name,
+                    "osVersion": host.summary.config.product.version,
+                    "totalCpuSockets": host.hardware.cpuInfo.numCpuPackages,
+                    "totalCpuCores": host.hardware.cpuInfo.numCpuCores,
+                    "totalCpuThreads": host.hardware.cpuInfo.numCpuThreads,
+                    "cpuMhz": mhz,
+                    "cpuVendor": host.hardware.cpuPkg[0].vendor,
+                    "cpuDescription": host.hardware.cpuPkg[0].description.strip(),
+                    "cpuArch": "x86_64",
+                    "ramMb": ram,
+                    "vms": {},
+                    "optionalVmData": {},
                 }
 
                 # If an additional hardware info is wanted:
@@ -155,19 +153,26 @@ class VMware(WorkerInterface):
                     # Ref: https://pubs.vmware.com/vi3/sdk/ReferenceGuide/vim.VirtualMachine.html
                     try:
                         vmname = virtual_machine.config.name
-                        output[host_name]['vms'][vmname] = self.get_vm_uuid(virtual_machine)
-                        output[host_name]['optionalVmData'][vmname] = {}
-                        output[host_name]['optionalVmData'][vmname]['vmState'] = self.VMSTATE.get(
-                            virtual_machine.runtime.powerState, 'unknown'
+                        output[host_name]["vms"][vmname] = self.get_vm_uuid(
+                            virtual_machine
                         )
-                        output[host_name]['optionalVmData'][vmname]['vmware_uuid'] = virtual_machine.config.uuid
+                        output[host_name]["optionalVmData"][vmname] = {}
+                        output[host_name]["optionalVmData"][vmname]["vmState"] = (
+                            self.VMSTATE.get(
+                                virtual_machine.runtime.powerState, "unknown"
+                            )
+                        )
+                        output[host_name]["optionalVmData"][vmname][
+                            "vmware_uuid"
+                        ] = virtual_machine.config.uuid
                     except AttributeError:
                         self.log.warning(
-                            "Missing config for vm {0}. Skipping it.".format(virtual_machine.summary.vm)
+                            "Missing config for vm %s. Skipping it.",
+                            virtual_machine.summary.vm,
                         )
 
         except (AttributeError, KeyError, IndexError) as exc:
-            self.log.error("Unexpected error processing node: {0}".format(exc))
+            self.log.error("Unexpected error processing node: %s", exc)
 
     def run(self):
         """
@@ -178,7 +183,9 @@ class VMware(WorkerInterface):
 
         self.log.info("Connect to %s:%s as user %s", self.host, self.port, self.user)
         try:
-            connection = SmartConnect(host=self.host, user=self.user, pwd=self.password, port=int(self.port))
+            connection = SmartConnect(
+                host=self.host, user=self.user, pwd=self.password, port=int(self.port)
+            )
             atexit.register(Disconnect, connection)
         except IOError as ex:
             self.log.error(ex)
@@ -214,8 +221,8 @@ class VMware(WorkerInterface):
         # 1b4e2242-b3f0-55bd-39c2-263f3860836f - dmidecode
         uuid_s = virtual_machine.config.uuid
         if virtual_machine.config.version:
-            version = int(virtual_machine.config.version.split('-')[1])
-            if (version >= 13):
+            version = int(virtual_machine.config.version.split("-")[1])
+            if version >= 13:
                 group1 = uuid_s[6:8] + uuid_s[4:6] + uuid_s[2:4] + uuid_s[0:2] + "-"
                 group2 = uuid_s[11:13] + uuid_s[9:11] + "-"
                 group3 = uuid_s[16:18] + uuid_s[14:16]

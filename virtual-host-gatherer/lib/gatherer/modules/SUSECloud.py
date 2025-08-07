@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 # Copyright (c) 2015 SUSE LLC, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +25,7 @@ from collections import OrderedDict
 
 try:
     from novaclient.v1_1 import client
+
     IS_VALID = True
 except ImportError as ex:
     IS_VALID = False
@@ -34,14 +36,18 @@ class SUSECloud(WorkerInterface):
     Worker class for the SUSE Cloud.
     """
 
-    DEFAULT_PARAMETERS = OrderedDict([
-        ('hostname', ''),
-        ('port', 5000),
-        ('username', ''),
-        ('password', ''),
-        ('protocol', 'https'),
-        ('tenant', 'openstack')])
+    DEFAULT_PARAMETERS = OrderedDict(
+        [
+            ("hostname", ""),
+            ("port", 5000),
+            ("username", ""),
+            ("password", ""),
+            ("protocol", "https"),
+            ("tenant", "openstack"),
+        ]
+    )
 
+    # pylint: disable-next=super-init-not-called
     def __init__(self):
         """
         Constructor.
@@ -67,11 +73,11 @@ class SUSECloud(WorkerInterface):
             self.log.error(error)
             raise error
 
-        self.host = node['hostname']
-        self.port = node.get('port', 5000)
-        self.user = node['username']
-        self.password = node['password']
-        self.tenant = node['tenant']
+        self.host = node["hostname"]
+        self.port = node.get("port", 5000)
+        self.user = node["username"]
+        self.password = node["password"]
+        self.tenant = node["tenant"]
 
     def parameters(self):
         """
@@ -88,35 +94,50 @@ class SUSECloud(WorkerInterface):
         """
 
         output = dict()
-        url = "http://%s:%s/v2.0/" % (self.host, self.port)
-        self.log.info("Connect to %s for tenant %s as user %s", url, self.tenant, self.user)
-        cloud_client = client.Client(self.user, self.password, self.tenant, url, service_type="compute")
+        url = f"http://{self.host}:{self.port}/v2.0/"
+        self.log.info(
+            "Connect to %s for tenant %s as user %s", url, self.tenant, self.user
+        )
+        cloud_client = client.Client(
+            self.user, self.password, self.tenant, url, service_type="compute"
+        )
         for hyp in cloud_client.hypervisors.list():
             htype = "qemu"
-            if hyp.hypervisor_type.lower() in ['fully_virtualized', 'para_virtualized', 'qemu', \
-                    'vmware', 'hyperv', 'virtage', 'virtualbox']:
+            if hyp.hypervisor_type.lower() in [
+                "fully_virtualized",
+                "para_virtualized",
+                "qemu",
+                "vmware",
+                "hyperv",
+                "virtage",
+                "virtualbox",
+            ]:
                 htype = hyp.hypervisor_type.lower()
             cpu_info = json.loads(hyp.cpu_info)
             output[hyp.hypervisor_hostname] = {
-                'name': hyp.hypervisor_hostname,
-                'hostIdentifier': hyp.hypervisor_hostname,
-                'type': htype,
-                'os': hyp.hypervisor_type,
-                'osVersion': hyp.hypervisor_version,
-                'totalCpuSockets': cpu_info.get('topology', {}).get('sockets'),
-                'totalCpuCores': cpu_info.get('topology', {}).get('cores'),
-                'totalCpuThreads': cpu_info.get('topology', {}).get('threads'),
-                'cpuMhz': 0,
-                'cpuVendor': cpu_info.get('vendor'),
-                'cpuDescription': cpu_info.get('model'),
-                'cpuArch': cpu_info.get('arch'),
-                'ramMb': hyp.memory_mb,
-                'vms': {}
+                "name": hyp.hypervisor_hostname,
+                "hostIdentifier": hyp.hypervisor_hostname,
+                "type": htype,
+                "os": hyp.hypervisor_type,
+                "osVersion": hyp.hypervisor_version,
+                "totalCpuSockets": cpu_info.get("topology", {}).get("sockets"),
+                "totalCpuCores": cpu_info.get("topology", {}).get("cores"),
+                "totalCpuThreads": cpu_info.get("topology", {}).get("threads"),
+                "cpuMhz": 0,
+                "cpuVendor": cpu_info.get("vendor"),
+                "cpuDescription": cpu_info.get("model"),
+                "cpuArch": cpu_info.get("arch"),
+                "ramMb": hyp.memory_mb,
+                "vms": {},
             }
-            for result in cloud_client.hypervisors.search(hyp.hypervisor_hostname, True):
-                if hasattr(result, 'servers'):
+            for result in cloud_client.hypervisors.search(
+                hyp.hypervisor_hostname, True
+            ):
+                if hasattr(result, "servers"):
                     for virtual_machine in result.servers:
-                        output[hyp.hypervisor_hostname]['vms'][virtual_machine['name']] = virtual_machine['uuid']
+                        output[hyp.hypervisor_hostname]["vms"][
+                            virtual_machine["name"]
+                        ] = virtual_machine["uuid"]
 
         return output
 
