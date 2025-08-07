@@ -1,0 +1,26 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: virtual-host-gatherer
+Upstream-Contact: Uyuni Project <>
+Source: https://github.com/uyuni-project/virtual-host-gatherer
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: virtual-host-gatherer/virtual-host-gatherer.changes* 
+Copyright: 2025 SUSE LLC
+License: Apache-2.0
+
+Files: virtual-host-gatherer/virtual-host-gatherer.spec
+Copyright: 2025 SUSE LLC
+License: Apache-2.0
+
+Files: rel-eng/tito.props
+Copyright: 2015-2025 SUSE LLC
+License: Apache-2.0
+
+Files: rel-eng/packages/*
+Copyright: 2015-2025 SUSE LLC
+License: Apache-2.0

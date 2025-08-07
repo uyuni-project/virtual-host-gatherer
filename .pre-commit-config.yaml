@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2020 Free Software Foundation Europe e.V.
+# SPDX-License-Identifier: CC0-1.0
+repos:
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: 920b64419e8e15e2e60818d3d473f8a110b97e87 # v5.0.2
+    hooks:
+      - id: reuse

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2019-2025 SUSE LLC
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # pylint: disable=invalid-name
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
