@@ -109,6 +109,16 @@ Requires:       %{python_module libvirt-python}
 %description Libvirt
 Libvirt connection module for gatherer
 
+%package Proxmox
+Summary:        Proxmox connection module
+Group:          Development/Languages
+Requires:       %{name} = %{version}
+Requires:       %{python_module proxmoxer}
+Requires:       %{python_module requests}
+
+%description Proxmox
+Proxmox connection module for gatherer
+
 %prep
 %setup -q
 
@@ -193,5 +203,10 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/Libvirt.py*
 %{python_sitelib}/gatherer/modules/__pycache__/Libvirt.*
+
+%files Proxmox
+%defattr(-,root,root,-)
+%{python_sitelib}/gatherer/modules/Proxmox.py*
+%{python_sitelib}/gatherer/modules/__pycache__/Proxmox.*
 
 %changelog
