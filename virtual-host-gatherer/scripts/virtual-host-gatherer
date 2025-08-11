@@ -1,8 +1,9 @@
+#!/usr/bin/python3
+
 # SPDX-FileCopyrightText: 2015-2025 SUSE LLC
 #
 # SPDX-License-Identifier: Apache-2.0
 
-#!/usr/bin/python3
 #
 # Copyright (c) 2015--2025 SUSE LLC. All Rights Reserved.
 #
@@ -38,6 +39,7 @@ The input file has the following format of the array of management node definiti
 """
 
 from __future__ import print_function, absolute_import
+
 # pylint: disable=no-name-in-module
 from gatherer.gatherer import Gatherer, parse_options
 

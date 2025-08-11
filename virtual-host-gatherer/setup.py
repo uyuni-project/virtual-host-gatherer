@@ -1,12 +1,10 @@
+#!/usr/bin/python3
+
 # SPDX-FileCopyrightText: 2015-2025 SUSE LLC
 #
 # SPDX-License-Identifier: Apache-2.0
 
 # pylint: disable=missing-module-docstring,deprecated-module
-
-#!/usr/bin/python3
-#
-#
 
 from __future__ import absolute_import
 from distutils.core import setup
