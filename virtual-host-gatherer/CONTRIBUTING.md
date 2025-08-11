@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2020-2025 SUSE LLC
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Writing a new virtual host gatherer module
 
 Virtual host gatherers are pluggable, independent modules written in Python 3.

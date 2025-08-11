@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2015-2025 SUSE LLC
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 Requires:
 
 * For File: install python-urlgrabber
