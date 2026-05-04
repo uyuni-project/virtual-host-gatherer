@@ -26,7 +26,7 @@
 %{?!python_install:%define python_install %{expand:%py3_install}}
 
 Name:           virtual-host-gatherer
-Version:        1.0.29
+Version:        1.0.30
 Release:        0
 Summary:        Gather virtualization information
 License:        Apache-2.0
