@@ -43,6 +43,7 @@ BuildRequires:  libxslt-tools
 %endif
 BuildRequires:  %{python_module devel}
 BuildRequires:  %{python_module pycurl}
+BuildRequires:  %{python_module setuptools}
 BuildRequires:  %{python_module six}
 Requires:       %{python_module pycurl}
 Requires:       %{python_module six}
