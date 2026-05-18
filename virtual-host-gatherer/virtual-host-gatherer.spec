@@ -62,17 +62,6 @@ Requires:       %{python_module pyvmomi}
 %description VMware
 VMware connection module for gatherer
 
-%if 0%{with_susecloud}
-%package SUSECloud
-Summary:        SUSE Cloud connection module
-Group:          Development/Languages
-Requires:       %{name} = %{version}
-Requires:       %{python_module novaclient}
-
-%description SUSECloud
-SUSE Cloud connection module for gatherer
-%endif
-
 %if 0%{with_kubernetes}
 %package Kubernetes
 Summary:        Kubernetes connection module
@@ -118,10 +107,6 @@ Libvirt connection module for gatherer
 
 %install
 %python_install
-%if ! 0%{with_susecloud}
-rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/SUSECloud.py*
-rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
-%endif
 %if ! 0%{with_kubernetes}
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/Kubernetes.py*
 rm -f $RPM_BUILD_ROOT%{python_sitelib}/gatherer/modules/__pycache__/Kubernetes.*
@@ -161,13 +146,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %{python_sitelib}/gatherer/modules/VMware.py*
 %{python_sitelib}/gatherer/modules/__pycache__/VMware.*
-
-%if 0%{with_susecloud}
-%files SUSECloud
-%defattr(-,root,root,-)
-%{python_sitelib}/gatherer/modules/SUSECloud.py*
-%{python_sitelib}/gatherer/modules/__pycache__/SUSECloud.*
-%endif
 
 %if 0%{with_kubernetes}
 %files Kubernetes
