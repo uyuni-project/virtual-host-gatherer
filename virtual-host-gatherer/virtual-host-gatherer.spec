@@ -16,7 +16,6 @@
 #
 
 
-%global with_susecloud 0
 %global with_kubernetes 0
 %define skip_python2 1
 %global __python /usr/bin/python3
