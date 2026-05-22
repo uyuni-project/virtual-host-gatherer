@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Fri May 22 10:58:39 WEST 2026 - psuarezhernandez@suse.com
+
+- version 1.0.31-0
+  * Drop SUSECloud module as not longer maintained
+
+-------------------------------------------------------------------
 Mon May 04 16:07:38 WEST 2026 - psuarezhernandez@suse.com
 
 - version 1.0.30-0

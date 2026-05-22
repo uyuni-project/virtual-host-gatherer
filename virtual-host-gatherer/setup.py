@@ -11,7 +11,7 @@ from distutils.core import setup
 
 setup(
     name="virtual-host-gatherer",
-    version="1.0.30",
+    version="1.0.31",
     description="Gather virtual host and VM data",
     long_description="""\
 Gather virtual host and VM data from different kind of hypervisors
