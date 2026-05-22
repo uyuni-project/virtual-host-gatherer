@@ -8,7 +8,6 @@ Requires:
 
 * For File: install python-urlgrabber
 * For VMware: install python-pyvmomi from devel:languages:python
-* For SUSECloud: install python-novaclient
 
 Example:
 
@@ -16,15 +15,6 @@ List all installed modules with the required paramater:
 ```
 $> scripts/virtual-host-gatherer --list-modules
 {
-    "SUSECloud": {
-        "module": "SUSECloud",
-        "hostname": "",
-        "port": 5000,
-        "username": "",
-        "password": "",
-        "protocol": "https",
-        "tenant": "openstack"
-    },
     "File": {
         "module": "File",
         "url": ""
@@ -55,16 +45,6 @@ Example input file (infile.json):
         "password": "secret",
         "port": 443
     },
-    {
-        "id": "mysusecloud",
-        "module" : "SUSECloud",
-        "protocol" : "http",
-        "hostname" : "susecloud.domain.top",
-        "port" : 5000,
-        "username" : "admin",
-        "password" : "secret",
-        "tenant" : "openstack"
-  }
 ]
 ```
 -----------------------------------------
